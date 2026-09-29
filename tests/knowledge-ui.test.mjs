@@ -35,6 +35,9 @@ test('CSS files isolate workbench dark theme from settings light theme', () => {
   assert.ok(knowledgeCss.includes('.knowledge-members button[data-member]'), 'Member adjust button must be styled');
   assert.ok(knowledgeCss.includes('.knowledge-members button[data-member-add]'), 'Member add button must be styled');
   assert.ok(knowledgeCss.includes('.knowledge-list .settings-list-item.active'), 'Selected item active state must be styled');
+  assert.ok(knowledgeCss.includes('#stageComplete'), 'Stage complete button must be styled in knowledge.css');
+  assert.ok(knowledgeCss.includes('#stageComplete:hover'), 'Stage complete button must have hover style');
+  assert.ok(knowledgeCss.includes('#knowledgeStageDialog'), 'Knowledge stage dialog must be styled in knowledge.css');
   assert.ok(knowledgeCss.includes('@media(max-width: 760px)'), 'Narrow screen responsiveness must be covered');
 });
 
