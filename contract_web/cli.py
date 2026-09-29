@@ -113,7 +113,7 @@ def main():
                     "OPENCODE_ENABLE_EXA": "true", "OPENCODE_WEBSEARCH_PROVIDER": "exa",
                     "OPENCODE_DISABLE_EXTERNAL_SKILLS": "true"})
         print(f"启动 {args.username} 的本地开发运行时，端口 {args.port}；此模式不提供容器级隔离", flush=True)
-        subprocess.run(["opencode", "serve", "--pure", "--hostname", "127.0.0.1", "--port", str(args.port)],
+        subprocess.run(["opencode", "serve", "--hostname", "127.0.0.1", "--port", str(args.port)],
                        cwd=root/"threads", env=env, check=True)
 
 

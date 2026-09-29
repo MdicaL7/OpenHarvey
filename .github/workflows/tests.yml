@@ -16,5 +16,7 @@ jobs:
       - run: pip install -r requirements.txt
       - run: npm ci
       - run: npm run build:redline
+      - run: npm --prefix scripts/memory-plugin ci
+      - run: npm --prefix scripts/memory-plugin run build
       - run: python -m unittest discover -s tests -q
       - run: npm test

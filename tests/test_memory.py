@@ -143,5 +143,20 @@ class MemoryTests(unittest.TestCase):
         u=self.store.one('SELECT * FROM users WHERE id=?',(self.uid,))
         self.assertEqual(self.app.state.memory.snapshot(u),{'enabled':False,'items':[]})
 
+    def test_existing_sqlite_rows_and_host_transaction_rollback(self):
+        u=self.store.one('SELECT * FROM users WHERE id=?',(self.uid,))
+        iid='d'*24
+        self.store.execute('INSERT INTO personal_memories VALUES(?,?,?,?,?,?,?,?,?)',
+                           (iid,self.uid,'Existing preference',2,1.0,2.0,'manual',None,None))
+        self.assertEqual(self.app.state.memory.items(u)[0]['revision'],2)
+        updated=self.app.state.memory.manual(u,'update',{'id':iid,'revision':2,'content':'Updated preference'})
+        self.assertEqual((updated['item']['id'],updated['item']['revision']),(iid,3))
+        with self.assertRaisesRegex(RuntimeError,'abort transaction'):
+            with self.store.connect() as db:
+                db.execute('BEGIN IMMEDIATE')
+                self.app.state.memory.mutate(db,u,'create',{'content':'Uncommitted preference'})
+                raise RuntimeError('abort transaction')
+        self.assertEqual([r['content'] for r in self.app.state.memory.items(u)],['Updated preference'])
+
 
 if __name__=='__main__':unittest.main()

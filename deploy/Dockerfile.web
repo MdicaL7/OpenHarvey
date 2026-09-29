@@ -21,6 +21,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY contract_web ./contract_web
+COPY memory_core ./memory_core
 COPY static ./static
 COPY runtime ./runtime
 COPY scripts/superdoc-engine.mjs ./scripts/superdoc-engine.mjs

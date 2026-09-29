@@ -4,6 +4,7 @@ import {mkdtemp,writeFile,rm} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import plugin from '../runtime/plugins/memory.js';
+import {createMemoryTool} from '../scripts/memory-plugin/tool.js';
 import {memoryReferencesHTML,memoryReceiptHTML} from '../static/memory-ui.js';
 import {setLanguage} from '../static/i18n.js';
 import {conversationHTML} from '../static/ui-utils.js';
@@ -25,6 +26,19 @@ test('bundled native tool sends scoped identity, stable retries and never return
   globalThis.fetch=async()=>({ok:false,json:async()=>({detail:'Personal memory is paused'})});
   assert.equal(JSON.parse((await native.execute({action:'list'},context)).output).saved,false);
  }finally{globalThis.fetch=prior;await rm(directory,{recursive:true,force:true});}
+});
+
+test('portable tool accepts a different host without an OpenHarvey capability file',async()=>{
+ const received=[];
+ const native=createMemoryTool({description:'Store preferences for a test host',execute:async(args,context)=>{
+  received.push({args,context});
+  return {saved:true,request_id:'portable-request',action:'create',item:{id:'host-memory',revision:1,content:args.content}};
+ }});
+ const context={sessionID:'other-runtime',messageID:'other-message'};
+ const result=await native.execute({action:'create',content:'Use concise answers'},context);
+ assert.equal(JSON.parse(result.output).item.content,'Use concise answers');
+ assert.equal(result.metadata.memory_request_id,'portable-request');
+ assert.deepEqual(received,[{args:{action:'create',content:'Use concise answers'},context}]);
 });
 
 test('memory UI renders only verified receipts, retains history and escapes preference text',()=>{

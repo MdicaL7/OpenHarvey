@@ -45,6 +45,13 @@ class LocalProcessDriver:
             if 'opencode' in cmd and ('--port '+port in cmd or '--port='+port in cmd):return int(value)
         return None
 
+    def uses_pure(self,config):
+        """A prior launcher may still be running with configured plugins disabled."""
+        pid=self.pid(config)
+        if not pid:return False
+        cmd=subprocess.run(['ps','-p',str(pid),'-o','command='],capture_output=True,text=True).stdout
+        return '--pure' in cmd.split()
+
     async def start(self,root,config,oc):
         binary=shutil.which('opencode')
         if not binary:raise RuntimeError('找不到 opencode，请先安装 OpenCode 1.16.2')
@@ -59,7 +66,7 @@ class LocalProcessDriver:
                     'OPENCODE_TEST_HOME':str(state/'home'),'OPENCODE_CONFIG':str(path),'OPENCODE_SERVER_PASSWORD':config['password'],'OPENCODE_DISABLE_CLAUDE_CODE':'true','OPENCODE_ENABLE_QUESTION_TOOL':'true','OPENCODE_DISABLE_EXTERNAL_SKILLS':'true',
                     'OPENCODE_ENABLE_EXA':'true','OPENCODE_WEBSEARCH_PROVIDER':'exa','OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX':'384000'})
         with (state/'service.log').open('ab') as log:
-            process=subprocess.Popen([binary,'serve',*([] if any(p.get('options',{}).get('workbenchExtraBody') for p in oc.get('provider',{}).values()) else ['--pure']),'--hostname','127.0.0.1','--port',config['url'].rsplit(':',1)[-1]],cwd=root/'threads',env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+            process=subprocess.Popen([binary,'serve','--hostname','127.0.0.1','--port',config['url'].rsplit(':',1)[-1]],cwd=root/'threads',env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
         for _ in range(100):
             if process.poll() is not None:raise RuntimeError('OpenCode 启动失败，请检查运行环境日志')
             if await self.health(config):return process.pid
@@ -173,7 +180,8 @@ class RuntimeManager:
                     generated_matches = (installed.get('provider') == generated.get('provider')
                         and installed.get('agent',{}).get('contract',{}).get('prompt') == defaults['agent']['contract']['prompt']
                         and installed.get('permission') == defaults['permission']
-                        and installed.get('plugin') == defaults['plugin'])
+                        and installed.get('plugin') == defaults['plugin']
+                        and not (hasattr(self.driver,'uses_pure') and self.driver.uses_pure(config)))
                 except (OSError, ValueError):generated_matches = False
             if healthy and state['applied_revision']==desired and state['status']=='ready' and generated_matches:return state
             if healthy and await self.busy(u,config):return self.state(u['id'],status='ready',desired_revision=desired)

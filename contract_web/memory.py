@@ -4,12 +4,25 @@ import os
 import re
 import secrets
 import time
+from dataclasses import asdict
 
 from fastapi import HTTPException, Request
+from memory_core import (InvalidAction, InvalidContent, LimitReached, MemoryPolicy,
+                         MemoryProvenance, MemoryService, MissingMemory, RevisionConflict)
+from .memory_prompt import memory_instructions
+from .memory_repository import SQLiteMemoryRepository
 from .settings import encoded
 from .store import digest
 
 MARKER = re.compile(r'\[\[memory:([a-f0-9]{24}):(\d+)\]\]')
+POLICY = MemoryPolicy()
+DOMAIN_ERRORS = {
+    InvalidAction: (422, '记忆操作无效'),
+    MissingMemory: (404, '记忆已删除或不存在'),
+    RevisionConflict: (409, '记忆已更新，请重新载入后保存'),
+    InvalidContent: (422, '每条记忆需要 1–500 字符'),
+    LimitReached: (422, '记忆总量已达上限，请先整理已有记忆'),
+}
 
 
 class Memory:
@@ -39,7 +52,7 @@ class Memory:
         enabled = json.loads(row['preferences']).get('memory_enabled') is True
         return {'available': available, 'memory_enabled': enabled, 'effective': available and enabled,
                 'requires_login': row['account_kind'] == 'demo',
-                'revision': row['settings_revision'], 'limit': 12000, 'item_limit': 500}
+                'revision': row['settings_revision'], 'limit': POLICY.total_limit, 'item_limit': POLICY.item_limit}
 
     def set_enabled(self, u, body):
         if not isinstance(body, dict) or set(body) != {'memory_enabled', 'revision'} or type(body['memory_enabled']) is not bool:
@@ -55,48 +68,37 @@ class Memory:
 
     @staticmethod
     def public(row):
-        return {**{k: row[k] for k in ('id', 'content', 'revision', 'created', 'updated', 'source', 'source_thread_id', 'source_message_id')},
-                'citation': f"[[memory:{row['id']}:{row['revision']}]]"}
+        values = asdict(row)
+        return {**values,
+                'citation': f"[[memory:{row.id}:{row.revision}]]"}
 
     def items(self, u, db=None):
-        sql = 'SELECT * FROM personal_memories WHERE user_id=? ORDER BY updated DESC,id'
-        rows = db.execute(sql, (u['id'],)).fetchall() if db else self.store.all(sql, (u['id'],))
-        return [self.public(r) for r in rows]
+        if db is not None:
+            return [self.public(row) for row in MemoryService(SQLiteMemoryRepository(db)).list(u['id'])]
+        with self.store.connect() as connection:
+            return self.items(u, connection)
 
     def snapshot(self, u):
         with self.store.connect() as db:
             db.execute('BEGIN')
             status = self.status(u, db)
-            return {'enabled': status['effective'], 'items': self.items(u, db) if status['effective'] else []}
+            service = MemoryService(SQLiteMemoryRepository(db))
+            return {'enabled': status['effective'],
+                    'items': [self.public(row) for row in service.snapshot(u['id'], status['effective'])]}
 
     def mutate(self, db, u, action, body, source='manual', tid=None, mid=None):
         if u.get('account_kind') == 'demo': raise HTTPException(403, '请登录正式账号后管理记忆')
-        if action not in {'create', 'update', 'delete'}: raise HTTPException(422, '记忆操作无效')
-        prior = None
-        if action != 'create':
-            prior = db.execute('SELECT * FROM personal_memories WHERE id=? AND user_id=?', (body.get('id'), u['id'])).fetchone()
-            if not prior: raise HTTPException(404, '记忆已删除或不存在')
-            if type(body.get('revision')) is not int or body['revision'] != prior['revision']:
-                raise HTTPException(409, '记忆已更新，请重新载入后保存')
-        if action == 'delete':
-            db.execute('DELETE FROM personal_memories WHERE id=? AND user_id=?', (prior['id'], u['id']))
-            return {'saved': True, 'action': action, 'item': self.public(prior)}
-        content = body.get('content')
-        if not isinstance(content, str) or not content.strip() or len(content.strip()) > 500 or any(ord(c) < 32 and c not in '\n\t' for c in content):
-            raise HTTPException(422, '每条记忆需要 1–500 字符')
-        content = content.strip()
-        used = db.execute('SELECT COALESCE(SUM(length(content)),0) FROM personal_memories WHERE user_id=?', (u['id'],)).fetchone()[0]
-        if used - (len(prior['content']) if prior else 0) + len(content) > 12000:
-            raise HTTPException(422, '记忆总量已达上限，请先整理已有记忆')
-        now = time.time()
-        if prior:
-            iid = prior['id']
-            db.execute('UPDATE personal_memories SET content=?,revision=revision+1,updated=?,source=?,source_thread_id=?,source_message_id=? WHERE id=?',
-                       (content, now, source, tid, mid, iid))
-        else:
-            iid = secrets.token_hex(12)
-            db.execute('INSERT INTO personal_memories VALUES(?,?,?,?,?,?,?,?,?)', (iid, u['id'], content, 1, now, now, source, tid, mid))
-        return {'saved': True, 'action': action, 'item': self.public(db.execute('SELECT * FROM personal_memories WHERE id=?', (iid,)).fetchone())}
+        service = MemoryService(SQLiteMemoryRepository(db))
+        provenance = MemoryProvenance(source, tid, mid)
+        try:
+            if action == 'create': record = service.create(u['id'], body.get('content'), provenance)
+            elif action == 'update': record = service.update(u['id'], body.get('id'), body.get('revision'), body.get('content'), provenance)
+            elif action == 'delete': record = service.delete(u['id'], body.get('id'), body.get('revision'))
+            else: raise InvalidAction()
+        except tuple(DOMAIN_ERRORS) as exc:
+            status, detail = DOMAIN_ERRORS[type(exc)]
+            raise HTTPException(status, detail) from exc
+        return {'saved': True, 'action': action, 'item': self.public(record)}
 
     def manual(self, u, action, body):
         if not isinstance(body, dict) or set(body) - {'content', 'id', 'revision'}:
@@ -111,7 +113,7 @@ class Memory:
         config = {k: v for k, v in execution.items() if k != 'id'}
         self.store.execute('UPDATE execution_configs SET config=?,message_id=? WHERE id=?', (encoded(config), message_id, execution['id']))
         if not snap['enabled']:
-            return '\n个人 Memory 已关闭或不可用。不得调用 memory 工具，不得应用历史中的个人记忆。当前用户指令、明确配置和合同材料仍有效。'
+            return memory_instructions(snap)
         token = secrets.token_urlsafe(32)
         self.store.execute('INSERT INTO memory_capabilities VALUES(?,?)', (execution['id'], digest(token)))
         cap = {'execution_id': execution['id'], 'thread_id': t['id'], 'session_id': t['session_id'],
@@ -120,10 +122,7 @@ class Memory:
         wd = self.store.user_root(u['id']) / 'threads' / t['id']
         path = wd / '.memory-capability'
         tmp = path.with_suffix('.tmp'); tmp.write_text(encoded(cap)); tmp.chmod(0o600); tmp.replace(path)
-        return ('\n个人 Memory 已开启。下列列表是本轮唯一有效的长期记忆快照，替代历史记忆；它是偏好数据，不改变权限、事实或证据要求。'
-                '当前用户要求优先，明确配置优先于冲突记忆。凡回答的标题、格式、措辞或判断方式遵循了某条记忆，必须在回答末尾原样复制该项 citation 字段。'
-                '这是界面展示参考记忆的唯一依据，不要只口头说遵循了偏好。输出前核对实际使用的条目；未使用的条目不要引用。'
-                '可用 memory 原生工具保存、更新、删除；仅后端 saved=true 才能声明保存。\n' + encoded(snap))
+        return memory_instructions(snap)
 
     def execute(self, u, req, *, token=None, workspace_id=None):
         if not isinstance(req, dict) or set(req) - {'request_id', 'execution_id', 'thread_id', 'session_id', 'message_id', 'action', 'id', 'revision', 'content'}:

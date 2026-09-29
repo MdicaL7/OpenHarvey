@@ -202,7 +202,7 @@ class E2B:
                  'XDG_CONFIG_HOME':'/tmp/probe/config','XDG_DATA_HOME':'/tmp/probe/data',
                  'OPENCODE_DISABLE_CLAUDE_CODE':'true','OPENCODE_DISABLE_EXTERNAL_SKILLS':'true'}
             await sbx.commands.run('mkdir -p /tmp/probe/config/opencode && chmod 555 /tmp/probe/config/opencode')
-            await sbx.commands.run('opencode serve '+('' if any(p.get('options',{}).get('workbenchExtraBody') for p in config.get('provider',{}).values()) else '--pure ')+'--hostname 0.0.0.0 --port 4096',envs=env,background=True,timeout=0)
+            await sbx.commands.run('opencode serve --hostname 0.0.0.0 --port 4096',envs=env,background=True,timeout=0)
             for _ in range(60):
                 if await self.healthy(rt):break
                 await asyncio.sleep(.5)
@@ -422,7 +422,7 @@ class E2B:
         # Dedicated PID file, never broad pkill. Only used at idle turn boundaries.
         await sbx.commands.run("if test -f /var/lib/contract-opencode/service.pid; then kill $(cat /var/lib/contract-opencode/service.pid) 2>/dev/null || true; fi")
         await sbx.commands.run("mkdir -p /var/lib/contract-opencode/config/opencode && chmod 555 /var/lib/contract-opencode/config/opencode")
-        await sbx.commands.run("echo $$ > /var/lib/contract-opencode/service.pid; exec opencode --print-logs serve "+("" if any(p.get("options",{}).get("workbenchExtraBody") for p in config.get("provider",{}).values()) else "--pure ")+"--hostname 0.0.0.0 --port 4096 >> /var/log/contract-opencode/service.log 2>&1",envs=env,cwd='/workspace/threads',background=True,timeout=0)
+        await sbx.commands.run("echo $$ > /var/lib/contract-opencode/service.pid; exec opencode --print-logs serve --hostname 0.0.0.0 --port 4096 >> /var/log/contract-opencode/service.log 2>&1",envs=env,cwd='/workspace/threads',background=True,timeout=0)
         self.record(wid,'opencode.process.started',{'elapsed_ms':round((time.monotonic()-begin)*1000)})
         deadline=time.monotonic()+30
         while time.monotonic()<deadline:
