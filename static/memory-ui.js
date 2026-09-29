@@ -16,7 +16,7 @@ export function memoryReferencesHTML(parts,open=new Set(),key=''){
 export function memoryReceiptHTML(part){
   const r=part.memory_receipt;
   if(!r)return `<div class="memory-receipt" role="status">${tr(part.memory_failed||part.state?.status==='error'?'记忆未保存':'记忆结果尚未确认')} · <a href="/labs">${tr('管理记忆')}</a></div>`;
-  if(r.status==='pending_confirmation')return `<aside class="memory-receipt" data-pending-proposal="${esc(r.proposal_id)}"><strong>${r.proposal_status==='pending'?'个人偏好待您确认':'提案已处理'}</strong><p>${esc(r.item?.content||'拟停用现有偏好')}</p>${r.proposal_status==='pending'?`<button data-memory-proposal="confirm" data-id="${esc(r.proposal_id)}" data-revision="${esc(r.proposal_revision)}">确认保存</button><button data-memory-proposal="ignore" data-id="${esc(r.proposal_id)}" data-revision="${esc(r.proposal_revision)}">忽略</button><a href="/knowledge">编辑提案</a>`:''}</aside>`;
+  if(r.status==='pending_confirmation')return `<aside class="memory-receipt" data-pending-proposal="${esc(r.proposal_id)}"><strong>${r.proposal_status==='pending'?'个人偏好待您确认':'提案已处理'}</strong><p>${esc(r.item?.content||'拟停用现有偏好')}</p>${r.proposal_status==='pending'?`<div class="memory-receipt-actions"><button type="button" class="primary" data-memory-proposal="confirm" data-id="${esc(r.proposal_id)}" data-revision="${esc(r.proposal_revision)}">确认保存</button><button type="button" data-memory-proposal="ignore" data-id="${esc(r.proposal_id)}" data-revision="${esc(r.proposal_revision)}">忽略</button><a href="/knowledge" class="memory-receipt-link">编辑提案</a></div>`:''}</aside>`;
   if(!r.saved)return `<div class="memory-receipt" role="status">${tr('记忆未保存')} · ${esc(tr(r.error||'记忆结果尚未确认'))}</div>`;
   return `<aside class="memory-receipt"><strong>${tr(({create:'已记住',update:'已更新记忆',delete:'已删除记忆'})[r.action])}</strong>${memoryItemHTML(r.action==='delete'?{...r.item,current_revision:null}:r.item,{historical:true})}</aside>`;
 }
@@ -60,11 +60,18 @@ export async function handleMemoryAction(event,{notice=()=>{},dirty=()=>{}}={}){
   const proposal=event.target.closest('[data-memory-proposal]');
   if(proposal){
     event.preventDefault();
+    if(proposal.disabled)return true;
+    const card=proposal.closest('[data-pending-proposal]');
+    const buttons=card?.querySelectorAll('button')||[proposal];
+    buttons.forEach(btn=>btn.disabled=true);
     try{
       await api(`/api/knowledge/proposals/${proposal.dataset.id}/decide`,{method:'POST',body:{decision:proposal.dataset.memoryProposal,proposal_revision:Number(proposal.dataset.revision)}});
-      const card=proposal.closest('[data-pending-proposal]');if(card)card.innerHTML='<strong>提案已处理</strong>';
+      if(card)card.innerHTML='<strong>提案已处理</strong>';
       announceMemoryChange();
-    }catch(e){notice(e.message);}
+    }catch(e){
+      buttons.forEach(btn=>btn.disabled=false);
+      notice(e.message);
+    }
     return true;
   }
   const b=event.target.closest('[data-memory-edit],[data-memory-disable],[data-memory-restore]');if(!b)return false;
