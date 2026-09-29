@@ -4,6 +4,7 @@ import {esc,markdown,citations} from './markdown.js';
 import {visibleMessageIssue,isCompaction,isCompactionContinuation} from './events.js';
 import {riskBoard} from './risk-ui.js';
 import {memoryReferencesHTML} from './memory-ui.js';
+import {knowledgeReferencesHTML} from './knowledge-ui.js';
 import {sourceReferencesHTML} from './materials-ui.js';
 import {toolHTML,thinkingHTML} from './agent-ui.js?v=20260913-2';
 import {skillLabel,skillCommand,skillMessage} from './skill-labels.js';
@@ -54,7 +55,7 @@ export function conversationHTML(state,open=new Set()){
       }
     }
     if(state.materials_enabled&&m.info.role==='assistant')content+=sourceReferencesHTML((m.parts||[]).filter(p=>p.type==='text').map(p=>p.text||'').join('\n'),state.documents);
-    if(m.info.role==='assistant')content+=memoryReferencesHTML(m.parts||[],open,m.info.id);
+    if(m.info.role==='assistant')content+=memoryReferencesHTML(m.parts||[],open,m.info.id)+knowledgeReferencesHTML(m.parts||[]);
     const issue=visibleMessageIssue(state,index);
     if(issue)content+=`<p class="chat-error">${esc(issue)}</p>`;
     else if(index===state.messages.length-1&&m.info.role==='assistant'&&!m.info.time?.completed&&state.status.type==='idle')content+=tr('<p class="muted">这段回复尚未完成。可发送消息继续。</p>');

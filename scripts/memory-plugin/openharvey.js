@@ -15,3 +15,14 @@ export async function openHarveyExecute(args,context){
   if(context.abort?.aborted)throw new Error('Memory operation cancelled');
   return cap.transport==='http' ? sendHttp(cap,req,context.abort) : sendExchange(req,context.abort);
 }
+
+export async function openHarveyKnowledgeExecute(args,context){
+  const cap=JSON.parse(await readFile(join(context.directory,'.knowledge-capability'),'utf8'));
+  if(cap.session_id!==context.sessionID)throw new Error('Knowledge session does not match this execution');
+  const req={execution_id:cap.execution_id,thread_id:cap.thread_id,session_id:context.sessionID,
+    message_id:context.messageID,...args};
+  req.request_id=hash(JSON.stringify(req));
+  if(context.abort?.aborted)throw new Error('Knowledge operation cancelled');
+  return cap.transport==='http' ? sendHttp(cap,req,context.abort) :
+    sendExchange(req,context.abort,{exchange:'/workspace/exchange/knowledge'});
+}

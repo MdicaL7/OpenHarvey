@@ -22,13 +22,15 @@ class SQLiteMemoryRepository:
             'SELECT * FROM personal_memories WHERE id=? AND user_id=?', (memory_id, scope_id)).fetchone())
 
     def used_chars(self, scope_id):
-        return self.db.execute('SELECT COALESCE(SUM(length(content)),0) FROM personal_memories WHERE user_id=?',
+        return self.db.execute("SELECT COALESCE(SUM(length(content)),0) FROM personal_memories WHERE user_id=? AND status='active'",
                                (scope_id,)).fetchone()[0]
 
     def insert(self, scope_id, record):
-        self.db.execute('INSERT INTO personal_memories VALUES(?,?,?,?,?,?,?,?,?)',
+        self.db.execute('''INSERT INTO personal_memories
+            (id,user_id,content,revision,created,updated,source,source_thread_id,source_message_id,status)
+            VALUES(?,?,?,?,?,?,?,?,?,?)''',
                         (record.id, scope_id, record.content, record.revision, record.created,
-                         record.updated, record.source, record.source_thread_id, record.source_message_id))
+                         record.updated, record.source, record.source_thread_id, record.source_message_id,record.status))
 
     def replace(self, scope_id, record):
         self.db.execute('''UPDATE personal_memories SET content=?,revision=?,updated=?,source=?,

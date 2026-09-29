@@ -29,7 +29,7 @@ export function setupSettings({notice,onClose,onOpen}){
   const select=(label,name,value,options)=>`<label>${esc(label)}<select name="${name}">${options.map(([v,l])=>`<option value="${esc(v)}" ${v===value?'selected':''}>${esc(l)}</option>`).join('')}</select></label>`;
   function shell(){
     root.setAttribute('aria-label',tr('工作台设置'));
-    root.innerHTML=ui`<div class="settings-nav"><div class="settings-title"><b>设置</b><button data-close aria-label="返回工作台">×</button></div><nav aria-label="设置导航">${[['general',tr('通用设置')],['labs','Labs'],['skills','Skills'],['risks',tr('风险库')],['traces',tr('执行记录')],['providers',tr('模型与服务')],...(identity.capabilities?.feishu?[['connectors',tr('连接器')]]:[]),...(identity.role==='admin'?[['members',tr('用户管理')]]:[])].map(([id,label])=>`<button data-tab="${id}" aria-current="${tab===id?'page':'false'}">${label}</button>`).join('')}</nav><p>${identity.account_kind==='demo'?tr('免登录体验'):tr('我的账户')}<br><span>${accountIdentityHTML(identity)} · ${identity.role==='admin'?tr('平台管理员'):identity.account_kind==='demo'?'demo':tr('个人用户')}</span></p><a class="settings-guide-link" href="/guide" target="_blank" rel="noopener">设置指南 ↗</a><button data-close class="settings-back">← 返回工作台</button></div><div class="settings-content"><div id="settingsPage"></div></div>`;
+    root.innerHTML=ui`<div class="settings-nav"><div class="settings-title"><b>设置</b><button data-close aria-label="返回工作台">×</button></div><nav aria-label="设置导航">${[['general',tr('通用设置')],['labs','Labs'],['knowledge',tr('知识')],['skills','Skills'],['risks',tr('风险库')],['traces',tr('执行记录')],['providers',tr('模型与服务')],...(identity.capabilities?.feishu?[['connectors',tr('连接器')]]:[]),...(identity.role==='admin'?[['members',tr('用户管理')]]:[])].map(([id,label])=>`<button data-tab="${id}" aria-current="${tab===id?'page':'false'}">${label}</button>`).join('')}</nav><p>${identity.account_kind==='demo'?tr('免登录体验'):tr('我的账户')}<br><span>${accountIdentityHTML(identity)} · ${identity.role==='admin'?tr('平台管理员'):identity.account_kind==='demo'?'demo':tr('个人用户')}</span></p><a class="settings-guide-link" href="/guide" target="_blank" rel="noopener">设置指南 ↗</a><button data-close class="settings-back">← 返回工作台</button></div><div class="settings-content"><div id="settingsPage"></div></div>`;
     $('[aria-current="page"]').scrollIntoView({block:'nearest',inline:'nearest'});
   }
   function route(next,mode){if(mode!=='none'&&location.pathname!==settingsPaths[next])history[mode==='replace'?'replaceState':'pushState'](null,'',settingsPaths[next]);}
@@ -61,6 +61,10 @@ export function setupSettings({notice,onClose,onOpen}){
     if(tab==='labs'){
       const {renderLabs}=await import('./memory-ui.js');if(g!==generation)return;
       await renderLabs($('#settingsPage'),{notice,dirty:value=>dirty=value,isCurrent:()=>g===generation});return;
+    }
+    if(tab==='knowledge'){
+      const {renderKnowledge}=await import('./knowledge-ui.js');if(g!==generation)return;
+      await renderKnowledge($('#settingsPage'),{identity,notice,dirty:value=>dirty=value,isCurrent:()=>g===generation});return;
     }
     if(tab==='connectors'){
       const {renderConnectors}=await import('./connectors-ui.js');if(g!==generation)return;

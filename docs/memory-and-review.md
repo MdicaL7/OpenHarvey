@@ -1,6 +1,6 @@
 # Memory and DOCX review
 
-Personal memory is opt-in under `/labs`. It stores account-scoped working preferences, with add/edit/delete controls and agent-requested writes. Current user instructions take priority. Memory is not contract evidence, a vector database, or a separate agent; enabled memories are included in task context. Existing conversations are not rewritten when memory is disabled or deleted.
+Personal memory is opt-in under `/labs`. It stores account-scoped working preferences, with add/edit/disable controls. Agent-requested changes enter a confirmation inbox and take effect only after the user confirms. Current user instructions take priority. Memory is not contract evidence or a vector database; active memories are included in task context. Existing conversations are not rewritten when memory is disabled or an item is deactivated. [Knowledge management](knowledge-management.md) explains organization knowledge and human publication.
 
 The core rules and OpenCode tool can be reused by another host; see [Memory portability](memory-portability.md) for the integration contract and transaction requirements.
 

@@ -64,12 +64,16 @@ class RiskSettings:
                     org['risk_scheme'] = iid
                     db.execute("UPDATE organizations SET settings=? WHERE id='default'", (encoded(org),))
 
-    def choose(self, u, iid=None):
+    def choose(self, u, iid=None, workspace_id=None):
         iid = iid or self.store.one('SELECT risk_scheme FROM users WHERE id=?', (u['id'],))['risk_scheme'] or self.settings.organization(u)['settings'].get('risk_scheme')
         item = self.settings.item(u, iid or '')
         if item['kind'] != 'risk' or not item['enabled']:
             raise HTTPException(422, '审查方案已停用或不可用，请重新选择')
         rules = [{k: v for k, v in r.items() if k != 'enabled'} for r in item['content']['rules'] if r.get('enabled', True)]
+        if getattr(self,'knowledge',None):
+            context=self.knowledge.workspace_context(u,workspace_id) if workspace_id else {}
+            rules += self.knowledge.applicable_rules(u,context)
+        if len(rules)>1000:raise HTTPException(422,'当前适用规则超过 1000 项，请先缩小适用范围')
         return {'id': item['id'], 'label': item['content']['label'], 'revision': item['revision'], 'hash': item['hash'], 'rules': rules}
 
     def execution(self, u, t, model, skill_versions, risk, message_id=None, after_message_id=None, model_revision=None, skill_revision=None):

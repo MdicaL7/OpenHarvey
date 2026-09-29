@@ -20,7 +20,10 @@ def runtime_config(shared):
             "skills": {"paths": [str(shared / "skills")]},
             "agent": {"contract": {"mode": "primary", "description": "合同工作台助手",
                         "permission": {"question": "allow"},
-                        "prompt": (ROOT / "runtime/agent.md").read_text()}},
+                        "prompt": (ROOT / "runtime/agent.md").read_text()},
+                      "knowledge-curator": {"mode":"primary","description":"组织知识整理助手",
+                        "permission":{"question":"allow"},
+                        "prompt": (ROOT / "runtime/knowledge-agent.md").read_text()}},
             "permission": {"task": "deny", "webfetch": "allow", "websearch": "allow",
                            "bash": {"*": "ask", f"python3 {shared}/scripts/publish.py *": "allow"}}}
 

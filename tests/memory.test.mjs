@@ -6,6 +6,7 @@ import {tmpdir} from 'node:os';
 import plugin from '../runtime/plugins/memory.js';
 import {createMemoryTool} from '../scripts/memory-plugin/tool.js';
 import {memoryReferencesHTML,memoryReceiptHTML} from '../static/memory-ui.js';
+import {knowledgeProposalHTML,knowledgeReferencesHTML} from '../static/knowledge-ui.js';
 import {setLanguage} from '../static/i18n.js';
 import {conversationHTML} from '../static/ui-utils.js';
 
@@ -54,4 +55,35 @@ test('memory UI renders only verified receipts, retains history and escapes pref
  assert.match(deleted,/Deleted/);assert.ok(!deleted.includes('data-memory-edit'));
  const html=conversationHTML({messages:[{info:{id:'msg',role:'assistant',time:{completed:1}},parts:[{type:'text',text:'Answer',memory_references:[item]}]}],status:{type:'idle'},documents:[]});
  assert.match(html,/Referenced memories/);setLanguage('zh-CN');
+});
+
+test('pending confirmations are distinct from committed memory and organization proposals',()=>{
+ const pending=memoryReceiptHTML({memory_receipt:{saved:false,status:'pending_confirmation',
+   proposal_status:'pending',proposal_id:'a'.repeat(24),proposal_revision:1,item:{content:'Remember <unsafe>'}}});
+ assert.match(pending,/待您确认/);assert.ok(!pending.includes('<unsafe>'));
+ assert.match(pending,/data-memory-proposal="confirm"/);
+ const member=knowledgeProposalHTML({knowledge_proposal:{id:'b'.repeat(24),kind:'rule',status:'pending',
+   proposal_revision:1,can_publish:false,content:{title:'<script>'}}});
+ assert.ok(!member.includes('<script>'));assert.ok(!member.includes('data-knowledge-decision="confirm"'));
+ const maintainer=knowledgeProposalHTML({knowledge_proposal:{id:'b'.repeat(24),kind:'rule',status:'pending',
+   proposal_revision:1,can_publish:true,content:{title:'Payment rule'}}});
+ assert.match(maintainer,/data-knowledge-decision="confirm"/);
+ assert.match(knowledgeReferencesHTML([{knowledge_references:[{item_id:'x',revision:1,title:'Past rule',current_status:'inactive'}]}]),/已停用/);
+});
+
+test('bundled organization tool uses execution capability but cannot publish',async()=>{
+ const directory=await mkdtemp(join(tmpdir(),'knowledge-plugin-')),prior=globalThis.fetch;
+ try{
+  await writeFile(join(directory,'.knowledge-capability'),JSON.stringify({execution_id:'exec',thread_id:'thread',
+    session_id:'ses_test',token:'TEST_KNOWLEDGE_CAPABILITY',transport:'http',url:'http://local/internal/knowledge'}));
+  let payload;
+  globalThis.fetch=async(url,options)=>{payload=JSON.parse(options.body);return {ok:true,json:async()=>({
+    status:'pending_confirmation',proposal_id:'proposal',request_id:payload.request_id})};};
+  const native=(await plugin()).tool.knowledge;
+  const result=JSON.parse((await native.execute({action:'propose_create',kind:'rule',title:'Payment',content:'30 days'},
+    {directory,sessionID:'ses_test',messageID:'msg_test'})).output);
+  assert.equal(result.status,'pending_confirmation');assert.equal(payload.thread_id,'thread');
+  assert.equal(payload.user_id,undefined);assert.equal(payload.action,'propose_create');
+  assert.ok(!JSON.stringify(result).includes('TEST_KNOWLEDGE_CAPABILITY'));
+ }finally{globalThis.fetch=prior;await rm(directory,{recursive:true,force:true});}
 });

@@ -50,7 +50,7 @@ class E2B:
         self.path_cache = {}
         self.pending_checkpoints = set()
         self.artifacts = self.traces = None
-        self.runtime_revision = hashlib.sha256(b''.join((ROOT / name).read_bytes() for name in ('runtime/agent.md','runtime/plugins/memory.js'))).hexdigest()
+        self.runtime_revision = hashlib.sha256(b''.join((ROOT / name).read_bytes() for name in ('runtime/agent.md','runtime/knowledge-agent.md','runtime/plugins/memory.js'))).hexdigest()
         self.template = os.environ.get('E2B_TEMPLATE', 'contract-opencode-1-16-2')
         self.enabled = os.environ.get('CW_SANDBOX_BACKEND', 'e2b') == 'e2b'
         with store.connect() as db:
@@ -367,7 +367,9 @@ class E2B:
 
     async def ensure_session(self,rt,t):
         if t['session_id'].startswith('pending_'):
-            session=await Runtime.call(rt,'POST','/session',tid=t['id'],body={'agent':'contract'})
+            w=self.store.one('SELECT purpose FROM workspaces WHERE id=?',(t['workspace_id'],))
+            session=await Runtime.call(rt,'POST','/session',tid=t['id'],
+                body={'agent':'knowledge-curator' if w and w['purpose']=='knowledge' else 'contract'})
             self.store.execute('UPDATE threads SET session_id=? WHERE id=?',(session['id'],t['id']))
             t['session_id']=session['id']
 
@@ -479,7 +481,7 @@ class E2B:
                 provider['headers']=headers;path.write_text(encoded(config))
         # Fixed application-owned files only: no recursive scan of agent output.
         pairs=shared+[(wd/name,rt.directory(t['id'])+'/'+name) for name in
-                      ('context.json','risk-library.json','opencode.json','.skill-versions.json','.memory-capability') if (wd/name).is_file()]
+                      ('context.json','risk-library.json','opencode.json','.skill-versions.json','.memory-capability','.knowledge-capability') if (wd/name).is_file()]
         changed=[];stats={}
         for local,remote in pairs:
             stat=local.stat();stamp=(stat.st_mtime_ns,stat.st_size,stat.st_ino)
@@ -742,6 +744,7 @@ class E2B:
 
     async def collect_submissions(self,u,w,sbx):
         if getattr(self,'memory',None): await self.memory.collect(u,w,sbx)
+        if getattr(self,'knowledge',None): await self.knowledge.collect(u,w,sbx)
         if getattr(self,'feishu',None):await self.feishu.collect(u,w,sbx)
         entries=await sbx.files.list('/workspace/exchange',depth=1)
         for entry in entries:

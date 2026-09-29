@@ -5,14 +5,16 @@ import {pendingRequest} from './message-queue.js?v=20260912-21';
 // MIT (c) 2026 Shane Levine; see vendor/beautiful-ui/LICENSE and THIRD_PARTY.md.
 import {esc} from './markdown.js';
 import {memoryReceiptHTML} from './memory-ui.js';
+import {knowledgeProposalHTML} from './knowledge-ui.js';
 import {isCompaction} from './events.js';
 
 const paths={check:'M20 6L9 17l-5-5',read:'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6',write:'M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z',bash:'M4 17l6-5-6-5M12 19h8',skill:'M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z',search:'M21 21l-5-5 M18 10a8 8 0 1 1-16 0a8 8 0 0 1 16 0',chevron:'M6 9l6 6 6-6',close:'M18 6L6 18M6 6l12 12',shield:'M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6z'};
 export function icon(name){return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name]||paths.read}"/></svg>`;}
 export function ring(active=false,number=''){return `<span class="bui-ring"><svg width="24" height="24" viewBox="0 0 24 24" class="${active?'bui-spin':''}" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="none" stroke="var(--line)" stroke-width="2"/>${active?'<circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="19.35 49.76"/>':''}</svg><span>${number}</span></span>`;}
-export const toolLabels=liveLabels({memory:'个人记忆',websearch:'搜索网络',webfetch:'读取网页',read:'读取原文',grep:'搜索材料',glob:'查找文件',skill:'加载 Skill',write:'写入文件',edit:'编辑文件',bash:'处理文件',todowrite:'更新任务清单',question:'等待答复'});
+export const toolLabels=liveLabels({memory:'个人记忆',knowledge:'组织知识',websearch:'搜索网络',webfetch:'读取网页',read:'读取原文',grep:'搜索材料',glob:'查找文件',skill:'加载 Skill',write:'写入文件',edit:'编辑文件',bash:'处理文件',todowrite:'更新任务清单',question:'等待答复'});
 export function toolHTML(p,stopped,open){
   if(p.tool==='memory'&&p.memory_action!=='list')return memoryReceiptHTML(p);
+  if(p.tool==='knowledge'&&p.knowledge_proposal)return knowledgeProposalHTML(p);
   const s=p.state||{},status=stopped&&['pending','running'].includes(s.status)?'interrupted':s.status;
   const label={pending:tr('等待'),running:tr('执行中'),completed:tr('完成'),error:tr('失败'),interrupted:tr('已中断')}[status]||status;
   const glyph={grep:'search',glob:'search',edit:'write',todowrite:'check',question:'skill'}[p.tool]||p.tool;

@@ -9,9 +9,11 @@ from .service import (
     MemoryProvenance, MemoryRecord, MemoryRepository, MemoryService,
     MissingMemory, RevisionConflict,
 )
+from .knowledge import Change, KnowledgeConflict, KnowledgeError, next_revision
 
 __all__ = [
     "InvalidAction", "InvalidContent", "LimitReached", "MemoryError",
     "MemoryPolicy", "MemoryProvenance", "MemoryRecord", "MemoryRepository",
     "MemoryService", "MissingMemory", "RevisionConflict",
+    "Change", "KnowledgeConflict", "KnowledgeError", "next_revision",
 ]

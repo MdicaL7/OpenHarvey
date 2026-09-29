@@ -64,13 +64,13 @@ class MemoryTests(unittest.TestCase):
         item = self.add()
         self.login('bob')
         self.assertEqual(self.client.get('/api/memories').json()['items'],[])
-        r=self.client.delete('/api/memories/'+item['id']+'?revision=1',headers=self.headers)
+        r=self.client.post('/api/knowledge/items/personal/preference/'+item['id']+'/disable',json={'revision':1},headers=self.headers)
         self.assertEqual(r.status_code,404)
         self.login('alice')
         r=self.client.patch('/api/memories/'+item['id'],json={'content':'changed','revision':0},headers=self.headers)
         self.assertEqual(r.status_code,409)
         self.assertEqual(self.client.post('/api/memories',json={'content':'x'*501},headers=self.headers).status_code,422)
-        self.client.delete('/api/memories/'+item['id']+'?revision=1',headers=self.headers)
+        self.client.post('/api/knowledge/items/personal/preference/'+item['id']+'/disable',json={'revision':1},headers=self.headers)
         for _ in range(24):self.add('x'*500)
         self.assertEqual(self.client.post('/api/memories',json={'content':'x'},headers=self.headers).status_code,422)
         with patch.dict(os.environ,{'CW_MEMORY_ENABLED':'0'}):
@@ -83,8 +83,12 @@ class MemoryTests(unittest.TestCase):
         endpoint=lambda body,token=cap['token']:self.client.post('/internal/memory',json=body,headers={'Authorization':'Bearer '+token})
         first=endpoint(req)
         self.assertEqual(first.status_code,200,first.text)
-        self.assertTrue(first.json()['saved'])
+        self.assertEqual(first.json()['status'],'pending_confirmation')
         self.assertEqual(endpoint(req).json(),first.json())
+        self.assertEqual(len(self.app.state.memory.items(u)),0)
+        pid=first.json()['proposal_id']
+        confirmed=self.client.post('/api/knowledge/proposals/'+pid+'/decide',json={'decision':'confirm','proposal_revision':1},headers=self.headers)
+        self.assertEqual(confirmed.status_code,200,confirmed.text)
         self.assertEqual(len(self.app.state.memory.items(u)),1)
         self.assertEqual(endpoint({**req,'content':'changed'}).status_code,409)
         self.assertEqual(endpoint(req,'bad-token').status_code,403)
@@ -107,14 +111,14 @@ class MemoryTests(unittest.TestCase):
         self.app.state.memory.manual(u,'update',{'id':item['id'],'revision':1,'content':'New preference'})
         self.assertEqual(view.part(text)['memory_references'][0]['current_revision'],2)
         self.assertEqual(view.part(text)['memory_references'][0]['content'],item['content'])
-        self.app.state.memory.manual(u,'delete',{'id':item['id'],'revision':2})
-        self.assertIsNone(view.part(text)['memory_references'][0]['current_revision'])
+        self.app.state.knowledge.manual(u,'personal','preference','disable',{'revision':2},item['id'])
+        self.assertEqual(view.part(text)['memory_references'][0]['current_status'],'inactive')
         self.assertEqual(self.app.state.memory.snapshot(u)['items'],[])
         forged={**text,'messageID':'msg_other'}
         self.assertNotIn('memory_references',view.part(forged))
         r=self.app.state.memory.execute(u,req,token=cap['token'])
         p={'id':'part_tool','type':'tool','tool':'memory','messageID':'msg_assistant','state':{'status':'completed','output':json.dumps(r)}}
-        self.assertTrue(view.part(p)['memory_receipt']['saved'])
+        self.assertEqual(view.part(p)['memory_receipt']['status'],'pending_confirmation')
         self.assertNotIn('memory_receipt',view.part({**p,'messageID':'msg_forged'}))
         p['state']['output']=json.dumps({'saved':True,'request_id':'fake'})
         self.assertNotIn('memory_receipt',view.part(p))
@@ -132,10 +136,10 @@ class MemoryTests(unittest.TestCase):
         sbx=SimpleNamespace(files=Files())
         asyncio.run(self.app.state.memory.collect(u,w,sbx))
         result=json.loads(content[path.replace('.request.','.receipt.')])
-        self.assertTrue(result['saved'])
+        self.assertEqual(result['status'],'pending_confirmation')
         content[path]=json.dumps(req).encode()
         asyncio.run(self.app.state.memory.collect(u,w,sbx))
-        self.assertEqual(len(self.app.state.memory.items(u)),1)
+        self.assertEqual(len(self.app.state.knowledge.proposals(u,'personal')),1)
         with self.assertRaises(HTTPException):self.app.state.memory.execute(u,req,workspace_id='different')
 
     def test_disabled_snapshot_never_carries_items(self):
@@ -146,7 +150,9 @@ class MemoryTests(unittest.TestCase):
     def test_existing_sqlite_rows_and_host_transaction_rollback(self):
         u=self.store.one('SELECT * FROM users WHERE id=?',(self.uid,))
         iid='d'*24
-        self.store.execute('INSERT INTO personal_memories VALUES(?,?,?,?,?,?,?,?,?)',
+        self.store.execute('''INSERT INTO personal_memories
+            (id,user_id,content,revision,created,updated,source,source_thread_id,source_message_id)
+            VALUES(?,?,?,?,?,?,?,?,?)''',
                            (iid,self.uid,'Existing preference',2,1.0,2.0,'manual',None,None))
         self.assertEqual(self.app.state.memory.items(u)[0]['revision'],2)
         updated=self.app.state.memory.manual(u,'update',{'id':iid,'revision':2,'content':'Updated preference'})

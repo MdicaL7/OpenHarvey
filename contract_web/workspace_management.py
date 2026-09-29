@@ -51,6 +51,10 @@ def register_workspace_management(app, store, settings, user, workspace, runtime
             aids = [item["id"] for item in artifacts]
             with store.connect() as db:
                 db.execute("BEGIN IMMEDIATE")
+                if tids:
+                    marks=','.join('?' for _ in tids)
+                    for table in ('knowledge_read_receipts','knowledge_capabilities'):
+                        db.execute(f'DELETE FROM {table} WHERE execution_id IN (SELECT id FROM execution_configs WHERE thread_id IN ({marks}))',tids)
                 for table, column, values in (
                     ("risk_feedback", "artifact_id", aids), ("trace_runs", "thread_id", tids),
                     ("memory_receipts", "thread_id", tids), ("execution_configs", "thread_id", tids), ("queued_messages", "thread_id", tids),

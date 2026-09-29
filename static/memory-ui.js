@@ -5,7 +5,7 @@ import {t as tr,getLanguage} from './i18n.js';
 
 export function memoryItemHTML(item,{historical=false}={}){
   const deleted=historical&&item.current_revision==null,changed=historical&&item.current_revision!==item.revision&&!deleted;
-  return `<article class="memory-item"><p>${esc(item.content)}</p><footer><small>${tr(item.source==='conversation'?'来自对话':'手动添加')} · ${esc(new Date(item.updated*1000).toLocaleString(getLanguage()))} · v${item.revision}${deleted?' · '+tr('已删除'):changed?' · '+tr('已有新版本'):''}</small>${!deleted?`<span><button type="button" data-memory-edit="${esc(item.id)}">${tr('编辑')}</button><button type="button" data-memory-delete="${esc(item.id)}">${tr('删除')}</button></span>`:''}</footer></article>`;
+  return `<article class="memory-item"><p>${esc(item.content)}</p><footer><small>${tr(item.source==='conversation'?'来自对话':'手动添加')} · ${esc(new Date(item.updated*1000).toLocaleString(getLanguage()))} · v${item.revision}${item.status==='inactive'?' · 已停用':''}${historical&&item.current_status==='inactive'?' · 现已停用':''}${deleted?' · '+tr('已删除'):changed?' · '+tr('已有新版本'):''}</small>${!deleted?`<span><button type="button" data-memory-edit="${esc(item.id)}">${tr('编辑')}</button>${item.status==='inactive'?`<button type="button" data-memory-restore="${esc(item.id)}">恢复</button>`:`<button type="button" data-memory-disable="${esc(item.id)}">停用</button>`}</span>`:''}</footer></article>`;
 }
 export function memoryReferencesHTML(parts,open=new Set(),key=''){
   const items=[...new Map(parts.flatMap(p=>p.memory_references||[]).map(i=>[i.id+':'+i.revision,i])).values()];
@@ -16,6 +16,7 @@ export function memoryReferencesHTML(parts,open=new Set(),key=''){
 export function memoryReceiptHTML(part){
   const r=part.memory_receipt;
   if(!r)return `<div class="memory-receipt" role="status">${tr(part.memory_failed||part.state?.status==='error'?'记忆未保存':'记忆结果尚未确认')} · <a href="/labs">${tr('管理记忆')}</a></div>`;
+  if(r.status==='pending_confirmation')return `<aside class="memory-receipt" data-pending-proposal="${esc(r.proposal_id)}"><strong>${r.proposal_status==='pending'?'个人偏好待您确认':'提案已处理'}</strong><p>${esc(r.item?.content||'拟停用现有偏好')}</p>${r.proposal_status==='pending'?`<button data-memory-proposal="confirm" data-id="${esc(r.proposal_id)}" data-revision="${esc(r.proposal_revision)}">确认保存</button><button data-memory-proposal="ignore" data-id="${esc(r.proposal_id)}" data-revision="${esc(r.proposal_revision)}">忽略</button><a href="/knowledge">编辑提案</a>`:''}</aside>`;
   if(!r.saved)return `<div class="memory-receipt" role="status">${tr('记忆未保存')} · ${esc(tr(r.error||'记忆结果尚未确认'))}</div>`;
   return `<aside class="memory-receipt"><strong>${tr(({create:'已记住',update:'已更新记忆',delete:'已删除记忆'})[r.action])}</strong>${memoryItemHTML(r.action==='delete'?{...r.item,current_revision:null}:r.item,{historical:true})}</aside>`;
 }
@@ -56,13 +57,24 @@ export function editMemory(item=null,{dirty=()=>{}}={}){
 }
 
 export async function handleMemoryAction(event,{notice=()=>{},dirty=()=>{}}={}){
-  const b=event.target.closest('[data-memory-edit],[data-memory-delete]');if(!b)return false;
+  const proposal=event.target.closest('[data-memory-proposal]');
+  if(proposal){
+    event.preventDefault();
+    try{
+      await api(`/api/knowledge/proposals/${proposal.dataset.id}/decide`,{method:'POST',body:{decision:proposal.dataset.memoryProposal,proposal_revision:Number(proposal.dataset.revision)}});
+      const card=proposal.closest('[data-pending-proposal]');if(card)card.innerHTML='<strong>提案已处理</strong>';
+      announceMemoryChange();
+    }catch(e){notice(e.message);}
+    return true;
+  }
+  const b=event.target.closest('[data-memory-edit],[data-memory-disable],[data-memory-restore]');if(!b)return false;
   event.preventDefault();
   try{
-    const {items}=await api('/api/memories'),item=items.find(i=>i.id===(b.dataset.memoryEdit||b.dataset.memoryDelete));
+    const {items}=await api('/api/memories'),item=items.find(i=>i.id===(b.dataset.memoryEdit||b.dataset.memoryDisable||b.dataset.memoryRestore));
     if(!item)throw new Error(tr('记忆已删除或不存在'));
     if(b.dataset.memoryEdit)editMemory(item,{dirty});
-    else if(confirm(tr('删除这条记忆？旧对话仍保留历史内容。'))){await api(`/api/memories/${item.id}?revision=${item.revision}`,{method:'DELETE'});announceMemoryChange();}
+    else if(b.dataset.memoryRestore){await api(`/api/knowledge/items/personal/preference/${item.id}/restore`,{method:'POST',body:{revision:item.revision}});announceMemoryChange();}
+    else if(confirm('停用这条记忆？历史内容会保留。')){await api(`/api/knowledge/items/personal/preference/${item.id}/disable`,{method:'POST',body:{revision:item.revision}});announceMemoryChange();}
   }catch(e){notice(e.message);}
   return true;
 }

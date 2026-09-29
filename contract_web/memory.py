@@ -88,12 +88,12 @@ class Memory:
 
     def mutate(self, db, u, action, body, source='manual', tid=None, mid=None):
         if u.get('account_kind') == 'demo': raise HTTPException(403, '请登录正式账号后管理记忆')
+        if action=='delete':raise HTTPException(410,'永久删除已停用，请使用停用')
         service = MemoryService(SQLiteMemoryRepository(db))
         provenance = MemoryProvenance(source, tid, mid)
         try:
             if action == 'create': record = service.create(u['id'], body.get('content'), provenance)
             elif action == 'update': record = service.update(u['id'], body.get('id'), body.get('revision'), body.get('content'), provenance)
-            elif action == 'delete': record = service.delete(u['id'], body.get('id'), body.get('revision'))
             else: raise InvalidAction()
         except tuple(DOMAIN_ERRORS) as exc:
             status, detail = DOMAIN_ERRORS[type(exc)]
@@ -103,6 +103,12 @@ class Memory:
     def manual(self, u, action, body):
         if not isinstance(body, dict) or set(body) - {'content', 'id', 'revision'}:
             raise HTTPException(422, '记忆请求无效')
+        if action=='delete':raise HTTPException(410,'永久删除已停用，请使用停用')
+        if hasattr(self,'knowledge'):
+            result=self.knowledge.manual(u,'personal','preference',action,body,body.get('id'))
+            with self.store.connect() as db:
+                record=SQLiteMemoryRepository(db).get(u['id'],result['item']['id'])
+            return {'saved':True,'action':action,'item':self.public(record)}
         with self.store.connect() as db:
             db.execute('BEGIN IMMEDIATE')
             return self.mutate(db, u, action, body)
@@ -155,8 +161,18 @@ class Memory:
             if not isinstance(req.get('message_id'), str) or not re.fullmatch(r'msg_[a-zA-Z0-9]+', req['message_id']):
                 raise HTTPException(422, '记忆消息标识无效')
             try:
-                if req.get('action') == 'list': result = {'saved': False, 'action': 'list', 'items': self.items(u, db)}
-                else: result = self.mutate(db, u, req.get('action'), req, 'conversation', e['thread_id'], req['message_id'])
+                if req.get('action') == 'list':
+                    result = {'saved': False, 'action': 'list',
+                              'items': [item for item in self.items(u, db) if item['status']=='active']}
+                else:
+                    action='disable' if req.get('action') in {'delete','disable'} else req.get('action')
+                    proposal=self.knowledge.propose(u,'personal','preference',action,req,
+                        target_id=req.get('id'),base_revision=req.get('revision'),
+                        request_id=rid,thread_id=e['thread_id'],execution_id=e['id'],
+                        message_id=req.get('message_id'),db=db)
+                    result={'saved':False,'status':'pending_confirmation','action':action,
+                            'proposal_id':proposal['id'],'proposal_revision':proposal['proposal_revision'],
+                            'item':proposal['content']}
             except HTTPException as exc:
                 result = {'saved': False, 'action': req.get('action'), 'error': exc.detail, 'status': exc.status_code}
             result['request_id'] = rid
@@ -200,8 +216,9 @@ class MemoryProjection:
             self.parents[info['id']] = info['parentID']
 
     def current(self, item):
-        row = self.memory.store.one('SELECT revision FROM personal_memories WHERE id=? AND user_id=?', (item['id'], self.user['id']))
-        return {**item, 'current_revision': row['revision'] if row else None}
+        row = self.memory.store.one('SELECT revision,status FROM personal_memories WHERE id=? AND user_id=?', (item['id'], self.user['id']))
+        return {**item, 'current_revision': row['revision'] if row else None,
+                'current_status':row['status'] if row else None}
 
     def part(self, part):
         store = self.memory.store
@@ -215,7 +232,11 @@ class MemoryProjection:
                             (result.get('request_id'), self.user['id'], self.thread['id'], mid))
             if not row: return {'memory_failed': True} if result.get('saved') is False and not result.get('pending') else {}
             receipt = json.loads(row['receipt'])
-            if receipt.get('item'): receipt['item'] = self.current(receipt['item'])
+            if receipt.get('item') and receipt.get('status')!='pending_confirmation': receipt['item'] = self.current(receipt['item'])
+            if receipt.get('proposal_id'):
+                proposal=store.one('SELECT status FROM knowledge_proposals WHERE id=? AND owner_id=?',
+                    (receipt['proposal_id'],self.user['id']))
+                receipt['proposal_status']=proposal['status'] if proposal else 'unavailable'
             # list results are context, not a "saved" card.
             return {'memory_receipt': receipt} if receipt.get('action') != 'list' else {'memory_action': 'list'}
         if part.get('type') != 'text' or not MARKER.search(part.get('text', '')): return {}
@@ -240,7 +261,7 @@ def register_memory(app, memory, user):
     @app.get('/api/memories')
     async def items(request: Request):
         rows = memory.items(user(request))
-        return {'items': rows, 'used': sum(len(r['content']) for r in rows), 'limit': 12000}
+        return {'items': rows, 'used': sum(len(r['content']) for r in rows if r['status']=='active'), 'limit': 12000}
 
     @app.post('/api/memories')
     async def create(request: Request): return memory.manual(user(request), 'create', await request.json())
@@ -252,7 +273,9 @@ def register_memory(app, memory, user):
         return memory.manual(u, 'update', {**body, 'id': iid})
 
     @app.delete('/api/memories/{iid}')
-    async def delete(iid: str, request: Request, revision: int): return memory.manual(user(request), 'delete', {'id': iid, 'revision': revision})
+    async def delete(iid: str, request: Request, revision: int):
+        user(request)
+        raise HTTPException(410, '永久删除已停用，请使用停用')
 
     @app.post('/internal/memory')
     async def internal(request: Request):

@@ -19,7 +19,8 @@ The host must open a transaction before mutations and use the same connection
 for authorization, capacity checks, memory writes, and any durable receipt.
 OpenHarvey continues to use `BEGIN IMMEDIATE` with `SQLiteMemoryRepository` so
 concurrent writes cannot pass a stale capacity or revision check. Existing
-`personal_memories` rows and public API responses need no migration.
+`personal_memories` IDs are retained; rows gain an active/inactive status and
+version history. Product-facing permanent deletion is disabled.
 
 The core returns records and domain exceptions. A new host translates those
 exceptions into its own API responses, manages enablement, and chooses how to
@@ -30,14 +31,17 @@ receipts, and verified UI citations in the host adapter.
 ## OpenCode tool
 
 `createMemoryTool({execute, description})` in
-`scripts/memory-plugin/tool.js` registers the same `memory` arguments and
+`scripts/memory-plugin/tool.js` registers the personal `memory` arguments and
 returns the same receipt-shaped tool output. `execute(args, context)` is
 provided by the host. The default plugin uses `openHarveyExecute`, which reads
 `.memory-capability` and uses the existing HTTP or file-exchange transport.
 A different OpenCode host can supply its own execution function without that
 file or the OpenHarvey server. It must authenticate its caller, implement
 storage and transaction handling, and supply relevant memories in Agent
-context; loading the tool alone does not provide recall.
+context; loading the tool alone does not provide recall. The companion
+`knowledge` tool covers authorized organization searches and proposals. Both
+write tools return pending proposals; only authenticated human confirmation
+creates a new effective version.
 
 Start OpenCode without `--pure`: that flag suppresses configured external
 plugins, including this tool. OpenHarvey's local and E2B launchers load only

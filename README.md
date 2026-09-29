@@ -28,13 +28,15 @@ Enable Contract materials under Settings → Labs to manage supporting files acr
 
 ## What’s new: Memory and DOCX review
 
-- **Personal memory you control:** opt in under Labs, ask the agent to remember long-term preferences, or add, edit and delete them yourself. Current instructions take priority; contract facts remain grounded in current documents.
+- **Personal memory you control:** opt in under Labs, ask the agent to propose a long-term preference, and confirm it before it takes effect. Add, edit, or disable preferences in Knowledge settings. Current instructions take priority; contract facts remain grounded in current documents.
 - **Review with the agent in the contract:** select a clause, request an edit and save it as native pending tracked changes. Changes and comments link to their text; accepting a change and resolving a comment are separate decisions.
 - **Keep your place and your history:** linked heading navigation, autosave, grouped save history, named milestones and restore-as-new-version. Preserve the uploaded original and download revised or clean DOCX files.
 
 DOCX review is **opt-in for registered accounts in Settings → Labs** (off by default), built with SuperDoc 1.46.3 on the AGPL route. Turning it off keeps saved changes, comments and versions. Single-user editing only; PDFs remain available for reading, analysis and suggestions. Clean export requires resolving pending changes. Complex layout fidelity and complete Word/WPS accept/reject compatibility are still under evaluation.
 
 [Feature details](https://openharvey.com/en/features#latest) · [Setup and boundaries](docs/memory-and-review.md)
+
+Organization Knowledge is available to administrator-enrolled members. Members can propose rules, templates, and cases; designated maintainers publish them. See [Knowledge management](docs/knowledge-management.md).
 
 ## Five product highlights
 

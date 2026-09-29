@@ -74,6 +74,8 @@ class Runtime:
             {"permission": "memory", "pattern": "*", "action": "allow"},
             {"permission": "read", "pattern": "*/.memory-capability", "action": "deny"},
             {"permission": "edit", "pattern": relative(root + "/.memory-capability"), "action": "deny"},
+            {"permission": "read", "pattern": "*/.knowledge-capability", "action": "deny"},
+            {"permission": "edit", "pattern": relative(root + "/.knowledge-capability"), "action": "deny"},
             {"permission": "read", "pattern": "*/.publish-token", "action": "deny"},
             {"permission": "edit", "pattern": relative(root + "/*"), "action": action},
             {"permission": "edit", "pattern": relative(root + "/context.json"), "action": "deny"},

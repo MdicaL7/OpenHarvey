@@ -179,6 +179,7 @@ class RuntimeManager:
                     defaults = runtime_config(ROOT/'runtime')
                     generated_matches = (installed.get('provider') == generated.get('provider')
                         and installed.get('agent',{}).get('contract',{}).get('prompt') == defaults['agent']['contract']['prompt']
+                        and installed.get('agent',{}).get('knowledge-curator',{}).get('prompt') == defaults['agent']['knowledge-curator']['prompt']
                         and installed.get('permission') == defaults['permission']
                         and installed.get('plugin') == defaults['plugin']
                         and not (hasattr(self.driver,'uses_pure') and self.driver.uses_pure(config)))

@@ -1,0 +1,16 @@
+.knowledge-tabs,.knowledge-toolbar,.knowledge-batch,.knowledge-proposal>div,.knowledge-members>div>div{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.knowledge-tabs{margin:16px 0}
+.knowledge-tabs button{padding:9px 14px;border:1px solid #d4dfeb;border-radius:8px;background:#fff;color:#34445a;cursor:pointer}
+.knowledge-tabs button[aria-selected="true"]{background:#eaf3ff;color:#1768b5;font-weight:700}
+.knowledge-toolbar{margin-bottom:14px}.knowledge-toolbar input{flex:1;min-width:180px}
+.knowledge-toolbar input,.knowledge-toolbar select,.knowledge-filters input,.knowledge-filters select{border:1px solid #cbd5e1;border-radius:7px;padding:8px;background:#fff}
+.knowledge-toolbar button,.knowledge-batch button,.knowledge-imports button,.knowledge-members button,.knowledge-proposal button{border-radius:7px;padding:8px 11px;cursor:pointer}
+.knowledge-filters{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.knowledge-filters label{display:flex;flex-direction:column;gap:3px;min-width:115px}.knowledge-filters input,.knowledge-filters select{max-width:180px}
+.knowledge-columns{display:grid;grid-template-columns:minmax(220px,35%) minmax(300px,1fr);gap:16px}
+.knowledge-list,.knowledge-detail,.knowledge-inbox,.knowledge-members,.knowledge-imports,.knowledge-context{border:1px solid #d8e0e8;border-radius:12px;padding:16px;background:#fff}
+.knowledge-list{max-height:550px;overflow:auto}.knowledge-list button{display:block;width:100%;text-align:left;margin-bottom:8px}
+.knowledge-detail pre{white-space:pre-wrap;overflow-wrap:anywhere}.knowledge-detail textarea{width:100%}
+.knowledge-inbox,.knowledge-members,.knowledge-imports,.knowledge-context{margin-top:16px}.knowledge-context form{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.knowledge-context label{display:flex;flex-direction:column;gap:4px}.knowledge-proposal{border:1px solid #d8e0e8;border-radius:9px;padding:12px;margin:10px 0}
+.knowledge-proposal p{margin:8px 0;white-space:pre-wrap}.knowledge-proposal small{display:block;margin-bottom:10px}
+.knowledge-proposal>div{display:flex}.knowledge-members>div>div{justify-content:space-between;border-bottom:1px solid #e9edf2;padding:5px}
+@media(max-width:760px){.knowledge-columns{grid-template-columns:1fr}}

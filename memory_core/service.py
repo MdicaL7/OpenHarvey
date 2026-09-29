@@ -53,6 +53,7 @@ class MemoryRecord:
     source: str
     source_thread_id: str | None
     source_message_id: str | None
+    status: str = "active"
 
 
 class MemoryRepository(Protocol):
@@ -79,7 +80,7 @@ class MemoryService:
         return self.repository.list(scope_id)
 
     def snapshot(self, scope_id: str, enabled: bool) -> tuple[MemoryRecord, ...]:
-        return tuple(self.list(scope_id)) if enabled else ()
+        return tuple(row for row in self.list(scope_id) if row.status == 'active') if enabled else ()
 
     def create(self, scope_id: str, content: str, provenance: MemoryProvenance = MemoryProvenance()) -> MemoryRecord:
         content = self._content(content)
@@ -96,7 +97,7 @@ class MemoryService:
         content = self._content(content)
         self._check_capacity(scope_id, content, prior)
         record = MemoryRecord(prior.id, content, prior.revision + 1, prior.created,
-                              self.now(), provenance.source, provenance.thread_id, provenance.message_id)
+                              self.now(), provenance.source, provenance.thread_id, provenance.message_id, prior.status)
         self.repository.replace(scope_id, record)
         return record
 

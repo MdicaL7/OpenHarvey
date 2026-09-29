@@ -11,6 +11,7 @@ import {threadScope,scopeLabels,threadListHTML,threadTitle} from './thread-ui.js
 import {queueHTML,restoreDraft,reconcilePending,pendingRequest,preparationLabel,loadingStateHTML} from './message-queue.js?v=20260921-skill-labels';
 import {setupSettings} from './settings-ui.js?v=20260921-skill-labels';
 import {handleMemoryAction,announceMemoryChange} from './memory-ui.js';
+import {handleKnowledgeProposalAction} from './knowledge-ui.js';
 import {settingsTab,savedWorkbenchURL} from './settings-routes.js';
 import {api,upload} from './api.js';
 import {connectEvents,applyEvent,runIssue,unchangedEvent} from './events.js?v=20260915-runtime-1';
@@ -85,6 +86,26 @@ const settingsUI=setupSettings({notice,onOpen:async()=>{await redline.close();wo
   }
 }});
 $('openSettings').onclick=protect(()=>settingsUI.open());
+$('stageComplete').onclick=protect(()=>{
+  if(!tid||workspace?.purpose==='knowledge')throw new Error('请先打开合同对话');
+  if(state.status?.type!=='idle'||state.queue?.active)throw new Error('请等待当前任务结束');
+  const dialog=$('knowledgeStageDialog');
+  dialog.dataset.requestId=crypto.randomUUID().replaceAll('-','');
+  dialog.showModal();
+});
+$('knowledgeStageDialog').querySelector('[data-close-stage]').onclick=()=>$('knowledgeStageDialog').close();
+$('knowledgeStageForm').onsubmit=protect(async e=>{
+  e.preventDefault();if(!tid)return;
+  const data=Object.fromEntries(new FormData(e.target));
+  const button=e.target.querySelector('[type=submit]');button.disabled=true;
+  try{
+    const result=await api(`/api/threads/${tid}/knowledge-stage`,{method:'POST',
+      body:{stage:data.stage,note:data.note,request_id:$('knowledgeStageDialog').dataset.requestId}});
+    $('knowledgeStageDialog').close();delete $('knowledgeStageDialog').dataset.requestId;
+    notice('案例整理任务已加入对话队列');
+    await refreshQueue(true);if(result.queue_id)await restore();
+  }finally{button.disabled=false;}
+});
 
 let noticeTimer;
 function notice(text='',kind='info',busy=false){clearTimeout(noticeTimer);$('notice').hidden=!text;setLoadingStatus($('notice'),text,busy);$('notice').dataset.kind=kind;if(text&&kind==='info'&&!busy)noticeTimer=setTimeout(()=>notice(),3200);}
@@ -99,6 +120,7 @@ function loggedOut(){
   artifactData.clear();
   stopStream();epoch++;sourceEpoch++;artifactEpoch++;restoring=false;buffer=[];
   $('loginView').hidden=false;workspace=null;tid=null;source=null;artifactId=null;workspaces=[];requestSignature='';switching=false;$('workspaceSwitcher').open=false;$('attachmentCount').textContent='0';
+  $('stageComplete').hidden=true;
   state={messages:[],status:{type:'idle'},documents:[]};modelCatalog=null;selectedModel=null;$('modelSelect').replaceChildren();
   renderSkills([]);hideSkillPicker();
   for(const id of ['workspaceList','threadList','workspaceArtifacts','artifactTabs','messageHistory','sourceContent','artBody','pendingRequests','attachmentList','todos','messageQueue','savedDrafts'])$(id).replaceChildren();
@@ -233,10 +255,11 @@ async function selectWorkspace(wid,requestedTid){
   let fresh;try{fresh=await api(`/api/workspaces/${wid}`,{signal:viewRequests.signal});}catch(error){if(view===epoch)$('sourceContent').textContent=tr('合同加载失败，请重新打开。');throw error;}
   if(view!==epoch)return;
   workspace=fresh;
+  $('stageComplete').hidden=fresh.purpose!=='contract';
   if(!fresh.threads.length&&(identity?.account_kind!=='demo'||identity.trial.threads_remaining>0)){
     try{await api(`/api/workspaces/${wid}/threads`,{method:'POST',body:{}});fresh=await api(`/api/workspaces/${wid}`);}
     catch(e){if(view===epoch){clearThreadSelection();renderWorkspace();background(loadSource(fresh.document_id));notice(e.message,'error');}return;}
-    if(view!==epoch)return;workspace=fresh;
+    if(view!==epoch)return;workspace=fresh;$('stageComplete').hidden=fresh.purpose!=='contract';
   }
   threadFilter=requestedTid?threadScope(workspace.threads.find(t=>t.id===requestedTid)||{}):'active';
   const target=requestedTid||visibleThreads()[0]?.id;
@@ -301,7 +324,7 @@ async function manageThread(id,action){
 $('threadScope').onchange=protect(e=>changeThreadScope(e.target.value));
 $('restoreCurrentThread').onclick=protect(()=>manageThread(tid,'restore'));
 
-document.addEventListener('click',e=>{if(e.target.closest('#messageHistory'))void handleMemoryAction(e,{notice});});
+document.addEventListener('click',e=>{if(e.target.closest('#messageHistory')){void handleMemoryAction(e,{notice});void handleKnowledgeProposalAction(e,{notice});}});
 document.addEventListener('labs-changed',()=>{void api('/api/me').then(async me=>{identity=me;if(!me.capabilities?.redline)await redline.close();syncRedlineAccess();}).catch(e=>notice(e.message));});
 window.addEventListener('storage',e=>{if(e.key==='labs-change')document.dispatchEvent(new Event('labs-changed'));});
 document.addEventListener('memory-changed',()=>{if(tid)void restore().catch(e=>notice(e.message));});
