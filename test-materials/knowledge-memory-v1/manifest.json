@@ -1,0 +1,104 @@
+{
+  "name": "OpenHarvey fictional knowledge and memory test materials",
+  "version": "1.0",
+  "scenario_date": "2026-09-29",
+  "fictional": true,
+  "formats": [
+    "Markdown",
+    "TXT"
+  ],
+  "business_documents": 15,
+  "note": "Package byte hashes are not application source identifiers. Guides are for human testers; do not upload them as knowledge.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4839,
+      "sha256": "a343da41cd7b6cf144f4eec347b9c9f9c39feaf40d6c75c5dc128260f7c1d42d"
+    },
+    {
+      "path": "guide/01_可复制的测试指令.txt",
+      "bytes": 3912,
+      "sha256": "b1b5ea9025dc90633b5591ef2166b3dc38c6dded2a0d7891cc39a243cd6342b8"
+    },
+    {
+      "path": "guide/02_场景与预期结果.md",
+      "bytes": 6842,
+      "sha256": "d55fef781821f467830ccccdea463e1399998d921cbce4b19e99abd43f41c683"
+    },
+    {
+      "path": "materials/01_采购合同审查标准_V1.md",
+      "bytes": 2406,
+      "sha256": "424792c0183212f1fea6314a43dccd2bceb354c4f0106b82b503e79df8a37aab"
+    },
+    {
+      "path": "materials/02_技术服务采购参考条款_V1.md",
+      "bytes": 1544,
+      "sha256": "b1b0a787f9569a45539becf9687441c48c17b432f82c2c63d1087caa291e6a82"
+    },
+    {
+      "path": "materials/03_北辰项目附条件批准记录.md",
+      "bytes": 1832,
+      "sha256": "05c9289db9c16603884318f816ef31994d43acb2489e46255d34531eff9c5353"
+    },
+    {
+      "path": "materials/04_合作方专项补充约定.md",
+      "bytes": 1520,
+      "sha256": "9be37b15c7f86be0bc82299a188e2375a44fe516510e66d4363f5d9a2c2d7a00"
+    },
+    {
+      "path": "materials/05_星桥采购合同_待审V1.txt",
+      "bytes": 2019,
+      "sha256": "a9b0d6039da7995f83ac331ae953bd1d92ef337b0c6b615619462caa5fc6d078"
+    },
+    {
+      "path": "materials/06_星桥审查与谈判阶段记录.md",
+      "bytes": 1716,
+      "sha256": "cd790d6305996c6fcb74282553473a2abd42f77a0c3d047422a58c3e8025bd6f"
+    },
+    {
+      "path": "materials/07_采购合同审查标准_V2及变更说明.md",
+      "bytes": 1678,
+      "sha256": "616144611c2d753ba5cfa6bde879f6431046106a33034f710033dfc9029613fb"
+    },
+    {
+      "path": "materials/08_北辰例外撤回与履约补记.md",
+      "bytes": 1182,
+      "sha256": "3a3a4ad4854b4f913745248dec4728808652591372482f6f7ac5e693da06de36"
+    },
+    {
+      "path": "materials/09_子公司采购合同_简版.md",
+      "bytes": 1202,
+      "sha256": "4c2590b3d39d2f293b6c35e8856f3564a722948c9b7a7053fc682f9ddf9fee7c"
+    },
+    {
+      "path": "materials/10_同名主体采购合同_简版.md",
+      "bytes": 1181,
+      "sha256": "a15a2a9b82694d40e03ab206c28181302a67c61f8f96563ebfb44e1c0f402741"
+    },
+    {
+      "path": "materials/11_未来政策草案与过期通知.md",
+      "bytes": 1075,
+      "sha256": "ec08317da5642944d10e4657196f36ca97cf32a7023183914e5f95fd54317ba0"
+    },
+    {
+      "path": "materials/12_供应商附件_含不可信指令.txt",
+      "bytes": 1110,
+      "sha256": "d323b56add27336588bfa204fe53d74132ed29ad9b461a96b1c8f1f59b4be41a"
+    },
+    {
+      "path": "materials/13_限制共享的案例原始记录.md",
+      "bytes": 1501,
+      "sha256": "0ec7736caa350c5430fbab1345fda1068b2599a3dc14c48f31b854b485b41241"
+    },
+    {
+      "path": "materials/14_适用范围不明的采购意向.txt",
+      "bytes": 851,
+      "sha256": "0e7efd0675e3f7ee53b19870c003e729ede6d0a75d3945544eeeb97f25c3d9b4"
+    },
+    {
+      "path": "materials/15_星桥采购合同_谈判V2.md",
+      "bytes": 1870,
+      "sha256": "5a99153956aa5e240ce2a4047f0ed65718fdec98b5a6048f760c0d8f121fef88"
+    }
+  ]
+}
