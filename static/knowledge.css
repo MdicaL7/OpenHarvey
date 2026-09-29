@@ -107,6 +107,85 @@
   outline-offset: 2px;
 }
 
+/* Type filter inside toolbar */
+.knowledge-type-filter {
+  display: inline-flex;
+  border: 1px solid #dce2eb;
+  border-radius: 7px;
+  background: #f8fafc;
+  padding: 2px;
+  gap: 2px;
+  align-items: center;
+}
+
+.knowledge-type-filter button {
+  padding: 5px 11px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: #536075;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .12s, color .12s, box-shadow .12s;
+}
+
+.knowledge-type-filter button:hover {
+  background: #edf3fa;
+  color: #274e7c;
+}
+
+.knowledge-type-filter button.active,
+.knowledge-type-filter button[aria-selected="true"] {
+  background: #fff;
+  color: #20578b;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.knowledge-type-filter button:focus-visible {
+  outline: 2px solid #79a7dc;
+  outline-offset: 1px;
+}
+
+/* Type tags / badges */
+.knowledge-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.knowledge-tag-rule {
+  background: #edf5fd;
+  color: #1e5692;
+  border: 1px solid #bfdbfe;
+}
+
+.knowledge-tag-template {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.knowledge-tag-case {
+  background: #faf5ff;
+  color: #6b21a8;
+  border: 1px solid #e9d5ff;
+}
+
+.knowledge-tag-preference {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
 /* Filters */
 .knowledge-filters {
   display: flex;
@@ -944,6 +1023,14 @@
   }
   .knowledge-toolbar input {
     min-width: 100%;
+  }
+  .knowledge-type-filter {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .knowledge-type-filter button {
+    flex: 1;
+    text-align: center;
   }
   .knowledge-filters {
     gap: 8px;

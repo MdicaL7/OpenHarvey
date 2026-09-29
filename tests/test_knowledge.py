@@ -277,5 +277,129 @@ class KnowledgeTests(unittest.TestCase):
                 self.assertEqual(attempt.status_code,422)
                 self.assertIn('模型',attempt.json()['detail'])
 
+    def test_multi_type_query_filtering_sorting_and_permissions(self):
+        admin=self.enroll()
+        # Create 2 rules
+        r1=self.client.post('/api/knowledge/items',json={
+            'scope':'organization','kind':'rule','title':'违约金上限标准',
+            'content':'违约金总额不得超过合同总价的20%','metadata':{},'sources':[]},headers=self.headers)
+        self.assertEqual(r1.status_code,200)
+        import time; time.sleep(0.01)
+        # Create template 1
+        t1=self.client.post('/api/knowledge/items',json={
+            'scope':'organization','kind':'template','title':'保密协议范本条款',
+            'content':'双方对商业秘密与技术资料承担保密义务','metadata':{},'sources':[]},headers=self.headers)
+        self.assertEqual(t1.status_code,200)
+        time.sleep(0.01)
+        # Create rule 2
+        r2=self.client.post('/api/knowledge/items',json={
+            'scope':'organization','kind':'rule','title':'争议解决管辖约定',
+            'content':'双方发生争议向原告所在地人民法院起诉','metadata':{},'sources':[]},headers=self.headers)
+        self.assertEqual(r2.status_code,200)
+        time.sleep(0.01)
+        # Create template 2
+        t2=self.client.post('/api/knowledge/items',json={
+            'scope':'organization','kind':'template','title':'知识产权归属条款',
+            'content':'合作开发成果的知识产权归委托方所有','metadata':{},'sources':[]},headers=self.headers)
+        self.assertEqual(t2.status_code,200)
+        time.sleep(0.01)
+        # Create 1 case
+        c1=self.client.post('/api/knowledge/items',json={
+            'scope':'organization','kind':'case','title':'特批账期案例决策',
+            'content':'由于战略合作特批60天付款周期','metadata':{'decision_type':'review'},
+            'sources':[{'excerpt':'特批60天付款周期'}]},headers=self.headers)
+        self.assertEqual(c1.status_code,200)
+
+        # 1. Multi-type filtering: kinds=rule,template
+        res=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,template',headers=self.headers)
+        self.assertEqual(res.status_code,200)
+        items=res.json()['items']
+        self.assertEqual(len(items),4)
+        item_kinds={it['kind'] for it in items}
+        self.assertEqual(item_kinds,{'rule','template'})
+        self.assertNotIn(c1.json()['item']['id'],{it['id'] for it in items})
+
+        # Comma-separated in kind param
+        res_kind_comma=self.client.get('/api/knowledge/items?scope=organization&kind=rule,template',headers=self.headers)
+        self.assertEqual(res_kind_comma.status_code,200)
+        self.assertEqual(len(res_kind_comma.json()['items']),4)
+
+        # Multiple kind params
+        res_multi_param=self.client.get('/api/knowledge/items?scope=organization&kind=rule&kind=template',headers=self.headers)
+        self.assertEqual(res_multi_param.status_code,200)
+        self.assertEqual(len(res_multi_param.json()['items']),4)
+
+        # 2. Server-side unified sorting (updated DESC)
+        updated_times=[it['updated'] for it in items]
+        self.assertEqual(updated_times,sorted(updated_times,reverse=True))
+        self.assertEqual(items[0]['id'],t2.json()['item']['id'])
+        self.assertEqual(items[1]['id'],r2.json()['item']['id'])
+        self.assertEqual(items[2]['id'],t1.json()['item']['id'])
+        self.assertEqual(items[3]['id'],r1.json()['item']['id'])
+
+        # 3. Unified search across multiple types
+        # Title match on template
+        search_title=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,template&q=知识产权',headers=self.headers)
+        self.assertEqual(search_title.status_code,200)
+        self.assertEqual(len(search_title.json()['items']),1)
+        self.assertEqual(search_title.json()['items'][0]['id'],t2.json()['item']['id'])
+        self.assertEqual(search_title.json()['items'][0]['match_reason'],'标题匹配')
+
+        # Content match on rule
+        search_content=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,template&q=原告所在地',headers=self.headers)
+        self.assertEqual(search_content.status_code,200)
+        self.assertEqual(len(search_content.json()['items']),1)
+        self.assertEqual(search_content.json()['items'][0]['id'],r2.json()['item']['id'])
+        self.assertEqual(search_content.json()['items'][0]['match_reason'],'正文匹配')
+
+        # 4. Validation: mixed list must NOT contain case
+        mixed_case1=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,case',headers=self.headers)
+        self.assertEqual(mixed_case1.status_code,422)
+        self.assertIn('混合列表不得包含案例',mixed_case1.json()['detail'])
+
+        mixed_case2=self.client.get('/api/knowledge/items?scope=organization&kind=template,case',headers=self.headers)
+        self.assertEqual(mixed_case2.status_code,422)
+        self.assertIn('混合列表不得包含案例',mixed_case2.json()['detail'])
+
+        mixed_case3=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,template,case',headers=self.headers)
+        self.assertEqual(mixed_case3.status_code,422)
+        self.assertIn('混合列表不得包含案例',mixed_case3.json()['detail'])
+
+        # Invalid kind validation
+        invalid_kind=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,unknown',headers=self.headers)
+        self.assertEqual(invalid_kind.status_code,422)
+
+        # 5. Legacy single-type compatibility
+        single_rule=self.client.get('/api/knowledge/items?scope=organization&kind=rule',headers=self.headers)
+        self.assertEqual(single_rule.status_code,200)
+        self.assertEqual(len(single_rule.json()['items']),2)
+        self.assertTrue(all(it['kind']=='rule' for it in single_rule.json()['items']))
+
+        single_template=self.client.get('/api/knowledge/items?scope=organization&kind=template',headers=self.headers)
+        self.assertEqual(single_template.status_code,200)
+        self.assertEqual(len(single_template.json()['items']),2)
+        self.assertTrue(all(it['kind']=='template' for it in single_template.json()['items']))
+
+        single_case=self.client.get('/api/knowledge/items?scope=organization&kind=case',headers=self.headers)
+        self.assertEqual(single_case.status_code,200)
+        self.assertEqual(len(single_case.json()['items']),1)
+        self.assertTrue(all(it['kind']=='case' for it in single_case.json()['items']))
+
+        no_kind=self.client.get('/api/knowledge/items?scope=organization',headers=self.headers)
+        self.assertEqual(no_kind.status_code,200)
+        self.assertEqual(len(no_kind.json()['items']),5)
+
+        # 6. Organization permissions
+        # Active member can query
+        self.login('bob')
+        bob_query=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,template',headers=self.headers)
+        self.assertEqual(bob_query.status_code,200)
+        self.assertEqual(len(bob_query.json()['items']),4)
+
+        # Revoked member cannot query
+        self.app.state.knowledge.set_member(admin,self.bid,{'role':'member','active':False,'revision':1})
+        revoked_query=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,template',headers=self.headers)
+        self.assertEqual(revoked_query.status_code,403)
+
 
 if __name__=='__main__':unittest.main()

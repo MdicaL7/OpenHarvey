@@ -229,3 +229,192 @@ test('renderKnowledge renders list with selection state and proposals inbox', as
     globalThis.fetch = prevFetch;
   }
 });
+
+test('renderKnowledge restores three top-level tabs and supports rules and templates mixed list, type filter, kind-based actions, and new form defaults', async () => {
+  const dom = new JSDOM('<!doctype html><html><body><div id="settingsPage"></div></body></html>');
+  const prevDoc = globalThis.document;
+  const prevSession = globalThis.sessionStorage;
+  const prevFetch = globalThis.fetch;
+  const calls = [];
+
+  const prevFormData = globalThis.FormData;
+
+  try {
+    globalThis.document = dom.window.document;
+    globalThis.FormData = dom.window.FormData;
+    globalThis.sessionStorage = {getItem: () => null};
+
+    globalThis.fetch = async (url, options = {}) => {
+      const u = String(url);
+      calls.push({url: u, method: options.method || 'GET', body: options.body});
+      if (u.includes('/api/knowledge/profile')) return {ok: true, json: async () => ({active: true, role: 'maintainer'})};
+      if (u.includes('/api/knowledge/items?')) {
+        return {
+          ok: true,
+          json: async () => ({
+            items: [
+              {id: 'r1', kind: 'rule', scope: 'organization', title: '审查标准一：违约金上限', content: '违约金上限约定为20%', status: 'active', revision: 1},
+              {id: 't1', kind: 'template', scope: 'organization', title: '参考范本一：保密条款', content: '双方承担保密义务', status: 'active', revision: 2}
+            ]
+          })
+        };
+      }
+      if (u.includes('/api/knowledge/proposals?')) {
+        return {
+          ok: true,
+          json: async () => ({
+            items: [
+              {id: 'prop_r', kind: 'rule', action: 'create', proposal_revision: 1, owner_id: null, content: {title: '审查标准提案'}},
+              {id: 'prop_t', kind: 'template', action: 'create', proposal_revision: 1, owner_id: null, content: {title: '参考范本提案'}}
+            ]
+          })
+        };
+      }
+      if (u.includes('/api/knowledge/members')) return {ok: true, json: async () => []};
+      if (u.includes('/api/knowledge/parties')) return {ok: true, json: async () => ({items: []})};
+      if (u.includes('/api/knowledge/imports')) return {ok: true, json: async () => []};
+      if (u.includes('/versions')) return {ok: true, json: async () => [{revision: 2, status: 'active'}]};
+      if (u.includes('/api/knowledge/items/organization/template/t1')) {
+        return {
+          ok: true,
+          json: async () => ({id: 't1', kind: 'template', scope: 'organization', title: '参考范本一：保密条款', content: '双方承担保密义务', status: 'active', revision: 2})
+        };
+      }
+      if (u.includes('/api/knowledge/items/organization/rule/r1')) {
+        return {
+          ok: true,
+          json: async () => ({id: 'r1', kind: 'rule', scope: 'organization', title: '审查标准一：违约金上限', content: '违约金上限约定为20%', status: 'active', revision: 1})
+        };
+      }
+      return {ok: true, json: async () => ({id: 'new_id', revision: 1, status: 'active'})};
+    };
+
+    const root = dom.window.document.getElementById('settingsPage');
+    await renderKnowledge(root, {identity: {id: 'user1', role: 'admin'}});
+
+    // 1. Verify exactly 3 top-level tabs
+    const tabButtons = root.querySelectorAll('.knowledge-tabs button');
+    assert.equal(tabButtons.length, 3, 'Must render exactly 3 top-level tabs');
+    const tabNames = [...tabButtons].map(b => b.textContent.trim());
+    assert.deepEqual(tabNames, ['我的偏好', '规则与范本', '案例与决策']);
+    assert.equal(tabButtons[0].getAttribute('aria-selected'), 'true', 'Default tab is 我的偏好');
+    for (const b of tabButtons) {
+      assert.equal(b.hasAttribute('data-tab'), false, 'Knowledge tabs must not have data-tab attribute to avoid settings-ui collision');
+    }
+
+    // 2. Switch to '规则与范本' tab
+    calls.length = 0;
+    let propStopped = false;
+    await tabButtons[1].onclick({stopPropagation: () => { propStopped = true; }});
+    assert.equal(propStopped, true, 'Clicking tab button must stop propagation');
+
+    // Verify query sent multi-type param kinds=rule,template
+    const mixedQueryCall = calls.find(c => c.url.includes('/api/knowledge/items?') && c.url.includes('kinds=rule'));
+    assert.ok(mixedQueryCall, 'Mixed list query must request kinds=rule,template');
+    assert.ok(mixedQueryCall.url.includes('rule') && mixedQueryCall.url.includes('template'));
+
+    // Verify sub-type filter rendered
+    const typeButtons = root.querySelectorAll('.knowledge-type-filter button');
+    assert.equal(typeButtons.length, 3, 'Must render 3 type filter options: 全部/审查标准/参考范本');
+    assert.deepEqual([...typeButtons].map(b => b.textContent.trim()), ['全部', '审查标准', '参考范本']);
+    assert.equal(typeButtons[0].classList.contains('active'), true, 'Default type filter is 全部');
+
+    // Verify list items show clear type badges
+    const listItems = root.querySelectorAll('.knowledge-list .settings-list-item');
+    assert.equal(listItems.length, 2, 'Mixed list displays both rules and templates');
+    assert.ok(listItems[0].querySelector('.knowledge-tag-rule'), 'Rule item must have rule tag');
+    assert.ok(listItems[0].innerHTML.includes('审查标准'), 'Rule item must display 审查标准 tag label');
+    assert.ok(listItems[1].querySelector('.knowledge-tag-template'), 'Template item must have template tag');
+    assert.ok(listItems[1].innerHTML.includes('参考范本'), 'Template item must display 参考范本 tag label');
+
+    // 3. Test type filter switching: switch to '审查标准'
+    calls.length = 0;
+    await typeButtons[1].onclick();
+    const ruleQueryCall = calls.find(c => c.url.includes('/api/knowledge/items?') && c.url.includes('kind=rule'));
+    assert.ok(ruleQueryCall, 'Switching to 审查标准 must query kind=rule');
+
+    // Switch to '参考范本'
+    calls.length = 0;
+    const updatedTypeButtons = root.querySelectorAll('.knowledge-type-filter button');
+    await updatedTypeButtons[2].onclick();
+    const templateQueryCall = calls.find(c => c.url.includes('/api/knowledge/items?') && c.url.includes('kind=template'));
+    assert.ok(templateQueryCall, 'Switching to 参考范本 must query kind=template');
+
+    // 4. Test "新增" form default kind when filter is template
+    const newBtn = root.querySelector('[data-new]');
+    assert.ok(newBtn.textContent.includes('参考范本'), 'New button label should reflect current filter');
+    newBtn.onclick();
+    const formKindSelect = root.querySelector('[data-form-kind]');
+    assert.ok(formKindSelect, 'New form in 规则与范本 must allow selecting knowledge type');
+    assert.equal(formKindSelect.value, 'template', 'Default kind in form must be template when filtered to 参考范本');
+
+    // Submit new template
+    calls.length = 0;
+    const form = root.querySelector('form');
+    form.querySelector('[name="title"]').value = '新建保密条款范本';
+    form.querySelector('[name="content"]').value = '严格保密内容';
+    await form.onsubmit({preventDefault: () => {}, target: form});
+    const createCall = calls.find(c => c.method === 'POST' && c.url.endsWith('/api/knowledge/items'));
+    assert.ok(createCall, 'Must call POST /api/knowledge/items');
+    const createData = typeof createCall.body === 'string' ? JSON.parse(createCall.body) : createCall.body;
+    assert.equal(createData.kind, 'template');
+    assert.equal(createData.scope, 'organization');
+
+    // 5. Test item details and actions in mixed list (template item)
+    // Switch back to 全部
+    const allBtn = root.querySelectorAll('.knowledge-type-filter button')[0];
+    await allBtn.onclick();
+
+    // Click template item (second item)
+    calls.length = 0;
+    const itemsInList = root.querySelectorAll('.knowledge-list [data-item]');
+    await itemsInList[1].onclick();
+
+    // Verify detail requested with actual kind 'template', NOT top-level tab
+    const detailCall = calls.find(c => c.url.includes('/api/knowledge/items/organization/template/t1'));
+    assert.ok(detailCall, 'Viewing template item must call API with kind=template');
+
+    // Verify detail rendered
+    const detail = root.querySelector('.knowledge-detail');
+    assert.ok(detail.innerHTML.includes('参考范本一：保密条款'));
+
+    // Test edit on template item
+    const editBtn = detail.querySelector('[data-edit]');
+    editBtn.onclick();
+    const editForm = root.querySelector('form');
+    assert.ok(!editForm.querySelector('[data-form-kind]'), 'Editing existing item must not allow changing kind');
+    calls.length = 0;
+    await editForm.onsubmit({preventDefault: () => {}, target: editForm});
+    const updateCall = calls.find(c => c.method === 'PUT' && c.url.includes('/api/knowledge/items/organization/template/t1'));
+    assert.ok(updateCall, 'Editing template item must PUT to /organization/template/t1');
+
+    // Test disable on template item
+    await itemsInList[1].onclick();
+    calls.length = 0;
+    const disableBtn = root.querySelector('.knowledge-detail [data-disable]');
+    await disableBtn.click();
+    const disableCall = calls.find(c => c.method === 'POST' && c.url.includes('/api/knowledge/items/organization/template/t1/disable'));
+    assert.ok(disableCall, 'Disabling template item must call POST /organization/template/t1/disable');
+
+    // 6. Test proposal cards display knowledge type
+    const proposals = root.querySelectorAll('.knowledge-proposal');
+    assert.ok(proposals.length >= 2, 'Unified proposals list rendered');
+    const proposalTexts = [...proposals].map(p => p.textContent);
+    assert.ok(proposalTexts.some(t => t.includes('审查标准')), 'Proposal card must display 审查标准');
+    assert.ok(proposalTexts.some(t => t.includes('参考范本')), 'Proposal card must display 参考范本');
+
+    // 7. Test file import options
+    const importKindSelect = root.querySelector('[data-import-kind]');
+    assert.ok(importKindSelect, 'Import kind select must exist');
+    const importOptions = [...importKindSelect.options].map(o => ({value: o.value, text: o.textContent.trim()}));
+    assert.deepEqual(importOptions, [
+      {value: 'rule', text: '审查标准'},
+      {value: 'template', text: '参考范本'}
+    ]);
+  } finally {
+    globalThis.document = prevDoc;
+    globalThis.FormData = prevFormData;
+    globalThis.sessionStorage = prevSession;
+    globalThis.fetch = prevFetch;
+  }
+});

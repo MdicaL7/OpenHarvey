@@ -485,17 +485,43 @@ class Knowledge:
             self._audit(db,u['org_id'],u['id'],'restored',iid)
             return {'id':iid,'revision':new,'status':'active'}
 
-    def list_items(self,u,scope,kind=None,q='',status='active',metadata=None):
+    def list_items(self,u,scope,kind=None,q='',status='active',metadata=None,kinds=None):
         if status not in {'active','inactive','all'}:raise HTTPException(422,'知识状态无效')
+        kinds_list = None
+        if kinds is not None:
+            if isinstance(kinds, str):
+                kinds_list = [k.strip() for k in kinds.split(',') if k.strip()]
+            elif isinstance(kinds, (list, tuple, set)):
+                kinds_list = [k.strip() for k in kinds if isinstance(k, str) and k.strip()]
+            else:
+                raise HTTPException(422, '知识类别无效')
+        elif kind is not None:
+            if isinstance(kind, str) and ',' in kind:
+                kinds_list = [k.strip() for k in kind.split(',') if k.strip()]
+            elif isinstance(kind, (list, tuple, set)):
+                kinds_list = [k.strip() for k in kind if isinstance(k, str) and k.strip()]
+            elif isinstance(kind, str):
+                kinds_list = [kind.strip()]
+            else:
+                raise HTTPException(422, '知识类别无效')
+
+        if kinds_list is not None:
+            kinds_list = list(dict.fromkeys(kinds_list))
+
         if scope=='personal':
             sql='SELECT * FROM personal_memories WHERE user_id=?';args=[u['id']]
-            if kind and kind!='preference':return []
+            if kinds_list is not None and any(k!='preference' for k in kinds_list):return []
         elif scope=='organization':
             with self.store.connect() as db:self.membership(db,u)
             sql='SELECT * FROM knowledge_items WHERE org_id=?';args=[u['org_id']]
-            if kind:
-                if kind not in {'rule','template','case'}:raise HTTPException(422,'知识类别无效')
-                sql+=' AND kind=?';args.append(kind)
+            if kinds_list is not None:
+                if not kinds_list or any(k not in {'rule','template','case'} for k in kinds_list):
+                    raise HTTPException(422,'知识类别无效')
+                if len(kinds_list)>1 and 'case' in kinds_list:
+                    raise HTTPException(422,'混合列表不得包含案例')
+                placeholders=','.join('?' for _ in kinds_list)
+                sql+=f' AND kind IN ({placeholders})'
+                args.extend(kinds_list)
         else:raise HTTPException(422,'知识范围无效')
         if status!='all':sql+=' AND status=?';args.append(status)
         if q:
@@ -792,12 +818,19 @@ def register_knowledge(app, knowledge, user):
     async def set_member(uid:str,request:Request):return knowledge.set_member(user(request),uid,await request.json())
 
     @app.get('/api/knowledge/items')
-    async def items(request:Request,scope:str='personal',kind:str|None=None,q:str='',status:str='active',
+    async def items(request:Request,scope:str='personal',kind:str|None=None,kinds:str|None=None,q:str='',status:str='active',
                     counterparty:str='',contract_type:str='',project:str='',department:str='',mine:bool=False,
                     updated_from:float|None=None,updated_to:float|None=None):
         u=user(request)
+        raw_kinds = []
+        for val in request.query_params.getlist('kinds') + request.query_params.getlist('kind'):
+            for piece in val.split(','):
+                piece = piece.strip()
+                if piece and piece not in raw_kinds:
+                    raw_kinds.append(piece)
+        kinds_arg = raw_kinds if raw_kinds else None
         metadata={'counterparty_id':counterparty,'contract_type':contract_type,'project':project,'department':department}
-        rows=knowledge.list_items(u,scope,kind,q,status,metadata)
+        rows=knowledge.list_items(u,scope,kinds=kinds_arg,q=q,status=status,metadata=metadata)
         if updated_from is not None:rows=[r for r in rows if r['updated']>=updated_from]
         if updated_to is not None:rows=[r for r in rows if r['updated']<=updated_to]
         if mine and scope!='personal':
