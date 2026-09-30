@@ -1,23 +1,176 @@
 import {api,upload} from './api.js';
-import {esc,citations} from './markdown.js';
+import {esc,citations,markdown} from './markdown.js';
 import {t as tr} from './i18n.js';
 import {loadingHTML} from './loading-ui.js';
 
 export const activeDocuments=documents=>documents.filter(d=>!d.removed_at&&!d.historical_only);
 
-export function sourceReferencesHTML(text,documents){
-  const refs=new Map();
-  for(const match of String(text||'').matchAll(/【D([a-f0-9]{12}):B(\d+)(?:-B(\d+))?】/g)){
-    const doc=documents.find(d=>d.id===match[1]);
-    if(doc?.locations?.['B'+match[2]]&&doc.locations['B'+(match[3]||match[2])]){
-      if(!refs.has(doc.id))refs.set(doc.id,match[0]);
+const KNOWLEDGE_KIND_LABELS = {
+  rule: '审查标准',
+  template: '参考范本',
+  case: '案例与决策',
+  preference: '表达偏好'
+};
+
+export function sourceReferencesHTML(text, documents, {
+  memoryReferences = [],
+  knowledgeReferences = [],
+  open = new Set(),
+  key = '',
+  materialsEnabled = true,
+} = {}) {
+  // 1. Contract materials / documents (only if materialsEnabled is true)
+  const contractEntries = new Map();
+  if (materialsEnabled) {
+    for (const match of String(text || '').matchAll(/【D([a-f0-9]{12}):B(\d+)(?:-B(\d+))?】/g)) {
+      const doc = (documents || []).find(d => d.id === match[1]);
+      if (doc?.locations?.['B' + match[2]] && doc.locations['B' + (match[3] || match[2])]) {
+        if (!contractEntries.has(doc.id)) contractEntries.set(doc.id, { doc, tags: new Set() });
+        contractEntries.get(doc.id).tags.add(match[0]);
+      }
     }
   }
-  if(!refs.size)return '';
-  return `<details class="material-references"><summary>${tr('引用来源')} · ${refs.size}</summary>${[...refs].map(([id,ref])=>{
-    const doc=documents.find(d=>d.id===id);
-    return `<div>${esc(doc.filename)}${doc.removed_at?' · '+tr('已移除'):''} ${citations(ref,documents)}</div>`;
-  }).join('')}</details>`;
+
+  // 2. Personal preferences: deduplicated by kind + id + revision
+  const memoryEntries = new Map();
+  for (const item of memoryReferences || []) {
+    if (!item) continue;
+    const kind = item.kind || 'preference';
+    const id = item.id || item.item_id;
+    if (!id) continue;
+    const rev = item.revision ?? 1;
+    const entryKey = `${kind}:${id}:${rev}`;
+    if (!memoryEntries.has(entryKey)) {
+      memoryEntries.set(entryKey, item);
+    }
+  }
+
+  // 3. Organization knowledge: deduplicated by kind + id + revision
+  const knowledgeEntries = new Map();
+  for (const item of knowledgeReferences || []) {
+    if (!item) continue;
+    const kind = item.kind || 'rule';
+    const id = item.item_id || item.id;
+    if (!id) continue;
+    const rev = item.revision ?? 1;
+    const entryKey = `${kind}:${id}:${rev}`;
+    if (!knowledgeEntries.has(entryKey)) {
+      knowledgeEntries.set(entryKey, item);
+    }
+  }
+
+  const total = contractEntries.size + memoryEntries.size + knowledgeEntries.size;
+  if (!total) return '';
+
+  const contractHTML = [...contractEntries.values()].map(({ doc, tags }) => {
+    const isPrimary = doc.primary;
+    const tagLabel = isPrimary ? tr('主合同') : (doc.thread_id ? tr('附件') : tr('合同资料'));
+    const tagClass = 'reference-tag-contract';
+    const cites = [...tags].map(t => citations(t, documents)).join(' ');
+    return `<div class="reference-entry"><span class="reference-tag ${tagClass}">${esc(tagLabel)}</span><span class="reference-title" title="${esc(doc.filename)}">${esc(doc.filename)}${doc.removed_at ? ' · ' + tr('已移除') : ''}</span> <span class="reference-citations">${cites}</span></div>`;
+  }).join('');
+
+  const memoryHTML = [...memoryEntries.values()].map(item => {
+    const snippet = item.content ? (item.content.length > 50 ? item.content.slice(0, 50) + '…' : item.content) : tr('偏好');
+    const isInactive = item.current_status === 'inactive';
+    const isChanged = item.current_revision != null && item.current_revision !== item.revision;
+    const statusText = isInactive ? ' · ' + tr('已停用') : isChanged ? ' · ' + tr('已有新版本') : '';
+    return `<div class="reference-entry"><span class="reference-tag reference-tag-preference">${tr('表达偏好')}</span><button type="button" class="reference-item-btn" data-reference-type="preference" data-scope="personal" data-kind="preference" data-id="${esc(item.id)}" data-revision="${esc(item.revision)}"><span class="reference-name">${esc(snippet)}</span><span class="reference-version"> · v${esc(item.revision)}</span>${statusText ? `<span class="reference-status">${esc(statusText)}</span>` : ''}</button></div>`;
+  }).join('');
+
+  const knowledgeHTML = [...knowledgeEntries.values()].map(item => {
+    const kind = item.kind || 'rule';
+    const label = tr(KNOWLEDGE_KIND_LABELS[kind] || '组织知识');
+    const tagClass = `reference-tag-${kind}`;
+    const isInactive = item.current_status === 'inactive';
+    const isChanged = item.current_revision != null && item.current_revision !== item.revision;
+    const statusText = isInactive ? ' · ' + tr('已停用') : isChanged ? ' · ' + tr('已有新版本') : '';
+    return `<div class="reference-entry"><span class="reference-tag ${tagClass}">${esc(label)}</span><button type="button" class="reference-item-btn" data-reference-type="knowledge" data-scope="${esc(item.scope || 'organization')}" data-kind="${esc(kind)}" data-id="${esc(item.item_id || item.id)}" data-revision="${esc(item.revision)}"><span class="reference-name">${esc(item.title || tr('知识条目'))}</span><span class="reference-version"> · v${esc(item.revision)}</span>${statusText ? `<span class="reference-status">${esc(statusText)}</span>` : ''}</button></div>`;
+  }).join('');
+
+  const dataKeyAttr = key ? ` data-key="${esc(key)}"` : '';
+  const openAttr = (key && open.has(key)) ? ' open' : '';
+  return `<details class="material-references"${dataKeyAttr}${openAttr}><summary>${tr('引用来源')} · ${total}</summary><div class="reference-list">${contractHTML}${memoryHTML}${knowledgeHTML}</div></details>`;
+}
+
+export async function openReferenceDetail({ referenceType, scope, kind, id, revision }){
+  const dialog = document.createElement('dialog');
+  dialog.className = 'reference-detail-dialog';
+  dialog.setAttribute('aria-labelledby', 'refDetailTitle');
+  dialog.innerHTML = `<header class="reference-detail-header">
+    <div class="reference-detail-head-main">
+      <h3 id="refDetailTitle">${tr('引用详情')}</h3>
+      <div class="reference-detail-badges" data-badges></div>
+    </div>
+    <button type="button" class="dialog-close-btn" data-close aria-label="${tr('关闭')}">×</button>
+  </header>
+  <div class="reference-detail-body" data-body>
+    ${loadingHTML(tr('正在加载引用内容…'))}
+  </div>
+  <footer class="reference-detail-footer">
+    <button type="button" data-close class="primary">${tr('关闭')}</button>
+  </footer>`;
+  document.body.append(dialog);
+  dialog.showModal();
+
+  const cleanup = () => { dialog.remove(); };
+  const close = () => { dialog.close(); cleanup(); };
+  dialog.oncancel = close;
+  dialog.querySelectorAll('[data-close]').forEach(btn => btn.onclick = close);
+
+  const titleEl = dialog.querySelector('#refDetailTitle');
+  const badgesEl = dialog.querySelector('[data-badges]');
+  const bodyEl = dialog.querySelector('[data-body]');
+
+  try {
+    const revParam = revision ? `?revision=${encodeURIComponent(revision)}` : '';
+    const item = await api(`/api/knowledge/items/${encodeURIComponent(scope || (referenceType === 'preference' ? 'personal' : 'organization'))}/${encodeURIComponent(kind || (referenceType === 'preference' ? 'preference' : 'rule'))}/${encodeURIComponent(id)}${revParam}`);
+
+    const isPreference = referenceType === 'preference' || kind === 'preference' || scope === 'personal';
+    const itemKind = item.kind || kind || (isPreference ? 'preference' : 'rule');
+    const kindLabel = tr(KNOWLEDGE_KIND_LABELS[itemKind] || (isPreference ? '表达偏好' : '组织知识'));
+    const isInactive = item.current_status === 'inactive';
+    const isChanged = item.current_revision != null && item.current_revision !== item.revision;
+
+    titleEl.textContent = isPreference ? tr('个人偏好') : (item.title || tr('知识详情'));
+
+    badgesEl.innerHTML = `
+      <span class="reference-tag reference-tag-${esc(itemKind)}">${esc(kindLabel)}</span>
+      <span class="reference-badge reference-badge-version">v${esc(item.revision)}</span>
+      ${isInactive ? `<span class="reference-badge reference-badge-inactive">${tr('现已停用')}</span>` : ''}
+      ${isChanged ? `<span class="reference-badge reference-badge-changed">${tr('已有新版本')} (v${esc(item.current_revision)})</span>` : ''}
+    `;
+
+    let html = '';
+    if (isPreference) {
+      html += `<div class="reference-detail-notice preference-notice">${tr('表达偏好仅作为回复风格与习惯参考，避免被误认为合同判断依据。')}</div>`;
+    } else {
+      html += `<div class="reference-detail-notice">${tr('当前展示该回答引用时的历史版本。若后续条目发生更新或停用，此处保持历史引用不变。')}</div>`;
+    }
+
+    html += `<div class="reference-detail-content markdown">${markdown(item.content || '')}</div>`;
+
+    if (item.sources && item.sources.length) {
+      html += `<div class="reference-detail-sources">
+        <h4>${tr('已确认来源')}</h4>
+        ${item.sources.map(s => `
+          <div class="reference-source-item">
+            <div class="reference-source-meta">
+              <strong>${esc(s.filename || tr('来源资料'))}</strong>
+              ${s.source_available === false ? `<span class="badge-source-unavailable">${tr('原资料不可访问')}</span>` : ''}
+            </div>
+            <blockquote class="reference-source-excerpt">${esc(s.excerpt || '')}</blockquote>
+          </div>
+        `).join('')}
+      </div>`;
+    }
+
+    bodyEl.innerHTML = html;
+  } catch (err) {
+    titleEl.textContent = tr('资料不可访问');
+    badgesEl.innerHTML = `<span class="reference-badge reference-badge-inactive">${tr('不可用')}</span>`;
+    bodyEl.innerHTML = `<p class="chat-error">${esc(err.message || tr('原资料不可访问或权限已撤销。'))}</p>`;
+  }
 }
 
 export function setupMaterials({context,notice,refresh,openSource,onBusy}){

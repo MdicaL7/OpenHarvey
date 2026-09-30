@@ -107,10 +107,16 @@ class MemoryTests(unittest.TestCase):
         text={'id':'part_text','messageID':'msg_assistant','type':'text','text':f"Answer [[memory:{item['id']}:1]] [[memory:{'f'*24}:1]]"}
         projected=visible_messages([{'info':info,'parts':[text]}],view)[0]['parts'][0]
         self.assertEqual(len(projected['memory_references']),1)
+        self.assertEqual(projected['memory_references'][0]['kind'],'preference')
+        self.assertEqual(projected['memory_references'][0]['scope'],'personal')
         self.assertNotIn('[[memory:',projected['text'])
         self.app.state.memory.manual(u,'update',{'id':item['id'],'revision':1,'content':'New preference'})
         self.assertEqual(view.part(text)['memory_references'][0]['current_revision'],2)
         self.assertEqual(view.part(text)['memory_references'][0]['content'],item['content'])
+        detail=self.client.get(f"/api/knowledge/items/personal/preference/{item['id']}?revision=1",headers=self.headers).json()
+        self.assertEqual(detail['content'],item['content'])
+        self.assertEqual(detail['revision'],1)
+        self.assertEqual(detail['current_revision'],2)
         self.app.state.knowledge.manual(u,'personal','preference','disable',{'revision':2},item['id'])
         self.assertEqual(view.part(text)['memory_references'][0]['current_status'],'inactive')
         self.assertEqual(self.app.state.memory.snapshot(u)['items'],[])

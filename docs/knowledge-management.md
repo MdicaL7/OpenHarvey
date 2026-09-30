@@ -5,6 +5,16 @@ organization rules and templates, cases and decisions, a pending proposal
 inbox, source imports, and (for platform administrators) member assignment.
 Counterparties are an exact-identity filter, not another knowledge category.
 
+Imported counterparty references are resolved within the current organization:
+an active record ID, exact business identifier, or exact name/alias may match.
+An ambiguous or missing reference stays on the pending proposal and requires
+human selection before publication; it is never broadened to all counterparties.
+The editor displays names and submits record IDs, with effective dates available
+for review. Partial edits preserve other metadata and full source records
+(including hashes, block positions and multiline excerpts). An omitted field
+is unchanged; a metadata key set to null explicitly clears that key. Replacing
+or removing evidence is an explicit form operation.
+
 ## Access and confirmation
 
 Existing active platform administrators are bootstrapped as maintainers. All

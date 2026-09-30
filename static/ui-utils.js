@@ -3,8 +3,6 @@ import {pendingRequest,preparationLabel,loadingStateHTML} from './message-queue.
 import {esc,markdown,citations} from './markdown.js';
 import {visibleMessageIssue,isCompaction,isCompactionContinuation} from './events.js';
 import {riskBoard} from './risk-ui.js';
-import {memoryReferencesHTML} from './memory-ui.js';
-import {knowledgeReferencesHTML} from './knowledge-ui.js';
 import {sourceReferencesHTML} from './materials-ui.js';
 import {toolHTML,thinkingHTML} from './agent-ui.js?v=20260913-2';
 import {skillLabel,skillCommand,skillMessage} from './skill-labels.js';
@@ -36,8 +34,29 @@ export function userMessageHTML(text,documents=[],quotes=[],skills=[],explicitSk
 export function conversationHTML(state,open=new Set()){
   const currentTurn=state.messages.findLastIndex(m=>m.info.role==='user');
   const groups=[];
+  let activeAssistant=null;
+  function flushAssistant(){
+    if(!activeAssistant)return;
+    const {id,body,texts,memoryRefs,knowledgeRefs,issue,incomplete}=activeAssistant;
+    const refKey='sources-'+id;
+    const textAll=texts.join('\n');
+    const references=sourceReferencesHTML(textAll,state.documents,{
+      memoryReferences:memoryRefs,
+      knowledgeReferences:knowledgeRefs,
+      open,
+      key:refKey,
+      materialsEnabled:!!state.materials_enabled,
+    });
+    let content=body+references;
+    if(issue)content+=`<p class="chat-error">${esc(issue)}</p>`;
+    else if(incomplete)content+=tr('<p class="muted">这段回复尚未完成。可发送消息继续。</p>');
+    if(content)groups.push({role:'assistant',content});
+    activeAssistant=null;
+  }
+
   for(const [index,m] of state.messages.entries()){
     if(isCompaction(m.info)){
+      flushAssistant();
       const stopped=state.status.type==='idle'||index<state.messages.length-1;
       const label=m.info.error?tr('压缩未完成'):m.info.time?.completed&&m.info.finish==='stop'?tr('压缩完成'):stopped?tr('压缩已中断'):tr('正在压缩上下文');
       const key='compaction-'+m.info.id;
@@ -46,24 +65,52 @@ export function conversationHTML(state,open=new Set()){
       groups.push({role:'process',content:`<details class="compaction-record" data-key="${esc(key)}" ${open.has(key)?'open':''}><summary><span>${tr('上下文压缩')}</span><small>${esc(label)}</small></summary><p class="muted">${tr('用于接续任务的过程记录')}</p><div class="markdown">${markdown(text,state.documents)}</div>${issue?`<p class="chat-error">${esc(issue)}</p>`:''}</details>`});
       continue;
     }
-    let content='';
-    for(const p of m.parts||[]){
-      if(isCompactionContinuation(p))continue;
-      if(p.type==='text'&&p.text)content+=m.info.role==='user'?userMessageHTML(p.text,state.documents,[],state.skills):`<div class="markdown" data-text-part="${esc(p.id)}">${markdown(p.text,state.documents)}</div>`;
-      if(p.type==='tool'){
-        content+=toolHTML(p,state.status.type==='idle'||index<currentTurn,open);
+    if(m.info.role==='user'){
+      flushAssistant();
+      let content='';
+      for(const p of m.parts||[]){
+        if(isCompactionContinuation(p))continue;
+        if(p.type==='text'&&p.text)content+=userMessageHTML(p.text,state.documents,[],state.skills);
+      }
+      if(content)groups.push({role:'user',content});
+      continue;
+    }
+    if(m.info.role==='assistant'){
+      if(!activeAssistant){
+        activeAssistant={
+          id:m.info.id,
+          body:'',
+          texts:[],
+          memoryRefs:[],
+          knowledgeRefs:[],
+          issue:null,
+          incomplete:false,
+        };
+      }
+      for(const p of m.parts||[]){
+        if(isCompactionContinuation(p))continue;
+        if(p.type==='text'&&p.text){
+          activeAssistant.body+=`<div class="markdown" data-text-part="${esc(p.id)}">${markdown(p.text,state.documents)}</div>`;
+          activeAssistant.texts.push(p.text);
+        }
+        if(p.type==='tool'){
+          activeAssistant.body+=toolHTML(p,state.status.type==='idle'||index<currentTurn,open);
+        }
+        if(p.memory_references?.length){
+          activeAssistant.memoryRefs.push(...p.memory_references);
+        }
+        if(p.knowledge_references?.length){
+          activeAssistant.knowledgeRefs.push(...p.knowledge_references);
+        }
+      }
+      const issue=visibleMessageIssue(state,index);
+      if(issue)activeAssistant.issue=issue;
+      if(index===state.messages.length-1&&!m.info.time?.completed&&state.status.type==='idle'){
+        activeAssistant.incomplete=true;
       }
     }
-    if(state.materials_enabled&&m.info.role==='assistant')content+=sourceReferencesHTML((m.parts||[]).filter(p=>p.type==='text').map(p=>p.text||'').join('\n'),state.documents);
-    if(m.info.role==='assistant')content+=memoryReferencesHTML(m.parts||[],open,m.info.id)+knowledgeReferencesHTML(m.parts||[]);
-    const issue=visibleMessageIssue(state,index);
-    if(issue)content+=`<p class="chat-error">${esc(issue)}</p>`;
-    else if(index===state.messages.length-1&&m.info.role==='assistant'&&!m.info.time?.completed&&state.status.type==='idle')content+=tr('<p class="muted">这段回复尚未完成。可发送消息继续。</p>');
-    if(!content)continue;
-    const role=m.info.role==='user'?'user':'assistant',last=groups.at(-1);
-    if(role==='assistant'&&last?.role===role)last.content+=content;
-    else groups.push({role,content});
   }
+  flushAssistant();
   const pending=pendingRequest(state);
   if(pending){
     const label=pending.status==='sending'?tr('正在发送'):pending.status==='failed'?tr('发送未确认，内容已保留'):pending.status==='dispatching'?preparationLabel(pending):pending.status==='submitted'?tr('已提交，等待响应'):tr('已收到，等待执行');

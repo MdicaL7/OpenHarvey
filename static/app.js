@@ -25,7 +25,7 @@ import {setupReading,setupArtifactStrip,setupQuotes,pdfMarkup,fitPdfText} from '
 import {setupDocumentNavigation} from './document-navigation.js?v=20260914-outline';
 import {RedlineEditor} from './redline.js';
 import {loadPdfPages} from './pdf-pages.js';
-import {activeDocuments,setupMaterials} from './materials-ui.js';
+import {activeDocuments,setupMaterials,openReferenceDetail} from './materials-ui.js';
 
 const $=id=>document.getElementById(id);
 const redline=new RedlineEditor({
@@ -415,7 +415,7 @@ function receive(event){
   if(unchangedEvent(state,event))return;
   const p=event.properties?.part;
   const m=p&&state.messages.find(m=>m.info.id===p.messageID);
-  const textOnly=!p?.memory_references&&!m?.parts.some(old=>old.id===p?.id&&old.memory_references)&&event.type==='message.part.updated'&&p.type==='text'&&m?.info.role==='assistant'&&!isCompaction(m.info)&&m.parts.some(old=>old.id===p.id&&old.text)&&!p.synthetic;
+  const textOnly=!p?.memory_references&&!p?.knowledge_references&&!m?.parts.some(old=>old.id===p?.id&&(old.memory_references||old.knowledge_references))&&event.type==='message.part.updated'&&p.type==='text'&&m?.info.role==='assistant'&&!isCompaction(m.info)&&m.parts.some(old=>old.id===p.id&&old.text)&&!p.synthetic;
   applyEvent(state,event);reconcilePending(state);updateControls();
   if(p?.memory_receipt?.saved&&!memoryReceiptIDs.has(p.memory_receipt.request_id)){memoryReceiptIDs.add(p.memory_receipt.request_id);queueMicrotask(announceMemoryChange);}
   if(textOnly)streamingParts.set(p.id,p.text||'');else fullRender=true;
@@ -914,6 +914,7 @@ document.addEventListener('click',protect(async e=>{
   if(b.dataset.sourceRetry)await loadSource(b.dataset.sourceRetry);
   if(b.dataset.quoteOpen!==undefined){const q=quotes.get()[Number(b.dataset.quoteOpen)];await navigateCitation(q.document_id,q.block_ids[0],q.source_hash);}
   if(b.dataset.doc)await navigateCitation(b.dataset.doc,b.dataset.block,b.dataset.hash,b.dataset.end||b.dataset.block);
+  if(b.dataset.referenceType)await openReferenceDetail(b.dataset);
   const board=b.closest('[data-risk-board]'),data=board&&artifactData.get(board.dataset.riskBoard);
   if(data&&b.dataset.riskFilterChoice){board.outerHTML=riskBoard(data,state.documents,b.dataset.riskFilterChoice);}
   if(b.dataset.permission)await submitRequest('permission',b.dataset.permission,{reply:b.dataset.reply},b.closest('.request-card'));

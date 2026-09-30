@@ -54,7 +54,7 @@ test('memory UI renders only verified receipts, retains history and escapes pref
  const deleted=memoryReferencesHTML([{memory_references:[{...item,current_revision:null}]}]);
  assert.match(deleted,/Deleted/);assert.ok(!deleted.includes('data-memory-edit'));
  const html=conversationHTML({messages:[{info:{id:'msg',role:'assistant',time:{completed:1}},parts:[{type:'text',text:'Answer',memory_references:[item]}]}],status:{type:'idle'},documents:[]});
- assert.match(html,/Referenced memories/);setLanguage('zh-CN');
+ assert.match(html,/Cited sources/);setLanguage('zh-CN');
 });
 
 test('pending confirmations are distinct from committed memory and organization proposals',()=>{

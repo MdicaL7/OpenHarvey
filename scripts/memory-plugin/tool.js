@@ -25,7 +25,7 @@ export function createKnowledgeTool({execute}) {
     category:tool.schema.string().optional(),valid_from:tool.schema.string().optional(),valid_to:tool.schema.string().optional(),
   });
   return tool({
-    description:'Search active organization rules, templates and cases, or submit a human-reviewed proposal. A proposal is not published until a maintainer confirms it. Never claim a historical disposition is a formal approval without evidence.',
+    description:'Search active organization rules, templates and cases, or submit a human-reviewed proposal. A proposal is not published until a maintainer confirms it. For proposals counterparty_id may contain a host ID or an exact business identifier/name from the source; the host resolves identity within the current organization. Unmatched or ambiguous identities require human selection, never omit the scope to bypass it. Never claim a historical disposition is a formal approval without evidence.',
     args:{action:tool.schema.enum(['search','get','propose_create','propose_update','propose_disable']),
       kind:tool.schema.enum(['rule','template','case']).optional(),id:tool.schema.string().optional(),
       title:tool.schema.string().optional(),content:tool.schema.string().optional(),

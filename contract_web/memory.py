@@ -218,7 +218,8 @@ class MemoryProjection:
     def current(self, item):
         row = self.memory.store.one('SELECT revision,status FROM personal_memories WHERE id=? AND user_id=?', (item['id'], self.user['id']))
         return {**item, 'current_revision': row['revision'] if row else None,
-                'current_status':row['status'] if row else None}
+                'current_status':row['status'] if row else None,
+                'kind': 'preference', 'scope': 'personal'}
 
     def part(self, part):
         store = self.memory.store

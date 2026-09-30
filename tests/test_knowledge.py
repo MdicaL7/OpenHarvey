@@ -180,7 +180,11 @@ class KnowledgeTests(unittest.TestCase):
         references=view.part({'type':'text','messageID':'msg_assistant',
             'text':f'[[knowledge:{item}:1]] [[knowledge:{"f"*24}:1]]'})
         self.assertEqual(len(references['knowledge_references']),1)
-        detail=self.client.get(f'/api/knowledge/items/organization/rule/{item}',headers=self.headers).json()
+        self.assertEqual(references['knowledge_references'][0]['kind'],'rule')
+        self.assertEqual(references['knowledge_references'][0]['scope'],'organization')
+        detail=self.client.get(f'/api/knowledge/items/organization/rule/{item}?revision=1',headers=self.headers).json()
+        self.assertEqual(detail['current_status'],'active')
+        self.assertEqual(detail['revision'],1)
         self.assertTrue(detail['sources'][0]['source_available'])
         (self.store.user_root(self.uid)/'sources'/doc['id']/'document.json').unlink()
         preserved=self.client.get(f'/api/knowledge/items/organization/rule/{item}',headers=self.headers).json()
@@ -400,6 +404,103 @@ class KnowledgeTests(unittest.TestCase):
         self.app.state.knowledge.set_member(admin,self.bid,{'role':'member','active':False,'revision':1})
         revoked_query=self.client.get('/api/knowledge/items?scope=organization&kinds=rule,template',headers=self.headers)
         self.assertEqual(revoked_query.status_code,403)
+
+
+    def test_counterparty_business_identifier_maps_to_current_org_id(self):
+        u=self.enroll();knowledge=self.app.state.knowledge
+        party=knowledge.create_party(u,{'name':'临沄数研技术有限公司','legal_identifier':'MOCK-PARTY-A'})
+        child=knowledge.create_party(u,{'name':'临沄数研（华东）科技有限公司','legal_identifier':'MOCK-PARTY-A-EAST'})
+        body={'title':'四小时通知','content':'发现安全事件后四小时内通知。',
+              'metadata':{'counterparty_id':'MOCK-PARTY-A','valid_from':'2026-03-01','valid_to':'2026-12-31'},
+              'sources':[{'excerpt':'四小时内通知','filename':'专项约定.md'}]}
+        p=knowledge.propose(u,'organization','rule','create',body,request_id='map-party')
+        self.assertEqual(p['content']['metadata']['counterparty_id'],party['id'])
+        self.assertEqual(p['counterparty_resolution']['status'],'resolved')
+        self.assertEqual(knowledge.propose(u,'organization','rule','create',body,request_id='map-party')['id'],p['id'])
+        result=knowledge.decide(u,p['id'],{'decision':'confirm','proposal_revision':1})
+        item=knowledge.item(u,'organization','rule',result['item']['id'])
+        self.assertEqual(item['metadata']['counterparty_id'],party['id'])
+        self.assertEqual(knowledge.applicable_rules(u,{'counterparty_id':child['id']}),[])
+        by_name=knowledge.propose(u,'organization','rule','create',{
+            **body,'metadata':{'counterparty_id':party['name']}})
+        self.assertEqual(by_name['content']['metadata']['counterparty_id'],party['id'])
+
+    def test_unresolved_or_ambiguous_counterparty_requires_human_selection(self):
+        u=self.enroll();knowledge=self.app.state.knowledge
+        a=knowledge.create_party(u,{'name':'同名公司','legal_identifier':'SAME'})
+        knowledge.create_party(u,{'name':'同名公司','legal_identifier':'SAME'})
+        self.store.execute("INSERT INTO knowledge_parties VALUES(?,?,?,?,?, 'active',1,0,0)",
+            ('f'*24,'other-org','外部公司','OTHER','[]'))
+        inactive=knowledge.create_party(u,{'name':'已停用','legal_identifier':'INACTIVE'})
+        knowledge.update_party(u,inactive['id'],{'name':'已停用','legal_identifier':'INACTIVE','status':'inactive','revision':1})
+        for ref,expected in [('SAME','ambiguous'),('同名公司','ambiguous'),('MISSING','not_found'),
+                             ('INACTIVE','not_found'),('OTHER','not_found'),('f'*24,'not_found')]:
+            p=knowledge.propose(u,'organization','rule','create',{
+                'title':'限定主体规则','content':'仅适用指定主体','metadata':{'counterparty_id':ref}})
+            self.assertEqual(p['counterparty_resolution']['status'],expected)
+            rejected=self.client.post(f"/api/knowledge/proposals/{p['id']}/decide",
+                headers=self.headers,json={'decision':'confirm','proposal_revision':1})
+            self.assertEqual(rejected.status_code,422,rejected.text)
+            self.assertIn('选择',rejected.json()['detail'])
+            self.assertEqual(self.store.one('SELECT status FROM knowledge_proposals WHERE id=?',(p['id'],))['status'],'pending')
+        self.assertEqual(self.store.one('SELECT COUNT(*) AS n FROM knowledge_items')['n'],0)
+        selected=knowledge.edit_proposal(u,p['id'],{'proposal_revision':1,'metadata':{'counterparty_id':a['id']}})
+        self.assertEqual(selected['counterparty_resolution']['status'],'resolved')
+        confirmed=knowledge.decide(u,p['id'],{'decision':'confirm','proposal_revision':2})
+        self.assertEqual(knowledge.item(u,'organization','rule',confirmed['item']['id'])['metadata']['counterparty_id'],a['id'])
+
+    def test_proposal_partial_edit_keeps_metadata_dates_and_full_sources(self):
+        u=self.enroll();knowledge=self.app.state.knowledge
+        source={'excerpt':'第一行\n第二行','filename':'专项约定.md','document_id':'d'*12,
+                'source_hash':'h'*64,'block_id':'B2','owner_user_id':self.uid,'location':{'page':2}}
+        metadata={'valid_from':'2026-03-01','valid_to':'2026-12-31','category':'安全',
+                  'future_field':{'nested':['retained']},'department':'信息技术部'}
+        p=knowledge.propose(u,'organization','rule','create',{
+            'title':'原题','content':'原规则','metadata':metadata,'sources':[source]})
+        edited=self.client.put(f"/api/knowledge/proposals/{p['id']}",headers=self.headers,
+            json={'proposal_revision':1,'content':'修改正文','metadata':{'department':'数据运营部'},
+                  'sources':[{'excerpt':source['excerpt']}]})
+        self.assertEqual(edited.status_code,200,edited.text)
+        payload=edited.json()['content']
+        self.assertEqual(payload['title'],'原题')
+        self.assertEqual(payload['metadata'],{**metadata,'department':'数据运营部'})
+        self.assertEqual(payload['sources'],[source])
+        stale=self.client.put(f"/api/knowledge/proposals/{p['id']}",headers=self.headers,
+            json={'proposal_revision':1,'content':'过期修改'})
+        self.assertEqual(stale.status_code,409)
+        # Omission preserves sources, and an explicit null clears just that field.
+        edited=knowledge.edit_proposal(u,p['id'],{'proposal_revision':2,'metadata':{'department':None}})
+        self.assertNotIn('department',edited['content']['metadata'])
+        self.assertEqual(edited['content']['sources'],[source])
+        published=knowledge.decide(u,p['id'],{'decision':'confirm','proposal_revision':3})
+        item=knowledge.item(u,'organization','rule',published['item']['id'])
+        self.assertEqual(item['metadata']['valid_to'],'2026-12-31')
+        stored=self.store.one('SELECT sources FROM knowledge_versions WHERE item_id=?',(item['id'],))
+        self.assertEqual(json.loads(stored['sources']),[source])
+
+    def test_published_knowledge_partial_edit_keeps_hidden_fields(self):
+        u=self.enroll();knowledge=self.app.state.knowledge
+        sources=[{'excerpt':'原文','filename':'政策.md','block_id':'B1','custom':{'kept':True}}]
+        metadata={'category':'付款','valid_to':'2026-12-31','custom':['保留']}
+        created=knowledge.manual(u,'organization','rule','create',{
+            'title':'原题','content':'原文','metadata':metadata,'sources':sources})
+        iid=created['item']['id']
+        edited=self.client.put(f'/api/knowledge/items/organization/rule/{iid}',headers=self.headers,
+            json={'revision':1,'content':'新正文','metadata':{'department':'信息技术部'}})
+        self.assertEqual(edited.status_code,200,edited.text)
+        item=knowledge.item(u,'organization','rule',iid)
+        self.assertEqual(item['metadata'],{**metadata,'department':'信息技术部'})
+        self.assertEqual(item['sources'][0]['custom'],{'kept':True})
+        self.login('bob');member=self.store.one('SELECT * FROM users WHERE id=?',(self.bid,))
+        suggestion=knowledge.manual(member,'organization','rule','update',{'revision':2,'content':'成员建议'},iid)['proposal']
+        self.assertEqual(suggestion['content']['sources'],sources)
+        self.assertEqual(suggestion['content']['metadata'],item['metadata'])
+        edited=knowledge.edit_proposal(member,suggestion['id'],{'proposal_revision':1,
+            'metadata':{'department':None}})
+        self.assertNotIn('department',edited['content']['metadata'])
+        approved=knowledge.decide(u,suggestion['id'],{'decision':'confirm','proposal_revision':2})
+        self.assertEqual(approved['item']['revision'],3)
+        self.assertNotIn('department',knowledge.item(u,'organization','rule',iid)['metadata'])
 
 
 if __name__=='__main__':unittest.main()

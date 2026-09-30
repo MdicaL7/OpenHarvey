@@ -1650,5 +1650,16 @@ export default {
   "未采集访问、注册历史、下载、付费与标准留存；费用缺失不等于零。": "Visits, registration history, downloads, payments and standard retention are not collected. Missing cost does not mean zero.",
   "试用": "Trial",
   "试用次数已用完，配置自己的模型": "Trial exhausted — configure your own model",
-  "试用次数已用完，请配置自己的模型。": "Your trial requests are used up. Please configure your own model."
+  "试用次数已用完，请配置自己的模型。": "Your trial requests are used up. Please configure your own model.",
+  "审查标准": "Review standard",
+  "参考范本": "Standard template",
+  "案例与决策": "Case & decision",
+  "表达偏好": "Expression preference",
+  "原资料不可访问": "Source document unavailable",
+  "引用详情": "Citation details",
+  "正在加载引用内容…": "Loading reference details…",
+  "现已停用": "Currently disabled",
+  "当前展示该回答引用时的历史版本。若后续条目发生更新或停用，此处保持历史引用不变。": "Showing the historical revision cited by this response. If the entry is later updated or disabled, historical citations remain unchanged.",
+  "表达偏好仅作为回复风格与习惯参考，避免被误认为合同判断依据。": "Expression preferences only guide reply style and formatting habits; not factual or legal review grounds.",
+  "原资料不可访问或权限已撤销。": "Source document unavailable or permissions revoked."
 };

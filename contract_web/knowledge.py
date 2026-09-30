@@ -195,6 +195,52 @@ class Knowledge:
             self._audit(db,u['org_id'],u['id'],'party.updated',detail={'party_id':iid,'status':body['status']})
         return {'id':iid,'revision':row['revision']+1,'status':body['status']}
 
+    def _resolve_counterparty(self, db, org_id, reference):
+        """Resolve an exact host-owned identity; never infer company relationships."""
+        if not isinstance(reference,str):raise HTTPException(422,'合作方标识需为文本')
+        reference=reference.strip()
+        rows=[dict(r) for r in db.execute('''SELECT id,name,legal_identifier,aliases
+            FROM knowledge_parties WHERE org_id=? AND status='active' ORDER BY name,id''',(org_id,))]
+        matches=[r for r in rows if r['id']==reference]
+        if not matches:
+            matches=[r for r in rows if r['legal_identifier'] and r['legal_identifier']==reference]
+        if not matches:
+            matches=[r for r in rows if r['name']==reference or reference in json.loads(r['aliases'])]
+        candidates=[{k:r[k] for k in ('id','name','legal_identifier')} for r in matches]
+        return {'status':'resolved' if len(matches)==1 else 'ambiguous' if matches else 'not_found',
+                'reference':reference,'id':matches[0]['id'] if len(matches)==1 else None,
+                'candidates':candidates}
+
+    def _normalize_counterparty(self,db,org_id,payload,*,require_resolved=False):
+        metadata=dict(payload.get('metadata',{}))
+        reference=metadata.get('counterparty_id')
+        if reference:
+            resolution=self._resolve_counterparty(db,org_id,reference)
+            if resolution['status']=='resolved':metadata['counterparty_id']=resolution['id']
+            elif require_resolved:
+                raise HTTPException(422,'合作方无法唯一匹配，请编辑提案并选择当前组织中的有效主体')
+        return {**payload,'metadata':metadata}
+
+    @staticmethod
+    def _merge_content(previous,body):
+        """Omitted fields are unchanged; metadata null explicitly clears a key."""
+        if not isinstance(body,dict):raise HTTPException(422,'知识内容无效')
+        result={**previous,**body}
+        if 'metadata' in body:
+            if not isinstance(body['metadata'],dict):raise HTTPException(422,'筛选信息无效')
+            metadata={**previous.get('metadata',{}),**body['metadata']}
+            result['metadata']={k:v for k,v in metadata.items() if v is not None}
+        if isinstance(body.get('sources'),list):
+            # A legacy form may only round-trip excerpts. Recover provenance only
+            # when that excerpt identifies exactly one unchanged source.
+            sources=[]
+            for source in body['sources']:
+                matches=[old for old in previous.get('sources',[]) if isinstance(source,dict)
+                         and old.get('excerpt')==source.get('excerpt')]
+                sources.append({**matches[0],**source} if len(matches)==1 else source)
+            result['sources']=sources
+        return result
+
     @staticmethod
     def _payload(body, kind):
         if kind=='preference':
@@ -211,6 +257,8 @@ class Knowledge:
         metadata=body.get('metadata',{})
         if not isinstance(metadata,dict) or len(encoded(metadata).encode())>10000:
             raise HTTPException(422,'筛选信息无效')
+        if 'counterparty_id' in metadata and not isinstance(metadata['counterparty_id'],str):
+            raise HTTPException(422,'合作方标识需为文本')
         for field in ('valid_from','valid_to'):
             if metadata.get(field):
                 try:date.fromisoformat(metadata[field])
@@ -312,12 +360,11 @@ class Knowledge:
                 title,body,metadata,stored_sources=prior['title'],prior['content'],json.loads(prior['metadata']),json.loads(prior['sources'])
                 status='inactive'
             else:
-                validated=self._payload(content,change.kind)
+                previous={k:prior[k] for k in ('title','content')} if prior and not proposal_id else {}
+                if previous:previous.update(metadata=json.loads(prior['metadata']),sources=json.loads(prior['sources']))
+                validated=self._payload(self._merge_content(previous,content),change.kind)
+                validated=self._normalize_counterparty(db,u['org_id'],validated,require_resolved=True)
                 title,body,metadata,stored_sources=(validated[k] for k in ('title','content','metadata','sources'))
-                if metadata.get('counterparty_id') and not db.execute(
-                    "SELECT 1 FROM knowledge_parties WHERE id=? AND org_id=? AND status='active'",
-                    (metadata['counterparty_id'],u['org_id'])).fetchone():
-                    raise HTTPException(422,'合作方主体标识不存在')
                 status='active' if not prior else prior['status']
             if prior:
                 db.execute('''UPDATE knowledge_items SET status=?,revision=?,title=?,content=?,
@@ -342,7 +389,15 @@ class Knowledge:
         if scope not in {'personal','organization'}:raise HTTPException(422,'知识范围无效')
         if scope=='personal' and kind!='preference':raise HTTPException(422,'个人知识类型无效')
         if scope=='organization' and kind=='preference':raise HTTPException(422,'组织知识类型无效')
-        payload={} if action=='disable' else self._payload(body,kind)
+        if scope=='organization':self.membership(db,u)
+        previous={}
+        if scope=='organization' and action=='update' and target_id:
+            prior=self._current(db,u,kind,target_id,scope)
+            if not prior:raise HTTPException(404,'目标知识不存在')
+            previous={'title':prior['title'],'content':prior['content'],
+                      'metadata':json.loads(prior['metadata']),'sources':json.loads(prior['sources'])}
+        payload={} if action=='disable' else self._payload(self._merge_content(previous,body),kind)
+        if scope=='organization' and action!='disable':payload=self._normalize_counterparty(db,u['org_id'],payload)
         change=Change(kind,action,payload,target_id,base_revision)
         try:change.validate()
         except KnowledgeError as exc:raise HTTPException(422,str(exc)) from exc
@@ -351,7 +406,8 @@ class Knowledge:
             if not user or not user['active'] or user['account_kind']=='demo':raise HTTPException(403,'个人记忆不可用')
         else:self.membership(db,u)
         if scope=='organization' and payload.get('sources'):
-            payload['sources']=[{**s,**({'owner_user_id':u['id']} if s.get('document_id') else {})}
+            payload['sources']=[{**s,**({'owner_user_id':u['id']} if s.get('document_id')
+                                and s not in previous.get('sources',[]) else {})}
                                 for s in payload['sources']]
         if scope=='organization' and action!='disable' and execution_id:
             self._validate_agent_sources(db,u,payload,thread_id)
@@ -375,10 +431,13 @@ class Knowledge:
         row=db.execute('SELECT * FROM knowledge_proposals WHERE id=?',(pid,)).fetchone()
         return self._proposal(row)
 
-    @staticmethod
-    def _proposal(row):
+    def _proposal(self,row):
         value=dict(row);value['content']=json.loads(value['content']);value['sources']=json.loads(value['sources'])
         value['scope']='personal' if value['owner_id'] else 'organization'
+        reference=value['content'].get('metadata',{}).get('counterparty_id')
+        if not value['owner_id'] and reference:
+            with self.store.connect() as db:
+                value['counterparty_resolution']=self._resolve_counterparty(db,value['org_id'],reference)
         return value
 
     def proposals(self, u, scope=None, status='pending'):
@@ -414,7 +473,10 @@ class Knowledge:
                 raise HTTPException(409,'提案已被处理或更新')
             if row['owner_id'] is None and row['proposer_id']!=u['id']:
                 self.membership(db,u,maintainer=True)
-            payload={} if row['action']=='disable' else self._payload(body,row['kind'])
+            previous=json.loads(row['content'])
+            payload={} if row['action']=='disable' else self._payload(self._merge_content(previous,body),row['kind'])
+            if row['owner_id'] is None and row['action']!='disable':
+                payload=self._normalize_counterparty(db,u['org_id'],payload)
             db.execute('''UPDATE knowledge_proposals SET content=?,sources=?,proposal_revision=proposal_revision+1,
                 updated=? WHERE id=?''',(encoded(payload),encoded(payload.get('sources',[])),time.time(),pid))
             self._audit(db,u['org_id'],u['id'],'proposal.edited',proposal_id=pid)
@@ -453,7 +515,7 @@ class Knowledge:
             if member['role']!='maintainer':
                 return {'proposal':self.propose(u,scope,kind,action,body,target_id=target_id,
                     base_revision=body.get('revision'))}
-        payload={} if action=='disable' else self._payload(body,kind)
+        payload={} if action=='disable' else self._payload(body,kind) if scope=='personal' else body
         change=Change(kind,action,payload,target_id,body.get('revision'))
         with self.store.connect() as db:
             db.execute('BEGIN IMMEDIATE')
@@ -662,8 +724,10 @@ class Knowledge:
             proposal=self.propose(u,'organization',kind,operations[action],payload,
                 target_id=req.get('id'),base_revision=req.get('revision'),request_id=rid,
                 thread_id=e['thread_id'],execution_id=e['id'],message_id=req.get('message_id'),db=db)
-            return {'status':'pending_confirmation','proposal_id':proposal['id'],
+            result={'status':'pending_confirmation','proposal_id':proposal['id'],
                 'proposal_revision':proposal['proposal_revision'],'action':operations[action],'request_id':rid}
+            if proposal.get('counterparty_resolution'):result['counterparty_resolution']=proposal['counterparty_resolution']
+            return result
 
     async def collect(self,u,w,sbx):
         folder='/workspace/exchange/knowledge'
@@ -690,25 +754,32 @@ class Knowledge:
         with self.store.connect() as db:
             row=self._current(db,u,kind,iid,scope)
             if not row:raise HTTPException(404,'知识不存在')
+            current_status=row['status']
+            current_revision=row['revision']
             if revision is not None:
                 if scope=='personal':
                     v=db.execute('SELECT * FROM personal_memory_versions WHERE memory_id=? AND revision=?',(iid,revision)).fetchone()
+                    if not v and row['revision']==revision:v=row
                     if not v:raise HTTPException(404,'版本不存在')
+                    v=dict(v)
                     row.update(content=v['content'],status=v['status'],revision=revision,
-                               source=v['source'],source_thread_id=v['source_thread_id'],
-                               source_message_id=v['source_message_id'],updated=v['created'])
+                               source=v['source'],source_thread_id=v.get('source_thread_id'),
+                               source_message_id=v.get('source_message_id'),updated=v.get('created',v.get('updated')))
                 else:
                     v=db.execute('SELECT * FROM knowledge_versions WHERE item_id=? AND revision=?',(iid,revision)).fetchone()
                     if not v:raise HTTPException(404,'版本不存在')
+                    v=dict(v)
                     row.update(title=v['title'],content=v['content'],status=v['status'],revision=revision,
                                metadata=json.loads(v['metadata']),sources=json.loads(v['sources']))
             elif scope=='organization':row.update(metadata=json.loads(row['metadata']),sources=json.loads(row['sources']))
             if scope=='organization':
+                reference=row['metadata'].get('counterparty_id')
+                if reference:row['counterparty_resolution']=self._resolve_counterparty(db,u['org_id'],reference)
                 row['sources']=[{**s,'source_available':
                     (self.store.user_root(s['owner_user_id'])/'sources'/s['document_id']/'document.json').is_file()
                     if s.get('owner_user_id') and s.get('document_id') else None}
-                    for s in row['sources']]
-            row.update(kind=kind,scope=scope)
+                    for s in (row.get('sources') or [])]
+            row.update(kind=kind,scope=scope,current_status=current_status,current_revision=current_revision)
             return row
 
     def versions(self,u,scope,kind,iid):
@@ -765,11 +836,13 @@ class KnowledgeProjection:
         found=[]
         for iid,revision in dict.fromkeys(refs):
             if (iid,int(revision)) not in allowed:continue
-            row=db.one('''SELECT v.item_id,v.revision,v.title,v.status,i.status AS current_status,
+            row=db.one('''SELECT v.item_id,v.revision,v.title,v.status,i.kind,i.status AS current_status,
                 i.revision AS current_revision FROM knowledge_versions v
                 JOIN knowledge_items i ON i.id=v.item_id WHERE v.item_id=? AND v.revision=? AND i.org_id=?''',
                 (iid,int(revision),self.user['org_id']))
-            if row:found.append(row)
+            if row:
+                row['scope']='organization'
+                found.append(row)
         return {'knowledge_references':found} if found else {}
 
 

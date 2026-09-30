@@ -1,5 +1,6 @@
 import {api} from './api.js';
 import {esc} from './markdown.js';
+import {resolveParty,knowledgeEditPayload} from './knowledge-editor.js';
 
 const tabs={preference:'我的偏好',rules:'规则与范本',case:'案例与决策'};
 const kinds={preference:'我的偏好',rule:'审查标准',template:'参考范本',case:'案例与决策'};
@@ -144,6 +145,12 @@ export async function renderKnowledge(root,{identity,notice=()=>{},dirty=()=>{},
   }
   function wireProposal(card){
     const p=proposals.find(value=>value.id===card.dataset.proposal);
+    const resolution=p.counterparty_resolution||resolveParty(p.content?.metadata?.counterparty_id,parties);
+    if(p.action!=='disable'&&resolution&&resolution.status!=='resolved'){
+      card.insertAdjacentHTML('beforeend',`<p class="settings-danger" role="status">合作方 ${E(resolution.reference)} ${resolution.status==='ambiguous'?'匹配到多个主体':'未匹配到有效主体'}，请编辑候选并选择合作方后再发布。</p>`);
+      const publish=card.querySelector('[data-decision="confirm"]');if(publish)publish.disabled=true;
+      const check=card.querySelector('[data-proposal-check]');if(check)check.disabled=true;
+    }
     card.querySelectorAll('[data-decision]').forEach(button=>button.onclick=async()=>{
       const buttons=card.querySelectorAll('button');
       buttons.forEach(btn=>btn.disabled=true);
@@ -187,28 +194,42 @@ export async function renderKnowledge(root,{identity,notice=()=>{},dirty=()=>{},
     const scope=(record?.scope)||(kindOf==='preference'?'personal':'organization');
     const detail=root.querySelector('.knowledge-detail');if(!detail)return;
     const showKindSelect=isNew&&tab==='rules';
+    const partyReference=c.metadata?.counterparty_id;
+    const resolution=record?.counterparty_resolution||resolveParty(partyReference,parties);
+    const selectedParty=resolution?.status==='resolved'?resolution.id:'';
+    const partyOptions=parties.filter(p=>p.status==='active').map(p=>`<option value="${E(p.id)}" ${selectedParty===p.id?'selected':''}>${E(p.name)} · ${E(p.legal_identifier||p.id.slice(-6))}${parties.filter(other=>other.name===p.name&&other.legal_identifier===p.legal_identifier).length>1?' · '+E(p.id.slice(-6)):''}</option>`).join('');
 
     detail.innerHTML=`<form class="settings-form knowledge-form"><h3>${proposal?'编辑待确认提案':record?`编辑${kinds[kindOf]||''}`:(tab==='rules'?'新增规则或范本':`新增${kinds[kindOf]}`)}</h3>
       ${showKindSelect?`<label>知识类型<select name="kind" data-form-kind><option value="rule" ${kindOf==='rule'?'selected':''}>审查标准</option><option value="template" ${kindOf==='template'?'selected':''}>参考范本</option></select></label>`:''}
       ${kindOf!=='preference'?`<label>标题<input name="title" required maxlength="120" value="${E(c.title)}"></label>`:''}
       <label>内容<textarea name="content" required rows="7">${E(c.content)}</textarea></label>
-      ${kindOf!=='preference'?`<details><summary>筛选与证据</summary><label>合作方主体标识<input name="counterparty_id" list="partyChoices" value="${E(c.metadata?.counterparty_id)}"></label><datalist id="partyChoices">${parties.filter(p=>p.status==='active').map(p=>`<option value="${E(p.id)}" label="${E(p.name)}">`).join('')}</datalist><label>合同类型<input name="contract_type" value="${E(c.metadata?.contract_type)}"></label><label>项目<input name="project" value="${E(c.metadata?.project)}"></label><label>部门<input name="department" value="${E(c.metadata?.department)}"></label>${kindOf==='case'?`<label>决定类型<select name="decision_type"><option value="review">审查建议</option><option value="disposition">人工处置</option><option value="approval">正式批准</option></select></label>`:''}<label>来源摘录（每行一段）<textarea name="excerpts" rows="4">${E((c.sources||[]).map(s=>s.excerpt).join('\n'))}</textarea></label></details>`:''}
+      ${kindOf!=='preference'?`<details ${partyReference&&!selectedParty?'open':''}><summary>筛选与证据</summary>
+        <label>合作方<select name="counterparty_id" ${partyReference?'required':''}>${partyReference?(!selectedParty?`<option value="" disabled selected>请选择主体（原标识：${E(partyReference)}）</option>`:''):'<option value="">不限合作方</option>'}${partyOptions}</select></label>
+        ${partyReference&&!selectedParty?'<p class="settings-danger" data-party-warning role="status">原标识无法唯一匹配，请人工选择有效主体。若列表中没有，请先在合作方主体索引中新增。</p>':''}
+        <label>合同类型<input name="contract_type" value="${E(c.metadata?.contract_type)}"></label><label>项目<input name="project" value="${E(c.metadata?.project)}"></label><label>部门<input name="department" value="${E(c.metadata?.department)}"></label>
+        <label>生效日期<input type="date" name="valid_from" value="${E(c.metadata?.valid_from)}"></label><label>截止日期<input type="date" name="valid_to" value="${E(c.metadata?.valid_to)}"></label>
+        ${kindOf==='case'?`<label>决定类型<select name="decision_type"><option value="review">审查建议</option><option value="disposition">人工处置</option><option value="approval">正式批准</option></select></label>`:''}
+        ${(c.sources||[]).map((s,i)=>`<fieldset><legend>来源 ${i+1} · ${E(s.filename||'记录')}</legend><p class="settings-note">${E(s.block_id||'手工摘录')}${s.source_hash?' · '+E(s.source_hash):''}</p><label>证据摘录<textarea name="source_excerpt_${i}" rows="3">${E(s.excerpt)}</textarea></label><label class="settings-check"><input type="checkbox" name="remove_source_${i}">移除此来源</label></fieldset>`).join('')}
+        <label>新增手工摘录（每行一段）<textarea name="new_excerpts" rows="3"></textarea></label></details>`:''}
       ${record&&!proposal?`<p class="settings-note">基于 v${record.revision} 修改；保存前会再次核对版本。</p>`:''}
       <div class="settings-form-actions"><button type="submit" class="primary">${proposal?'保存提案':scope==='personal'?'保存个人偏好':'提交／发布'}</button><button type="button" data-cancel>取消</button></div></form>`;
     if(kindOf==='case')detail.querySelector('[name=decision_type]').value=c.metadata?.decision_type||'review';
+    const partySelector=detail.querySelector('[name=counterparty_id]');
+    if(partySelector)partySelector.onchange=()=>{
+      const warning=detail.querySelector('[data-party-warning]');if(warning)warning.hidden=Boolean(partySelector.value);
+    };
     detail.querySelector('[data-cancel]').onclick=()=>{dirty(false);void load();};
     detail.querySelector('form').oninput=()=>dirty(true);
     detail.querySelector('form').onsubmit=async event=>{
       event.preventDefault();const data=Object.fromEntries(new FormData(event.target));
+      if(kindOf!=='preference'&&partyReference&&!data.counterparty_id)return notice('请选择有效的合作方主体');
       const submitBtn=event.target.querySelector('button[type="submit"]');
       if(submitBtn)submitBtn.disabled=true;
       const targetKind=proposal?record.kind:(record?record.kind:(data.kind||kindOf));
       const targetScope=(record?.scope)||(targetKind==='preference'?'personal':'organization');
       const body={content:data.content,revision:record?.revision};
       if(targetKind!=='preference'){
-        body.title=data.title;
-        body.metadata=Object.fromEntries(['counterparty_id','contract_type','project','department','decision_type'].filter(k=>data[k]).map(k=>[k,data[k]]));
-        body.sources=(data.excerpts||'').split('\n').filter(Boolean).map(excerpt=>({excerpt}));
+        Object.assign(body,knowledgeEditPayload(c,data));
       }
       try{
         if(proposal){body.proposal_revision=record.proposal_revision;await api(`/api/knowledge/proposals/${record.id}`,{method:'PUT',body});}
