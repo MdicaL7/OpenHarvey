@@ -12,10 +12,11 @@ from .store import Store
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def runtime_config(shared):
+def runtime_config(shared, binding_dir=None):
     return {"$schema": "https://opencode.ai/config.json", "default_agent": "contract",
             "share": "disabled", "autoupdate": False, "snapshot": False,
-            "plugin": [(shared / "plugins/request-params.js").as_uri(), (shared / "plugins/memory.js").as_uri()],
+            "plugin": [(shared / "plugins/request-params.js").as_uri()] +
+                      ([[str((shared / "plugins/tencentdb-memory.js").as_uri()), {"bindingDirectory": str(binding_dir)}]] if binding_dir else []),
             "compaction": {"auto": True, "prune": False},
             "skills": {"paths": [str(shared / "skills")]},
             "agent": {"contract": {"mode": "primary", "description": "合同工作台助手",
@@ -37,6 +38,14 @@ def main():
     sub.add_parser("list-users")
     bootstrap = sub.add_parser("init-admin", help="指定默认组织首位管理员（只可初始化一次）")
     bootstrap.add_argument("username")
+    tdai = sub.add_parser('tdai-connect', help='管理员为本机账号配置独立 TencentDB Memory 身份与模型')
+    tdai.add_argument('username')
+    tdai.add_argument('--admin-key-file', type=Path, required=True)
+    tdai.add_argument('--core-url', default='http://127.0.0.1:8420')
+    tdai.add_argument('--proxy-url', default='http://127.0.0.1:8096/opencode/default/v1')
+    tdai.add_argument('--service-id', default='default')
+    tdai.add_argument('--memory-username', default='openharvey-local')
+    tdai.add_argument('--gateway-key-file', type=Path)
     local = sub.add_parser("local-runtime", help="仅用于单机开发，生产使用隔离容器")
     local.add_argument("username")
     local.add_argument("--port", type=int, default=4096)
@@ -77,6 +86,20 @@ def main():
         print("账号已禁用，现有登录及保存凭据均不再有效")
     elif args.command == "list-users":
         print(json.dumps(store.all("SELECT id,username,active FROM users ORDER BY username"), ensure_ascii=False, indent=2))
+    elif args.command == 'tdai-connect':
+        import asyncio
+        from .settings import Settings
+        from .model_settings import Models
+        from .tencentdb_memory import TencentDBMemory
+        u = store.one('SELECT * FROM users WHERE username=? AND active=1', (args.username,))
+        if not u or u['role'] != 'admin':
+            raise ValueError('请先创建并初始化本机管理员账号')
+        models = Models(Settings(store, ROOT/'runtime/skills'))
+        result = asyncio.run(TencentDBMemory(store, models).connect(u,
+            admin_key=args.admin_key_file.read_text().strip(), core_url=args.core_url, proxy_url=args.proxy_url,
+            service_id=args.service_id, username=args.memory_username,
+            gateway_key=args.gateway_key_file.read_text().strip() if args.gateway_key_file else 'local'))
+        print(json.dumps(result, ensure_ascii=False))
     elif args.command == "local-runtime":
         user = store.one("SELECT * FROM users WHERE username=? AND active=1", (args.username,))
         if not user:
@@ -94,7 +117,7 @@ def main():
         configs[args.username] = config
         config_path.write_text(json.dumps(configs, indent=2))
         config_path.chmod(0o600)
-        oc = runtime_config(shared)
+        oc = runtime_config(shared, root/"opencode"/"tdai-bindings")
         provider = json.loads(args.provider_config.read_text())
         oc.update({k: provider[k] for k in ("model", "small_model", "provider", "enabled_providers") if k in provider})
         state = root/"opencode"
@@ -113,7 +136,7 @@ def main():
                     "OPENCODE_ENABLE_EXA": "true", "OPENCODE_WEBSEARCH_PROVIDER": "exa",
                     "OPENCODE_DISABLE_EXTERNAL_SKILLS": "true"})
         print(f"启动 {args.username} 的本地开发运行时，端口 {args.port}；此模式不提供容器级隔离", flush=True)
-        subprocess.run(["opencode", "serve", "--pure", "--hostname", "127.0.0.1", "--port", str(args.port)],
+        subprocess.run(["opencode", "serve", "--hostname", "127.0.0.1", "--port", str(args.port)],
                        cwd=root/"threads", env=env, check=True)
 
 

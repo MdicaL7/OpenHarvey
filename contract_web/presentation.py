@@ -5,8 +5,7 @@ from .report_processing import merge_citations
 
 
 class PublicView:
-    def __init__(self, paths=None, locale='zh-CN', memory=None, skills=None):
-        self.memory = memory
+    def __init__(self, paths=None, locale='zh-CN', skills=None):
         self.skills = skills or {}
         self.locale = 'en' if locale == 'en' else 'zh-CN'
         self.paths = paths or {}
@@ -62,13 +61,11 @@ class PublicView:
         return value
 
     def info(self, info):
-        if self.memory: self.memory.info(info)
         return self.clean({k: v for k, v in info.items() if k in {
             "id", "sessionID", "role", "time", "finish", "error", "parentID", "summary", "mode"}})
 
     def part(self, part):
         base = {k: part[k] for k in ("id", "messageID", "sessionID", "type") if k in part}
-        if self.memory: base.update(self.memory.part(part))
         if part.get("type") == "text":
             self.text_parts[part.get("id")] = dict(part)
             return {**base, "text": self.text(re.sub(r"\[\[memory:[^\]\n]*\]\]", "", part.get("text") or "")),

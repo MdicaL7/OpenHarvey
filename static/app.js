@@ -10,7 +10,6 @@ import {previewCitation} from './preview-citations.js';
 import {threadScope,scopeLabels,threadListHTML,threadTitle} from './thread-ui.js?v=20260912-21';
 import {queueHTML,restoreDraft,reconcilePending,pendingRequest,preparationLabel,loadingStateHTML} from './message-queue.js?v=20260921-skill-labels';
 import {setupSettings} from './settings-ui.js?v=20260921-skill-labels';
-import {handleMemoryAction,announceMemoryChange} from './memory-ui.js';
 import {settingsTab,savedWorkbenchURL} from './settings-routes.js';
 import {api,upload} from './api.js';
 import {connectEvents,applyEvent,runIssue,unchangedEvent} from './events.js?v=20260915-runtime-1';
@@ -45,7 +44,6 @@ let sourceRendered=false,sending=false,submission=null,queuePolling=false,stoppi
 let sourceRequest=null,artifactLoadingId=null;
 let stopPdfPages=()=>{};
 const streamingParts=new Map();
-const memoryReceiptIDs=new Set();
 let fullRender=true;
 const artifactData=new Map();
 const reading=setupReading();
@@ -93,7 +91,6 @@ function background(task,view=epoch){void task.catch(e=>{if(view===epoch&&e.name
 function loggedOut(){
   materialManager.reset();
   stopPdfPages();
-  memoryReceiptIDs.clear();
   identity=null;riskSchemeOptions=null;artifactLoadingId=null;
   document.body.dataset.auth='logged-out';$('authLoading').hidden=true;
   artifactData.clear();
@@ -301,11 +298,8 @@ async function manageThread(id,action){
 $('threadScope').onchange=protect(e=>changeThreadScope(e.target.value));
 $('restoreCurrentThread').onclick=protect(()=>manageThread(tid,'restore'));
 
-document.addEventListener('click',e=>{if(e.target.closest('#messageHistory'))void handleMemoryAction(e,{notice});});
 document.addEventListener('labs-changed',()=>{void api('/api/me').then(async me=>{identity=me;if(!me.capabilities?.redline)await redline.close();syncRedlineAccess();}).catch(e=>notice(e.message));});
 window.addEventListener('storage',e=>{if(e.key==='labs-change')document.dispatchEvent(new Event('labs-changed'));});
-document.addEventListener('memory-changed',()=>{if(tid)void restore().catch(e=>notice(e.message));});
-window.addEventListener('storage',e=>{if(e.key==='memory-change')document.dispatchEvent(new Event('memory-changed'));});
 
 document.addEventListener('click',e=>document.querySelectorAll('.thread-menu[open]').forEach(menu=>{if(!menu.contains(e.target))menu.open=false;}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const menu=document.querySelector('.thread-menu[open]');if(menu){menu.open=false;menu.querySelector('summary').focus();e.preventDefault();}}},true);
@@ -392,9 +386,8 @@ function receive(event){
   if(unchangedEvent(state,event))return;
   const p=event.properties?.part;
   const m=p&&state.messages.find(m=>m.info.id===p.messageID);
-  const textOnly=!p?.memory_references&&!m?.parts.some(old=>old.id===p?.id&&old.memory_references)&&event.type==='message.part.updated'&&p.type==='text'&&m?.info.role==='assistant'&&!isCompaction(m.info)&&m.parts.some(old=>old.id===p.id&&old.text)&&!p.synthetic;
+  const textOnly=event.type==='message.part.updated'&&p.type==='text'&&m?.info.role==='assistant'&&!isCompaction(m.info)&&m.parts.some(old=>old.id===p.id&&old.text)&&!p.synthetic;
   applyEvent(state,event);reconcilePending(state);updateControls();
-  if(p?.memory_receipt?.saved&&!memoryReceiptIDs.has(p.memory_receipt.request_id)){memoryReceiptIDs.add(p.memory_receipt.request_id);queueMicrotask(announceMemoryChange);}
   if(textOnly)streamingParts.set(p.id,p.text||'');else fullRender=true;
   if(event.type==='session.updated'){
     $('threadTitle').textContent=threadTitle(state.title);

@@ -48,7 +48,7 @@ class LocalProcessDriver:
     async def start(self,root,config,oc):
         binary=shutil.which('opencode')
         if not binary:raise RuntimeError('找不到 opencode，请先安装 OpenCode 1.16.2')
-        oc={**oc,'plugin':list(dict.fromkeys([*oc.get('plugin',[]),(ROOT/'runtime/plugins/request-params.js').as_uri()]))}
+        oc={**oc,'plugin':runtime_config(ROOT/'runtime',root/'opencode'/'tdai-bindings')['plugin']}
         state=root/'opencode';state.mkdir(parents=True,exist_ok=True)
         # The shipped plugin has no dependencies. Keep global config read-only so
         # OpenCode does not install an unused plugin SDK at every cold start.
@@ -59,7 +59,7 @@ class LocalProcessDriver:
                     'OPENCODE_TEST_HOME':str(state/'home'),'OPENCODE_CONFIG':str(path),'OPENCODE_SERVER_PASSWORD':config['password'],'OPENCODE_DISABLE_CLAUDE_CODE':'true','OPENCODE_ENABLE_QUESTION_TOOL':'true','OPENCODE_DISABLE_EXTERNAL_SKILLS':'true',
                     'OPENCODE_ENABLE_EXA':'true','OPENCODE_WEBSEARCH_PROVIDER':'exa','OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX':'384000'})
         with (state/'service.log').open('ab') as log:
-            process=subprocess.Popen([binary,'serve',*([] if any(p.get('options',{}).get('workbenchExtraBody') for p in oc.get('provider',{}).values()) else ['--pure']),'--hostname','127.0.0.1','--port',config['url'].rsplit(':',1)[-1]],cwd=root/'threads',env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+            process=subprocess.Popen([binary,'serve','--hostname','127.0.0.1','--port',config['url'].rsplit(':',1)[-1]],cwd=root/'threads',env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
         for _ in range(100):
             if process.poll() is not None:raise RuntimeError('OpenCode 启动失败，请检查运行环境日志')
             if await self.health(config):return process.pid
@@ -169,7 +169,7 @@ class RuntimeManager:
                 try:
                     generated = self.models.native(self.models.snapshot(self.models.scope(u), desired))[0]
                     installed = json.loads((self.store.user_root(u['id'])/'opencode'/'opencode.json').read_text())
-                    defaults = runtime_config(ROOT/'runtime')
+                    defaults = runtime_config(ROOT/'runtime',self.store.user_root(u['id'])/'opencode'/'tdai-bindings')
                     generated_matches = (installed.get('provider') == generated.get('provider')
                         and installed.get('agent',{}).get('contract',{}).get('prompt') == defaults['agent']['contract']['prompt']
                         and installed.get('permission') == defaults['permission']

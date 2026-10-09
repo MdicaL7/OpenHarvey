@@ -50,7 +50,7 @@ class E2B:
         self.path_cache = {}
         self.pending_checkpoints = set()
         self.artifacts = self.traces = None
-        self.runtime_revision = hashlib.sha256(b''.join((ROOT / name).read_bytes() for name in ('runtime/agent.md','runtime/plugins/memory.js'))).hexdigest()
+        self.runtime_revision = hashlib.sha256(b''.join((ROOT / name).read_bytes() for name in ('runtime/agent.md','runtime/plugins/request-params.js'))).hexdigest()
         self.template = os.environ.get('E2B_TEMPLATE', 'contract-opencode-1-16-2')
         self.enabled = os.environ.get('CW_SANDBOX_BACKEND', 'e2b') == 'e2b'
         with store.connect() as db:
@@ -393,7 +393,7 @@ class E2B:
         self.state(wid,status='starting',revision=0)
         self.permission_cache={k:v for k,v in self.permission_cache.items() if k[0]!=wid}
         self.path_cache={k:v for k,v in self.path_cache.items() if k[0]!=wid}
-        await sbx.commands.run('mkdir -p /workspace/threads /workspace/input /workspace/output /workspace/published /workspace/exchange/memory /opt/contract-runtime /var/lib/contract-opencode /var/log/contract-opencode && chown -R user:user /workspace /opt/contract-runtime /var/lib/contract-opencode /var/log/contract-opencode',user='root')
+        await sbx.commands.run('mkdir -p /workspace/threads /workspace/input /workspace/output /workspace/published /opt/contract-runtime /var/lib/contract-opencode /var/log/contract-opencode && chown -R user:user /workspace /opt/contract-runtime /var/lib/contract-opencode /var/log/contract-opencode',user='root')
         version=await sbx.commands.run('opencode --version')
         if version.stdout.strip()!='1.16.2': raise RuntimeError('E2B 模板须固定使用 OpenCode 1.16.2，请先构建配套模板')
         uploads=[]
@@ -479,7 +479,7 @@ class E2B:
                 provider['headers']=headers;path.write_text(encoded(config))
         # Fixed application-owned files only: no recursive scan of agent output.
         pairs=shared+[(wd/name,rt.directory(t['id'])+'/'+name) for name in
-                      ('context.json','risk-library.json','opencode.json','.skill-versions.json','.memory-capability') if (wd/name).is_file()]
+                      ('context.json','risk-library.json','opencode.json','.skill-versions.json') if (wd/name).is_file()]
         changed=[];stats={}
         for local,remote in pairs:
             stat=local.stat();stamp=(stat.st_mtime_ns,stat.st_size,stat.st_ino)
@@ -741,7 +741,6 @@ class E2B:
             finally:self.stream_ready[t['id']].clear()
 
     async def collect_submissions(self,u,w,sbx):
-        if getattr(self,'memory',None): await self.memory.collect(u,w,sbx)
         if getattr(self,'feishu',None):await self.feishu.collect(u,w,sbx)
         entries=await sbx.files.list('/workspace/exchange',depth=1)
         for entry in entries:
@@ -1037,7 +1036,7 @@ class E2BRuntime(Runtime):
     async def messages(self,t):return (await asyncio.to_thread(self.e2b.history,t['id']))[0]
     async def last_assistant(self,t):return await asyncio.to_thread(self.e2b.last_assistant,t['id'])
     async def status(self,t):return self.e2b.snapshot(t['id']).get('status',{'type':'idle'})
-    async def permissions(self,tid,documents,mode='auto'):
+    async def permissions(self,tid,documents,mode='auto', *, tdai=None):
         if mode=='full':return [{'permission':'*','pattern':'*','action':'allow'}]
         if not self.w or self.w['id'] not in self.e2b.handles:return []
         rules=await super().permissions(tid,documents,mode)

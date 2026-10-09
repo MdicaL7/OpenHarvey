@@ -5,13 +5,13 @@ import test_workbench as fixtures
 class TaskControlsTests(fixtures.WorkbenchTests):
     def test_trial_notice_dismissal_is_account_scoped_and_survives_settings_reset(self):
         self.assertFalse(self.client.get('/api/me').json()['trial_notice_dismissed'])
-        self.store.execute("UPDATE users SET preferences=? WHERE id=?",(json.dumps({'assistant_name':'My helper','memory_enabled':True}),self.uid))
+        self.store.execute("UPDATE users SET preferences=? WHERE id=?",(json.dumps({'assistant_name':'My helper','materials_enabled':True}),self.uid))
         r=self.client.post('/api/settings/trial-notice/dismiss',json={},headers=self.headers)
         self.assertEqual(r.status_code,200,r.text)
         self.assertTrue(self.client.get('/api/me').json()['trial_notice_dismissed'])
         prefs=self.client.get('/api/settings').json()
         self.assertEqual(prefs['effective']['assistant_name'],'My helper')
-        self.assertTrue(prefs['effective']['memory_enabled'])
+        self.assertTrue(prefs['effective']['materials_enabled'])
         self.client.put('/api/settings',json={'values':{},'revision':prefs['revision']},headers=self.headers).raise_for_status()
         self.assertTrue(self.client.get('/api/me').json()['trial_notice_dismissed'])
         self.login('bob');self.assertFalse(self.client.get('/api/me').json()['trial_notice_dismissed'])

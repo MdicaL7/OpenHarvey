@@ -51,7 +51,7 @@ class Runtime:
         except (httpx.HTTPError, ValueError) as exc:
             raise RuntimeError("OpenCode 暂时无法连接，请稍后重试；已保存的材料仍然保留") from exc
 
-    async def permissions(self, tid, documents, mode="auto"):
+    async def permissions(self, tid, documents, mode="auto", *, tdai=None):
         if mode=='full':raise RuntimeError('全权执行仅适用于云端隔离沙箱')
         # OpenCode matches read/edit against paths relative to its worktree;
         # for non-Git projects that worktree is often '/', not the session cwd.
@@ -71,7 +71,7 @@ class Runtime:
         for path in [root + "/*", shared + "/*"] + [self.source_path(d["id"]).rsplit("/",1)[0]+"/*" for d in documents]:
             rules.append({"permission": "read", "pattern": relative(path), "action": "allow"})
         rules += [
-            {"permission": "memory", "pattern": "*", "action": "allow"},
+            # Retained legacy data may still contain an obsolete capability file.
             {"permission": "read", "pattern": "*/.memory-capability", "action": "deny"},
             {"permission": "edit", "pattern": relative(root + "/.memory-capability"), "action": "deny"},
             {"permission": "read", "pattern": "*/.publish-token", "action": "deny"},
@@ -85,7 +85,8 @@ class Runtime:
         ]
         for path in [shared + "/*"] + [self.source_path(d["id"]).rsplit("/",1)[0]+"/*" for d in documents]:
             rules.append({"permission": "external_directory", "pattern": path, "action": "allow"})
-        return rules
+        from .tencentdb_memory import bridge_permissions
+        return rules + bridge_permissions(tdai)
 
     async def skills(self, tid):
         """Expose only business skill metadata discovered by this native instance."""

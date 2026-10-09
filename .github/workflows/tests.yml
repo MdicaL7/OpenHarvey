@@ -16,5 +16,6 @@ jobs:
       - run: pip install -r requirements.txt
       - run: npm ci
       - run: npm run build:redline
+      - run: npm run build:memory
       - run: python -m unittest discover -s tests -q
       - run: npm test

@@ -35,7 +35,7 @@ All active materials are available for on-demand reading; no per-message checkbo
 | Reference-only document | “Treat the agreement as authoritative. Use this quotation only to compare prices.” |
 | Saved output | “Save the differences as a table file, keeping filenames and source citations.” |
 
-Contract materials hold project sources; personal memory holds working preferences; Skills define methods; playbooks define review standards. Contract amounts, parties and deadlines remain grounded in the current source documents.
+Contract materials hold project sources; the independent memory service retains historical working context; Skills define methods; playbooks define review standards. Contract amounts, parties and deadlines remain grounded in the current source documents.
 
 ## Disable and keep your work
 

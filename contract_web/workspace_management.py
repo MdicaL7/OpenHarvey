@@ -53,7 +53,7 @@ def register_workspace_management(app, store, settings, user, workspace, runtime
                 db.execute("BEGIN IMMEDIATE")
                 for table, column, values in (
                     ("risk_feedback", "artifact_id", aids), ("trace_runs", "thread_id", tids),
-                    ("memory_receipts", "thread_id", tids), ("execution_configs", "thread_id", tids), ("queued_messages", "thread_id", tids),
+                    ("execution_configs", "thread_id", tids), ("queued_messages", "thread_id", tids),
                     ("queue_state", "thread_id", tids)):
                     if values:
                         marks = ",".join("?" for _ in values)

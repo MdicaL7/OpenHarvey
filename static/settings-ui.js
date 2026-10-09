@@ -20,7 +20,7 @@ export function setupSettings({notice,onClose,onOpen}){
   const $=sel=>root.querySelector(sel);
   const run=fn=>async(...args)=>{try{await fn(...args);}catch(e){notice(e.message);}};
   document.addEventListener('ui-language-changed',()=>{if(!root.hidden&&!dirty)void render();});
-  document.addEventListener('memory-changed',()=>{if(!root.hidden&&tab==='labs'&&!dirty)void render().catch(e=>notice(e.message));});
+  document.addEventListener('labs-changed',()=>{if(!root.hidden&&tab==='labs'&&!dirty)void render().catch(e=>notice(e.message));});
   document.addEventListener('labs-changed',()=>{if(!root.hidden&&tab==='labs'&&!dirty)void render().catch(e=>notice(e.message));});
   window.addEventListener('focus',()=>{if(!root.hidden&&tab==='labs'&&!dirty)void render().catch(e=>notice(e.message));});
   const leave=()=>!dirty||confirm(tr('有尚未保存的修改，确定离开？'));
@@ -59,7 +59,7 @@ export function setupSettings({notice,onClose,onOpen}){
       await renderAdmin($('#settingsPage'),{mode:tab,identity,notice,dirty:value=>dirty=value,leave});if(g===generation)orcaConnect($('#settingsPage'),identity);return;
     }
     if(tab==='labs'){
-      const {renderLabs}=await import('./memory-ui.js');if(g!==generation)return;
+      const {renderLabs}=await import('./labs-ui.js');if(g!==generation)return;
       await renderLabs($('#settingsPage'),{notice,dirty:value=>dirty=value,isCurrent:()=>g===generation});return;
     }
     if(tab==='connectors'){

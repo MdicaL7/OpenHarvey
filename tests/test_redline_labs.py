@@ -29,16 +29,16 @@ class RedlineLabsTests(unittest.TestCase):
 
     def test_shared_revision_conflicts_and_general_reset_preserves_both_labs(self):
         stale = self.c.get(self.url).json()['revision']
-        self.assertEqual(self.c.patch('/api/settings/labs', json={'memory_enabled': True, 'revision': stale}, headers=self.base.headers).status_code, 200)
+        self.assertEqual(self.c.patch('/api/settings/labs', json={'materials_enabled': True, 'revision': stale}, headers=self.base.headers).status_code, 200)
         self.assertEqual(self.toggle(True, stale).status_code, 409)
         self.assertEqual(self.toggle(True).status_code, 200)
         settings = self.c.get('/api/settings').json()
         response = self.c.put('/api/settings', json={'values': {}, 'revision': settings['revision']}, headers=self.base.headers)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self.c.get(self.url).json()['effective'])
-        self.assertTrue(self.c.get('/api/settings/labs').json()['effective'])
+        self.assertTrue(self.c.get('/api/settings/labs').json()['materials_enabled'])
         self.assertEqual(self.toggle(False).status_code, 200)
-        self.assertTrue(self.c.get('/api/settings/labs').json()['effective'])
+        self.assertTrue(self.c.get('/api/settings/labs').json()['materials_enabled'])
 
     def test_demo_disabled_and_expired_accounts_cannot_gain_access(self):
         with patch.dict('os.environ', {'CW_REDLINE_ENABLED': '0'}):

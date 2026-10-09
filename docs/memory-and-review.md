@@ -1,6 +1,6 @@
 # Memory and DOCX review
 
-Personal memory is opt-in under `/labs`. It stores account-scoped working preferences, with add/edit/delete controls and agent-requested writes. Current user instructions take priority. Memory is not contract evidence, a vector database, or a separate agent; enabled memories are included in task context. Existing conversations are not rewritten when memory is disabled or deleted.
+This branch uses an independent TencentDB Memory service through a local OpenCode provider. Select `TencentDB Memory / DeepSeek` to use it; other providers have no memory integration. The former personal Memory tools and Labs editor are removed. Existing legacy records and conversation text are retained but are not injected or migrated. See [local integration and verification](tencentdb-memory.md). Historical memory is context, not current contract evidence or approval.
 
 DOCX review uses SuperDoc **1.46.3** (AGPL). Install with `npm ci` and build with `npm run build:redline`. Registered users opt in under **Settings → Labs → DOCX review**; new accounts start with review off. Turning review off keeps saved working copies, changes, comments and versions; save and close active review windows first. Demo accounts must sign in to a registered account. `CW_REDLINE_ENABLED=0` is the operator's global off switch. The legacy `CW_REDLINE_USERS` value is used only once to preserve existing enabled accounts during migration, never as an ongoing access list. Do not upgrade SuperDoc across major versions without reviewing licensing and compatibility.
 

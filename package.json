@@ -3,7 +3,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "build:redline": "node scripts/build_redline.mjs"
+    "build:redline": "node scripts/build_redline.mjs",
+    "build:memory": "node scripts/build_tencentdb_plugin.mjs"
   },
   "dependencies": {
     "superdoc": "1.46.3"

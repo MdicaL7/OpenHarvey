@@ -1,0 +1,60 @@
+{
+  "verified_at": "2026-10-09T16:45:47+08:00",
+  "branch": "codex/tencentdb-memory-integration",
+  "base_revision": "81e55c5c3e6049f5d2a2bc28b195634cf3d21a7f",
+  "memory_revision": "8b86874a2daea49e3ff0fb53d699203146c5c77d",
+  "model": "deepseek-flash",
+  "web_url": "http://127.0.0.1:8080/spaces",
+  "memory_identity": {
+    "username": "openharvey-local",
+    "team": "OpenHarvey",
+    "agent": "合同助手"
+  },
+  "task_maps": [
+    {
+      "workspace_id": "c7cd19be125bb10ea468232b",
+      "task_id": "task-w1bxylgc0q"
+    },
+    {
+      "workspace_id": "8260a75f7f163d65d0a83fef",
+      "task_id": "task-w2css6bk20"
+    }
+  ],
+  "checks": {
+    "python_tests": 328,
+    "node_tests": 155,
+    "memory_build": true,
+    "redline_build": true,
+    "contract_a_cited_answer": true,
+    "natural_dialogue_memory_generation": true,
+    "new_session_recall": true,
+    "quoted_curl_auto_permission": true,
+    "contract_b_current_facts": true,
+    "real_saved_receipt": true,
+    "direct_switch_marker_absent_from_l0": true,
+    "legacy_apis_http_status": 410,
+    "legacy_memory_ui_removed": true,
+    "materials_and_docx_labs_ui": true,
+    "web_restart_bindings_unchanged": true,
+    "post_restart_recall": true
+  },
+  "memory_observation": {
+    "l0_messages": 10,
+    "l1_records": 6,
+    "l2_entries": 1,
+    "l3_characters": 1623
+  },
+  "artifacts": [
+    {
+      "id": "5ea9899308c914be810f8dc1",
+      "title": "合同B 核对结果",
+      "kind": "document",
+      "thread_id": "3cb65a2d2bf9ea47cde4c267"
+    }
+  ],
+  "limitations": [
+    "Local integration only; E2B memory provider is intentionally rejected.",
+    "Compaction header exclusion is covered by targeted hook checks; no live compaction benchmark.",
+    "Default code extraction may retain some test instructions as work methods; contract-domain extraction is unchanged."
+  ]
+}

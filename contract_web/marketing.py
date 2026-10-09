@@ -21,8 +21,8 @@ def register_marketing(app, root):
                   'harvey-alternative': t('面向合同审查的开源 Harvey 替代方案 | OpenHarvey', 'Open-Source Harvey Alternative for Contracts | OpenHarvey')}
         descriptions = {
             'home': t(
-                'OpenHarvey（Open Harvey）是开源合同审查与标书 AI 工作台，支持个人记忆、DOCX 审改批注、原文溯源、自定义风险库和自托管。',
-                'OpenHarvey (Open Harvey) is an open-source AI contract review and tender workspace with personal memory, DOCX review, comments, citations and self-hosting.'),
+                'OpenHarvey（Open Harvey）是开源合同审查与标书 AI 工作台，支持独立记忆服务、DOCX 审改批注、原文溯源、自定义风险库和自托管。',
+                'OpenHarvey (Open Harvey) is an open-source AI contract review and tender workspace with independent memory, DOCX review, comments, citations and self-hosting.'),
             'security': t(
                 '了解 OpenHarvey 如何处理合同数据、E2B 沙箱执行、模型凭据、持久化、删除、备份与自托管边界。',
                 'Learn how OpenHarvey handles contract data, sandboxed agent execution, model credentials, storage, deletion, backups and self-hosting boundaries.'),
@@ -33,8 +33,8 @@ def register_marketing(app, root):
                 '寻找开源 Harvey 替代方案？了解 OpenHarvey 的合同审查、原文引用、自定义风险库、自托管方式、运行成本与适用范围。',
                 "Explore OpenHarvey, an open-source Harvey alternative for contract review. See source citations, custom playbooks, self-hosting and operating costs."),
             'features': t(
-                '查看 OpenHarvey 合同 AI 工作台实景：个人记忆、DOCX 审改批注、目录联动、版本管理、原文溯源与多格式产出。',
-                "See OpenHarvey's contract AI workspace in action: personal memory, DOCX tracked changes, comments, version history and source-linked review.")}
+                '查看 OpenHarvey 合同 AI 工作台实景：独立记忆服务、DOCX 审改批注、目录联动、版本管理、原文溯源与多格式产出。',
+                "See OpenHarvey's contract AI workspace in action: independent memory, DOCX tracked changes, comments, version history and source-linked review.")}
         description = descriptions[section]
         schema = {'@context':'https://schema.org','@type':'WebSite','name':'OpenHarvey','alternateName':'Open Harvey','url':ORIGIN,'sameAs':['https://github.com/twonly/OpenHarvey'],'inLanguage':['zh-CN','en'],'description':description}
         zhurl = ORIGIN + ('/' if section=='home' else '/'+section)
