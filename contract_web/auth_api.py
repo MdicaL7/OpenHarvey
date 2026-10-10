@@ -180,6 +180,8 @@ def register_auth(app,accounts,models,manager,user):
         if uid==actor['id'] and body.get('active') is False:raise HTTPException(422,'不能停用自己')
         amount=body.get('add_requests',0)
         if isinstance(amount,bool) or not isinstance(amount,int) or not 0<=amount<=10000:raise HTTPException(422,'增加额度须为0–10000的整数')
+        if 'active' in body:
+            await app.state.contract_memory.sync_status(actor,target,body['active'])
         with store.connect() as db:
             db.execute('UPDATE users SET active=?,trial_total=trial_total+? WHERE id=?',(int(bool(body.get('active',target['active']))),amount,uid))
             if body.get('active') is False:

@@ -23,14 +23,14 @@
 <div id="spacesApp" hidden>
   <header class="topbar">
     <a href="/spaces" class="brand"><img src="/static/brand/openharvey.svg" width="30" height="30" alt=""><span><b>OpenHarvey</b><small>OPENHARVEY</small></span></a>
-    <nav><a href="/spaces" aria-current="page">合同空间</a><a href="/landing" target="_blank" rel="noopener">产品介绍 ↗</a><a href="/config">设置</a><span id="username"></span><button id="logout" hidden>退出</button></nav>
+    <nav><a href="/spaces" aria-current="page">合同空间</a><a href="/experience">经验与偏好</a><a href="/landing" target="_blank" rel="noopener">产品介绍 ↗</a><a href="/config">设置</a><span id="username"></span><button id="logout" hidden>退出</button></nav>
   </header>
   <main>
     <section class="hero">
       <div><p class="eyebrow">CONTRACT ARCHIVE</p><h1>合同空间</h1><p>从一份合同出发，回到相关对话、材料与已保存成果。</p></div>
       <button id="uploadButton" class="upload-button"><span>＋</span> 上传新合同</button>
     </section>
-    <section id="summary" class="summary" aria-label="合同空间概览"></section>
+    <label id="teamControl" hidden>当前团队 <select id="teamSelect" aria-label="当前团队"></select></label><section id="summary" class="summary" aria-label="合同空间概览"></section>
     <section class="workspace-card">
       <div class="toolbar">
         <div class="scope-tabs" role="tablist" aria-label="合同范围">

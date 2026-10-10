@@ -150,7 +150,16 @@ class MessageQueue:
                         self.pause(tid,'原生运行已中断，后续消息已暂停。')
                     return
                 last=answers[-1]
-                if last.get('finish') in {'tool-calls','unknown'} and not last.get('error'):return
+                if last.get('finish')=='tool-calls' and not last.get('error'):return
+                if last.get('finish')=='unknown' and not last.get('error'):
+                    parts=next(m for m in reversed(messages[start+1:]) if m['info']['role']=='assistant').get('parts',[])
+                    if any(p.get('type')=='tool' for p in parts):return
+                    if not any(p.get('type')=='text' and str(p.get('text','')).strip() for p in parts):
+                        message='模型返回了空响应，请重新发送；历史记录和已有成果仍保留'
+                        self.store.execute("UPDATE queued_messages SET status='failed',error=? WHERE id=?",(message,row['id']))
+                        self.pause(tid,'上一条消息未正常完成，确认后可继续队列。')
+                        if hasattr(self,'accounts'):self.accounts.finish(row['id'],True)
+                        return
                 if cloud:
                     async with self.manager.lock('e2b-'+t['workspace_id']):
                         await self.manager.e2b.collect_submissions(u,self.store.one('SELECT * FROM workspaces WHERE id=?',(t['workspace_id'],)),self.manager.e2b.handles[t['workspace_id']])

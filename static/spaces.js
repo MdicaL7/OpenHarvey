@@ -7,14 +7,17 @@ import {api,upload} from './api.js';
 import {filteredWorkspaces,workspaceRows} from './spaces-ui.js';
 
 const $=id=>document.getElementById(id);
+let selectedTeam=null;
+async function loadTeams(){const r=await api('/api/contract-memory/teams');selectedTeam=r.selected;$('teamControl').hidden=!r.items.length;$('teamSelect').replaceChildren(...r.items.map(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.name;o.selected=t.id===selectedTeam;return o;}));}
+$('teamSelect').onchange=async()=>{try{await api('/api/contract-memory/team-selection',{method:'POST',body:{team_id:$('teamSelect').value}});selectedTeam=$('teamSelect').value;await load();}catch(e){notice(e.message);}};
 let items=[],scope='active',busy=false;
 function notice(text='',busy=false){$('notice').hidden=!text;setLoadingStatus($('notice'),text,busy);}
 function render(){
-  const active=items.filter(item=>!item.deleted_at),deleted=items.filter(item=>item.deleted_at);
+  const visible=selectedTeam?items.filter(item=>item.team_id===selectedTeam):items;const active=visible.filter(item=>!item.deleted_at),deleted=visible.filter(item=>item.deleted_at);
   $('activeCount').textContent=active.length;$('starredCount').textContent=active.filter(item=>item.starred).length;$('deletedCount').textContent=deleted.length;
   $('summary').innerHTML=ui`<article><span>有效合同</span><b>${active.length}</b><small>独立合同空间</small></article><article><span>重点关注</span><b>${active.filter(item=>item.starred).length}</b><small>置顶优先处理</small></article><article><span>全部会话</span><b>${active.reduce((sum,item)=>sum+Number(item.thread_count),0)}</b><small>保留完整上下文</small></article><article><span>已存产出</span><b>${active.reduce((sum,item)=>sum+Number(item.artifact_count),0)}</b><small>摘要与审查报告</small></article>`;
   document.querySelectorAll('[data-scope]').forEach(button=>button.setAttribute('aria-selected',String(button.dataset.scope===scope)));
-  $('spaceList').innerHTML=workspaceRows(filteredWorkspaces(items,{scope,query:$('searchInput').value,sort:$('sortSelect').value}));
+  $('spaceList').innerHTML=workspaceRows(filteredWorkspaces(visible,{scope,query:$('searchInput').value,sort:$('sortSelect').value}));
 }
 async function load(){items=await api('/api/workspaces?scope=all');render();}
 function loggedOut(){document.body.dataset.auth='logged-out';$('authLoading').hidden=true;$('spacesApp').hidden=true;$('loginView').hidden=false;}
@@ -37,7 +40,7 @@ $('logout').onclick=async()=>{try{await signOut();}catch(error){notice(error.mes
 $('searchInput').oninput=render;$('sortSelect').onchange=render;
 document.querySelector('.scope-tabs').onclick=event=>{const button=event.target.closest('[data-scope]');if(button){scope=button.dataset.scope;render();}};
 $('uploadButton').onclick=()=>$('uploadInput').click();
-$('uploadInput').onchange=async event=>{const file=event.target.files[0];if(!file)return;notice(tr('正在解析并建立合同空间…'),true);$('uploadButton').disabled=true;try{const item=await upload('/api/workspaces',file);location.href=`/agent#${item.id}`;}catch(error){notice(error.message);}finally{event.target.value='';$('uploadButton').disabled=false;}};
+$('uploadInput').onchange=async event=>{const file=event.target.files[0];if(!file)return;notice(tr('正在解析并建立合同空间…'),true);$('uploadButton').disabled=true;try{const item=await api('/api/workspaces',{method:'POST',body:file,headers:{'X-Filename':encodeURIComponent(file.name),...(selectedTeam?{'X-Team-ID':selectedTeam}:{})}});location.href=`/agent#${item.id}`;}catch(error){notice(error.message);}finally{event.target.value='';$('uploadButton').disabled=false;}};
 $('spaceList').onclick=async event=>{
   const button=event.target.closest('[data-space-action]');if(!button||busy)return;
   const id=button.dataset.spaceId,item=items.find(row=>row.id===id);if(!item)return;
@@ -61,7 +64,7 @@ async function initialize(){
   try{
     await setupAuth();if(await exchangeCallback())return;
     if(location.pathname==='/login'){loggedOut();return;}
-    const me=await api('/api/me');await accountLanguage(me);$('username').innerHTML=accountIdentityHTML(me);await load();document.body.dataset.auth='ready';$('authLoading').hidden=true;$('spacesApp').hidden=false;void accountReady(me);
+    const me=await api('/api/me');await accountLanguage(me);await loadTeams();$('username').innerHTML=accountIdentityHTML(me);await load();document.body.dataset.auth='ready';$('authLoading').hidden=true;$('spacesApp').hidden=false;void accountReady(me);
     const message=new URLSearchParams(location.search).get('notice');if(message==='missing'){notice(tr('该合同空间已删除、不存在，或不属于当前账号。'));history.replaceState(null,'','/spaces');}
   }catch(error){
     if(error.status===401&&!callback)return;

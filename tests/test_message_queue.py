@@ -156,5 +156,14 @@ class MessageQueueTests(fixtures.WorkbenchTests):
         self.assertEqual(self.native(t)['messages'][-1]['parts'][0]['text'],'新指令')
         self.assertEqual(self.queue(t)['items'],[])
 
+    def test_completed_unknown_empty_response_fails_visibly_and_pauses_queue(self):
+        _,t=self.make_workspace();self.send(t,'请求保存报告');self.send(t,'后续消息');self.finish(t)
+        last=self.native(t)['messages'][-1];last['info']['finish']='unknown';last['parts']=[]
+        self.tick(t);state=self.queue(t)
+        self.assertTrue(state['paused']);self.assertEqual(state['items'][0]['status'],'failed')
+        self.assertIn('空响应',state['items'][0]['error'])
+        self.assertEqual(len(self.native(t)['messages']),2)
+
+
 for _name in list(vars(fixtures.WorkbenchTests)):
     if _name.startswith('test_') and _name not in vars(MessageQueueTests):setattr(MessageQueueTests,_name,None)

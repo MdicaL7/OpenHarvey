@@ -77,6 +77,9 @@ class TencentDBMemory:
         self.write_binding(u, t, off)
         if rt.config.get('e2b') or not rt.config.get('local', True):
             raise HTTPException(422, 'TencentDB Memory 当前接入仅支持本机运行，请选择其他模型或本机合同空间')
+        if getattr(self, 'contracts', None):
+            value = await self.contracts.prepare(u, t, rt, model)
+            if value is not None: return value
         binding = self.store.one('SELECT * FROM tdai_users WHERE user_id=?', (u['id'],))
         provider = self.store.one('SELECT * FROM providers WHERE org_id=? AND id=? AND enabled=1', (self.models.scope(u), PROVIDER))
         if not binding or not provider or not provider.get('secret'):
@@ -125,6 +128,12 @@ class TencentDBMemory:
     def prompt(memory):
         if not memory.get('enabled'):
             return '\n本轮未启用外部记忆；不要调用记忆桥接或应用历史中的记忆工具结果。本轮用户指令与当前合同材料仍有效。'
+        if memory.get('contract'):
+            return ('\n本轮使用合同记忆。自动整理的经验和工作偏好先形成待确认建议，须由用户在建议卡片或“经验与偏好”页面确认后才能长期生效；'
+                    '不要用对话中的口头承诺替代实际保存回执。原始记录仅用于恢复当前合同依据，未确认的偏好不能当成已生效工作约定。'
+                    '正式个人经验和团队已发布经验可以只读召回，须核对当前交易角色、条件、例外和原文；都不代表合同事项已批准。'
+                    '团队共享须经管理员审核，不开放原合同。用户增删改通过业务面板处理，不调用记忆写入接口。'
+                    '本轮不得调用旧个人 memory 工具；不能改变当前合同 Task；原文引用、风险方案与成果保存继续按现有规则执行。')
         return ('\n本轮通过独立 TencentDB Memory 服务使用记忆。记忆由后台异步提炼，口头确认不代表已落盘；'
                 '只有实际查询到记录或在独立面板确认后，才能说明记忆已保存。历史记忆只作工作经验参考，'
                 '须核对适用条件；不改变当前合同事实、风险方案、权限或审批状态。合同结论仍需当前原文依据。'

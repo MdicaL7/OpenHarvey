@@ -35,6 +35,7 @@ def main():
     add.add_argument("--password-env", help="从指定环境变量读取初始密码，否则交互输入")
     disable = sub.add_parser("disable-user")
     disable.add_argument("username")
+    disable.add_argument("--memory-admin-key-file", type=Path, help="同步停用独立 Memory 身份的控制端凭据文件")
     sub.add_parser("list-users")
     bootstrap = sub.add_parser("init-admin", help="指定默认组织首位管理员（只可初始化一次）")
     bootstrap.add_argument("username")
@@ -67,6 +68,21 @@ def main():
                 raise ValueError("请指定已有的有效账号")
         print("首位管理员已初始化")
     elif args.command == "disable-user":
+        target=store.one('SELECT * FROM users WHERE username=?',(args.username,))
+        if target and target['active'] and target['role']=='admin' and store.one("SELECT COUNT(*) AS n FROM users WHERE org_id=? AND active=1 AND role='admin'",(target['org_id'],))['n']<=1:
+            raise ValueError('必须保留至少一位有效管理员')
+        mapped=store.one("SELECT 1 FROM sqlite_master WHERE name='memory_identities'")
+        if target and mapped and store.one('SELECT 1 FROM memory_identities WHERE user_id=?',(target['id'],)):
+            import asyncio
+            from .settings import Settings
+            from .model_settings import Models
+            from .tencentdb_memory import TencentDBMemory
+            from .contract_memory import ContractMemory
+            actor=store.one("SELECT * FROM users WHERE org_id=? AND active=1 AND role='admin'",(target['org_id'],))
+            if not actor:raise ValueError('缺少本企业有效管理员')
+            if args.memory_admin_key_file:os.environ['CW_TDAI_ADMIN_KEY_FILE']=str(args.memory_admin_key_file.resolve())
+            models=Models(Settings(store,ROOT/'runtime/skills'))
+            asyncio.run(ContractMemory(store,models,TencentDBMemory(store,models)).sync_status(actor,target,False))
         with store.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("SELECT * FROM users WHERE username=?", (args.username,)).fetchone()

@@ -1,3 +1,4 @@
+import {setupMemorySuggestions} from './memory-suggestions.js';
 import {configureModelValue,modelOptionsHTML,modelUsable,availableModel} from './model-picker.js';
 import {accountLanguage} from './language-ui.js';
 import {t as tr,ui} from './i18n.js';
@@ -33,6 +34,7 @@ const redline=new RedlineEditor({
 });
 
 let identity=null;
+setupMemorySuggestions(()=>({teamId:workspace?.team_id,threadId:tid}));
 let workspace=null,tid=null,state={messages:[],status:{type:'idle'},documents:[]},selectedSkill=null;
 let stopStream=()=>{},epoch=0,renderTimer=null,source=null,sourceMode='original',artifactId=null;
 let restoring=false,restoreEpoch=0,buffer=[],sourceEpoch=0,sourceRenderEpoch=0,artifactEpoch=0;
@@ -331,7 +333,7 @@ async function selectThread(id){
   materialManager.close();
   if(id!==tid)await redline.close();
   if(id===tid&&!switching&&state.loaded)return;
-  saveDraft();stopStream();viewRequests.abort();viewRequests=new AbortController();clearTimeout(renderTimer);renderTimer=null;fullRender=true;streamingParts.clear();const view=++epoch;tid=id;sourceEpoch++;notice();
+  saveDraft();stopStream();viewRequests.abort();viewRequests=new AbortController();clearTimeout(renderTimer);renderTimer=null;fullRender=true;streamingParts.clear();const view=++epoch;tid=id;document.dispatchEvent(new Event('contract-memory-context'));sourceEpoch++;notice();
   modelCatalog=null;selectedModel=null;$('modelSelect').replaceChildren();
   restoring=false;switching=true;buffer=[];requestSignature='';updateControls();
   state.queue=null;renderQueue();

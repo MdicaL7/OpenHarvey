@@ -1,0 +1,168 @@
+{
+  "model": "deepseek-flash",
+  "prompt_version": "contract-v1",
+  "input": {
+    "messages": [
+      {
+        "id": "msg-60-days",
+        "role": "user",
+        "content": "合同 A 这次我提出可以接受60天账期，但必须收取20%预付款，仅限本项目。这是我的意见，没有正式审批。"
+      },
+      {
+        "id": "msg-style",
+        "role": "user",
+        "content": "以后给我的报告请先列风险，再列依据，最后列建议。"
+      },
+      {
+        "id": "msg-draft",
+        "role": "assistant",
+        "content": "我建议接受60天账期，并可以生成建议稿。目前没有实际保存回执。"
+      }
+    ],
+    "prior_records": []
+  },
+  "recorded_at": "2026-10-09T16:19:31.498Z",
+  "code": {
+    "output": [
+      {
+        "scene_name": "团队在围绕合同 A 讨论账期与预付款商务条款",
+        "message_ids": [
+          "msg-60-days",
+          "msg-draft"
+        ],
+        "memories": [
+          {
+            "content": "针对合同 A，有成员提出可接受 60 天账期，但必须收取 20% 预付款，且该条件仅限本项目；该意见尚未经过正式审批，属于待确认的商务方案。",
+            "type": "work_fact",
+            "priority": 85,
+            "source_message_ids": [
+              "msg-60-days"
+            ],
+            "metadata": {
+              "work_object": "合同 A",
+              "status": "pending_confirmation"
+            }
+          },
+          {
+            "content": "合同 A 的 60 天账期加 20% 预付款方案目前仅为个人意见，尚未获得正式审批，也未生成或保存任何正式建议稿回执。",
+            "type": "work_task",
+            "priority": 80,
+            "source_message_ids": [
+              "msg-60-days",
+              "msg-draft"
+            ],
+            "metadata": {
+              "status": "todo"
+            }
+          }
+        ]
+      },
+      {
+        "scene_name": "团队在围绕报告输出格式约定汇报结构规范",
+        "message_ids": [
+          "msg-style"
+        ],
+        "memories": [
+          {
+            "content": "团队约定后续报告的输出结构应统一为：先列风险，再列依据，最后列建议。",
+            "type": "work_method",
+            "priority": 90,
+            "source_message_ids": [
+              "msg-style"
+            ],
+            "metadata": {
+              "scope": "team",
+              "method_type": "sop"
+            }
+          }
+        ]
+      }
+    ],
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 2675,
+      "completion_tokens": 363,
+      "total_tokens": 3038,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 2675
+    }
+  },
+  "contract": {
+    "output": {
+      "records": [
+        {
+          "content": "用户就合同 A 提出：可以接受60天账期，但必须收取20%预付款，仅限本项目；该表述为用户意见，没有正式审批。",
+          "kind": "human_opinion",
+          "topic": "付款条件",
+          "perspective": "我方",
+          "conditions": [
+            "合同 A",
+            "仅限本项目"
+          ],
+          "exceptions": [],
+          "business_state": "proposed",
+          "validity": "active",
+          "source_ids": [
+            "msg-60-days"
+          ],
+          "document_refs": [],
+          "supersedes_ids": []
+        },
+        {
+          "content": "用户偏好：以后给其的报告先列风险，再列依据，最后列建议。",
+          "kind": "preference",
+          "topic": "报告格式",
+          "perspective": null,
+          "conditions": [],
+          "exceptions": [],
+          "business_state": "confirmed",
+          "validity": "active",
+          "source_ids": [
+            "msg-style"
+          ],
+          "document_refs": [],
+          "supersedes_ids": []
+        },
+        {
+          "content": "助手建议接受60天账期，并表示可以生成建议稿；该内容仅为助手建议，且没有实际保存回执。",
+          "kind": "agent_suggestion",
+          "topic": "付款条件",
+          "perspective": null,
+          "conditions": [
+            "合同 A"
+          ],
+          "exceptions": [],
+          "business_state": "proposed",
+          "validity": "active",
+          "source_ids": [
+            "msg-draft"
+          ],
+          "document_refs": [],
+          "supersedes_ids": []
+        }
+      ]
+    },
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 540,
+      "completion_tokens": 279,
+      "total_tokens": 819,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 284
+    }
+  },
+  "contract_checks": {
+    "preserves_sixty_days": true,
+    "preserves_prepayment": true,
+    "preserves_project_limit": true,
+    "structured_conditions": true,
+    "no_formal_approval": true,
+    "assistant_suggestion": true
+  }
+}

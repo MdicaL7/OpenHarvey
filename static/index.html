@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/static/account-ui.css?v=20260921-tasks">
 <link rel="stylesheet" href="/static/workspace-controls.css?v=20260913-5">
 <link rel="stylesheet" href="/static/redline.css">
-<script defer src="/static/site-telemetry.js?v=20260914-1"></script><link rel="stylesheet" href="/static/i18n.css?v=20260914-1"><script type="module" src="/static/language-ui.js"></script></head>
+<script defer src="/static/site-telemetry.js?v=20260914-1"></script><link rel="stylesheet" href="/static/i18n.css?v=20260914-1"><script type="module" src="/static/language-ui.js"></script><link rel="stylesheet" href="/static/memory-suggestions.css"></head>
 <body data-auth="loading">
 <div id="authLoading" class="auth-loading" role="status"><p id="authLoadingText" class="loading-status" aria-busy="true"><span class="loading-spinner" aria-hidden="true"></span><span data-no-i18n><span data-initial-locale="zh-CN">正在打开工作台…</span><span data-initial-locale="en">Opening workspace…</span></span></p><button id="authRetry" hidden>重新连接</button></div>
 <div id="loginView" class="login-view" hidden>
@@ -32,7 +32,7 @@
 <header>
   <div class="brand-lockup"><img src="/static/brand/openharvey.svg" width="28" height="28" alt=""><h1>OpenHarvey</h1></div>
   <details id="workspaceSwitcher" class="workspace-switcher"><summary><span>我的合同</span><b id="fname">选择合同</b><span aria-hidden="true">⌄</span></summary><div class="workspace-menu"><label class="workspace-search"><span>切换合同</span><input id="workspaceSearch" placeholder="搜索合同…" aria-label="搜索我的合同" autocomplete="off"></label><div id="workspaceList"></div><button id="uploadButton" class="new-contract">＋ 上传新合同</button></div></details>
-  <a href="/spaces" id="spacesLink" class="shell-toggle">合同空间</a>
+  <a href="/experience">经验与偏好</a><a href="/spaces" id="spacesLink" class="shell-toggle">合同空间</a>
   <nav><span id="username"></span><button id="openSettings" class="shell-toggle">设置</button><button id="logout" hidden class="shell-toggle">退出</button></nav>
   <button id="toggleRail" class="shell-toggle panel-toggle" aria-controls="workspaceRail" aria-expanded="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16"/><path class="panel-arrow" d="m15 9-3 3 3 3"/></svg><span>工作区</span></button>
 <button id="toggleSource" class="shell-toggle panel-toggle" aria-controls="docPane" aria-expanded="true">合同原文</button><button id="toggleArtifact" class="shell-toggle panel-toggle" aria-controls="artPane" aria-expanded="true">产出物</button>

@@ -1,0 +1,75 @@
+{
+  "recorded": "2026-10-10T01:35:33Z",
+  "origin": "http://127.0.0.1:8081",
+  "checks": [
+    {
+      "name": "confirmed personal and published team memories",
+      "passed": true
+    },
+    {
+      "name": "same user different team has no inherited personal memory",
+      "passed": true
+    },
+    {
+      "name": "same user different team has no inherited team memory",
+      "passed": true
+    },
+    {
+      "name": "another member cannot see personal memory",
+      "passed": true
+    },
+    {
+      "name": "another member can see approved team summary",
+      "passed": true
+    },
+    {
+      "name": "another member cannot open source contract",
+      "passed": true
+    },
+    {
+      "name": "team source stays restricted",
+      "passed": true
+    },
+    {
+      "name": "member cannot approve shared proposal",
+      "passed": true
+    },
+    {
+      "name": "Core rejects forged user even with valid member key",
+      "passed": true
+    },
+    {
+      "name": "Core denies legacy write bypass",
+      "passed": true
+    },
+    {
+      "name": "membership removal revokes application memory access",
+      "passed": true
+    },
+    {
+      "name": "membership removal revokes direct Core recall",
+      "passed": true
+    },
+    {
+      "name": "account disable revokes upstream user key",
+      "passed": true
+    },
+    {
+      "name": "repeat create is idempotent",
+      "passed": true
+    },
+    {
+      "name": "stale edit is rejected",
+      "passed": true
+    },
+    {
+      "name": "deleted entry disappears immediately",
+      "passed": true
+    }
+  ],
+  "team_ids": [
+    "bca79511bf37e98809f1203a",
+    "226f7889100824c1adfebd1e"
+  ],
+  "model": "deepseek-flash"
+}

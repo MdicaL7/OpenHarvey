@@ -156,6 +156,7 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
                         ("" if include_deleted else " AND deleted_at IS NULL"), (wid, u["id"]))
         if not row:
             raise HTTPException(404, "合同工作区不存在")
+        if row.get('team_id'):contract_memory.member(u,row['team_id'])
         return row
 
     def thread(u, tid, writable=False):
@@ -163,6 +164,7 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
                         "WHERE t.id=? AND w.user_id=? AND w.deleted_at IS NULL", (tid, u["id"]))
         if not row:
             raise HTTPException(404, "对话不存在")
+        workspace(u,row['workspace_id'])
         if writable and store.one('SELECT security_blocked FROM workspaces WHERE id=?',(row['workspace_id'],))['security_blocked']:raise HTTPException(409,'旧空间的共享配置已撤销，历史和文件保留，请新建空间继续')
         if writable and (row["archived_at"] or row["deleted_at"]):
             raise HTTPException(409, "此对话只读，请先恢复后再继续")
@@ -180,6 +182,7 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
                 row = None
             if not row:
                 raise HTTPException(404, "原文不存在或不属于当前账号")
+            workspace(u,row['workspace_id'])
             return row
         t = thread(u, tid)
         row = next((d for d in documents_for(u, t, history=True) if d["id"] == docid), None)
@@ -353,6 +356,10 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
     register_trial_proxy(app,accounts)
     register_settings(app, settings, user, runtime)
     register_removed_memory(app)
+    from .contract_memory import ContractMemory, register_contract_memory
+    app.state.contract_memory = contract_memory = ContractMemory(store, models, tdai)
+    tdai.contracts = contract_memory
+    register_contract_memory(app, user, contract_memory, ROOT)
     def labs_status(u):
         return {'revision': store.one('SELECT settings_revision FROM users WHERE id=?', (u['id'],))['settings_revision'],
                 'materials_enabled': materials.enabled(store,u)}
@@ -479,7 +486,7 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
             LEFT JOIN threads t ON t.workspace_id=w.id
             LEFT JOIN artifacts a ON a.workspace_id=w.id
             LEFT JOIN documents d ON d.workspace_id=w.id
-            WHERE w.user_id=? AND {where}
+            WHERE w.user_id=? AND {where} AND (w.team_id IS NULL OR EXISTS (SELECT 1 FROM team_members tm JOIN teams mt ON mt.id=tm.team_id JOIN users mu ON mu.id=tm.user_id WHERE tm.team_id=w.team_id AND tm.user_id=w.user_id AND tm.active=1 AND mt.org_id=mu.org_id))
             GROUP BY w.id
             ORDER BY w.starred DESC, w.last_activity_at DESC, w.created DESC
         """, (u["id"],))
@@ -487,11 +494,13 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
     @app.post("/api/workspaces")
     async def new_workspace(request: Request):
         u, wid = user(request), secrets.token_hex(12)
+        selected = request.headers.get("x-team-id")
+        team = contract_memory.member(u, selected) if selected else contract_memory.selected(u)
         doc = await upload(request, u, wid)
         created = time.time()
         store.execute("INSERT INTO workspaces(id,user_id,document_id,title,created,last_activity_at) VALUES(?,?,?,?,?,?)",
                       (wid, u["id"], doc["id"], doc["filename"], created, created))
-        store.execute('UPDATE workspaces SET backend=? WHERE id=?',('e2b' if e2b.enabled else 'local',wid))
+        store.execute('UPDATE workspaces SET backend=?,team_id=? WHERE id=?',('e2b' if e2b.enabled else 'local',team['id'] if team else None,wid))
         # Source upload remains usable if the runtime is down. Creating a thread can be retried.
         return workspace(u, wid)
 
@@ -1088,7 +1097,7 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
         if t["archived_at"] or t["deleted_at"]:
             raise HTTPException(409, "此对话只读，请先恢复后再保存")
         w = store.one("SELECT * FROM workspaces WHERE id=?", (t["workspace_id"],))
-        u = store.one("SELECT id,username FROM users WHERE id=?", (w["user_id"],))
+        u = store.one("SELECT * FROM users WHERE id=?", (w["user_id"],))
         async with locks.setdefault(t["id"], asyncio.Lock()):
             t = thread(u, t["id"], True)
             content = bytearray()
@@ -1105,6 +1114,7 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
                         "WHERE a.id=? AND w.user_id=? AND w.deleted_at IS NULL", (aid, u["id"]))
         if not row:
             raise HTTPException(404, "产出物不存在")
+        workspace(u,row["workspace_id"])
         dest = store.user_root(u["id"]) / "published" / aid
         if not (dest/"report.json").is_file():
             raise HTTPException(410, "产出物文件缺失，请联系管理员恢复")
