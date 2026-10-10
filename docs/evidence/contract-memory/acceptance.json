@@ -1,0 +1,38 @@
+{
+  "python": {
+    "tests": 337,
+    "passed": true
+  },
+  "frontend": {
+    "tests": 155,
+    "passed": true
+  },
+  "contract_core": {
+    "tests": 10,
+    "passed": true
+  },
+  "live_api": {
+    "tests": 16,
+    "passed": true
+  },
+  "plugin_build": true,
+  "redline_build": true,
+  "contract_typescript_check": true,
+  "proxy_typescript": {
+    "baseline_errors": 60,
+    "current_errors": 60,
+    "new_errors": 0
+  },
+  "restart_persistence": true,
+  "git": {
+    "openharvey": "a8921a64596de3ac4b1bc4585e83cee73d00ea4d",
+    "memory": "41b3e0a68235b2f199acdd1c8f680b858920de5a"
+  },
+  "addresses": {
+    "workbench": "http://127.0.0.1:8081/spaces",
+    "experience": "http://127.0.0.1:8081/experience",
+    "core": "http://127.0.0.1:8430",
+    "proxy": "http://127.0.0.1:8106"
+  },
+  "workflow_recovery": "Empty model response failed visibly; failed report save callback fixed; report published with real receipt."
+}

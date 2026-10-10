@@ -1,0 +1,20 @@
+{
+  "model": "deepseek-flash",
+  "contract_b": {
+    "workspace_id": "84b63a4c668fa7f5b8f0584f",
+    "artifact_id": "ecd63d9a18e886111530d78c",
+    "saved": true,
+    "content_checks_passed": true
+  },
+  "direct_provider": {
+    "thread_id": "ff57ff9e56bd3d49b055fe8d",
+    "actual_response": "连接正常",
+    "binding_enabled": false,
+    "l0_marker_matches": 0
+  },
+  "contract_a": {
+    "workspace_id": "b37d66a3a9fe939ca2f111f6",
+    "recall_private_entry": "c75b4aed-0a4e-40c4-aac3-2bc4af55f78f",
+    "recall_team_entry": "e2cdcd1b-2baf-49eb-851c-94542542dbe1"
+  }
+}

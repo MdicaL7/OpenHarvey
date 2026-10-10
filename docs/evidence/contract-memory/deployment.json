@@ -1,0 +1,20 @@
+{
+  "images": [
+    {
+      "name": "tdai-contract-core",
+      "id": "sha256:07104b2fd1b5b62a62a2d96cf87778c1bab9f59b8686f8f24a29ab213dbddcda",
+      "base_revision": "8b86874a"
+    },
+    {
+      "name": "tdai-contract-proxy",
+      "id": "sha256:e0f73bddce2a1b3bef30bbd28a3a7265af8290c783e155d3ccdc824cd8869c3c",
+      "base_revision": "8b86874a"
+    }
+  ],
+  "ports": {
+    "core": 8430,
+    "proxy": 8106
+  },
+  "source_sha256": "d38ac0e44a13eded6dddcc6e3bf0fbde170832ade7037f91106baaa68626276c",
+  "git": "41b3e0a68235b2f199acdd1c8f680b858920de5a"
+}
