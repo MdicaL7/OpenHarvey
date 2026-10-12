@@ -1,1 +1,158 @@
-.memory-suggestions{border:1px solid #bcd8c7;background:#f5faf6;border-radius:10px;padding:12px 16px;margin:12px}.memory-suggestions summary{cursor:pointer;color:#326b4c}.memory-suggestions article{padding:12px 0;border-top:1px solid #d8e5dc}.memory-suggestions p{white-space:pre-wrap;line-height:1.7}.memory-suggestions button{margin-right:8px}.memory-suggestions a{color:#326b4c}
+.memory-suggestions {
+  --ms-bg: var(--good-bg, #ebf6f0);
+  --ms-surface: var(--surface, #ffffff);
+  --ms-surface-hover: var(--surface-subtle, #f8fafc);
+  --ms-ink: var(--ink, #152033);
+  --ms-ink-2: var(--ink-2, #475569);
+  --ms-accent: var(--good, #157048);
+  --ms-focus: var(--accent, #315fd3);
+  --ms-border: color-mix(in srgb, var(--ms-accent) 28%, var(--line-strong, #bcd8c7));
+  --ms-divider: color-mix(in srgb, var(--ms-accent) 18%, var(--line, #d8e5dc));
+  --ms-btn-border: var(--line-strong, #cbd5e1);
+  color-scheme: light dark;
+  flex: none;
+  max-height: 68vh;
+  overflow-y: auto;
+  margin: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--ms-border);
+  border-radius: var(--r-lg, 10px);
+  background: var(--ms-bg);
+  color: var(--ms-ink);
+  font: 12.5px/1.65 var(--sans, "Avenir Next", "PingFang SC", sans-serif);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(16, 24, 40, .05));
+}
+
+@media (prefers-color-scheme: dark) {
+  .memory-suggestions {
+    --ms-bg: var(--good-bg, #1b2f26);
+    --ms-surface: var(--surface, #141e2d);
+    --ms-surface-hover: var(--surface-subtle, #192536);
+    --ms-ink: var(--ink, #f5f7fb);
+    --ms-ink-2: var(--ink-2, #c7d2e2);
+    --ms-accent: var(--good, #7fd0a5);
+    --ms-focus: var(--accent, #83aaff);
+    --ms-border: color-mix(in srgb, var(--ms-accent) 30%, var(--line-strong, #3c4e68));
+    --ms-divider: color-mix(in srgb, var(--ms-accent) 22%, var(--line, #27364b));
+    --ms-btn-border: var(--line-strong, #3c4e68);
+  }
+}
+
+.memory-suggestions details {
+  min-width: 0;
+}
+
+.memory-suggestions summary {
+  cursor: pointer;
+  color: var(--ms-accent);
+  font-weight: 600;
+  line-height: 1.5;
+  border-radius: var(--r-sm, 6px);
+  overflow-wrap: anywhere;
+}
+
+.memory-suggestions summary:hover {
+  color: var(--ms-ink);
+}
+
+.memory-suggestions article {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--ms-divider);
+  min-width: 0;
+}
+
+.memory-suggestions article + article {
+  margin-top: 8px;
+}
+
+.memory-suggestions strong {
+  display: block;
+  flex: 0 0 100%;
+  min-width: 0;
+  color: var(--ms-ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.memory-suggestions p {
+  flex: 0 0 100%;
+  min-width: 0;
+  margin: 0 0 4px;
+  color: var(--ms-ink-2);
+  white-space: pre-wrap;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.memory-suggestions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 5px 12px;
+  margin: 0;
+  border: 1px solid var(--ms-btn-border);
+  border-radius: var(--r-md, 7px);
+  background: var(--ms-surface);
+  color: var(--ms-ink);
+  font: 600 12px/1.4 var(--sans, "Avenir Next", "PingFang SC", sans-serif);
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.memory-suggestions button:first-of-type {
+  border-color: color-mix(in srgb, var(--ms-accent) 45%, var(--ms-btn-border));
+  color: var(--ms-accent);
+}
+
+.memory-suggestions button:hover:not(:disabled) {
+  background: var(--ms-surface-hover);
+  border-color: var(--ms-accent);
+  color: var(--ms-accent);
+}
+
+.memory-suggestions button:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+.memory-suggestions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 4px 6px;
+  border-radius: var(--r-sm, 6px);
+  color: var(--ms-accent);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.memory-suggestions a:hover {
+  color: var(--ms-ink);
+  background: color-mix(in srgb, var(--ms-accent) 12%, transparent);
+}
+
+.memory-suggestions :is(summary, button, a):focus-visible {
+  outline: 2px solid var(--ms-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .memory-suggestions {
+    margin: 8px 10px;
+    padding: 10px 12px;
+  }
+}
