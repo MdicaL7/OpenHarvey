@@ -1,46 +1,32 @@
 {
   "result": "PASS",
-  "python_syntax": "3 scripts compiled without execution errors",
-  "stage_materialization": [
-    {
-      "stage": "T1_before_guarantee",
-      "result": "PASS",
-      "history_inputs": 13,
-      "future_inputs": 0,
-      "queries": 1
-    },
-    {
-      "stage": "T2_after_guarantee",
-      "result": "PASS",
-      "history_inputs": 14,
-      "future_inputs": 0,
-      "queries": 1
-    },
-    {
-      "stage": "T3_before_withdrawal",
-      "result": "PASS",
-      "history_inputs": 17,
-      "future_inputs": 0,
-      "queries": 1
-    },
-    {
-      "stage": "T4_internal_withdrawal_only",
-      "result": "PASS",
-      "history_inputs": 24,
-      "future_inputs": 0,
-      "queries": 1
-    },
-    {
-      "stage": "T5_current_policy",
-      "result": "PASS",
-      "history_inputs": 28,
-      "future_inputs": 4,
-      "queries": 20
-    }
+  "phase": "offline_preparation",
+  "python_tests": {
+    "passed": 32,
+    "failed": 0,
+    "command": "python3 -m unittest discover -s openharvey_contract_memory_pack/07_tools/tests -v"
+  },
+  "core_tests": {
+    "passed": 15,
+    "failed": 0,
+    "command": "node --import /tmp/contract-memory-pack-v2-node/node_modules/tsx/dist/loader.mjs --test tests/contract-completion.test.ts tests/contract-memory.test.ts"
+  },
+  "core_changed_sources_typecheck": "PASS",
+  "docx_visual_pages": 33,
+  "real_model_calls": 0,
+  "real_application_uploads": 0,
+  "real_judge_calls": 0,
+  "runtime_services_changed": false,
+  "pack_sha": "37374496c51bb3099a473c3201903e5ff487921a0f8aed345b57830e29e7116c",
+  "source_baselines": {
+    "openharvey": "4ee9e2a0f7f45005d0e8412ce3b3fe7709b349a9",
+    "memory_component": "41b3e0a68235b2f199acdd1c8f680b858920de5a"
+  },
+  "limitations": [
+    "CLI real-account availability and quota unverified",
+    "Docker-to-local adapter connectivity unverified",
+    "Full live workflow unexecuted pending user dataset review",
+    "Auxiliary request and runtime fault/restart require genuine operator evidence"
   ],
-  "diagnostic_self_tests": [
-    "empty results explicitly report all 24 missing",
-    "controlled forbidden-authority and cross-tenant fixture flags both detected"
-  ],
-  "scope": "Tool behavior tests only; controlled examples are not model outputs or application evaluation."
+  "scope": "These are materials, mocked API/CLI and Core-unit checks; not application or legal correctness scores."
 }

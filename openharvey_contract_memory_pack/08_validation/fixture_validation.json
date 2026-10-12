@@ -1,15 +1,14 @@
 {
   "result": "PASS",
-  "checks": 995,
-  "contracts": 10,
-  "history_contracts": 6,
-  "future_contracts": 4,
-  "clauses": 140,
+  "checks": 1350,
+  "contracts": 11,
+  "clauses": 154,
   "source_events": 21,
-  "queries": 24,
-  "current_gold_memories": 15,
-  "memory_versions": 21,
-  "temporal_stages": 5,
+  "original_queries": 24,
+  "cases": 58,
+  "steps": 156,
+  "categories": 12,
+  "pack_sha": "37374496c51bb3099a473c3201903e5ff487921a0f8aed345b57830e29e7116c",
   "errors": [],
-  "scope": "Local fixture integrity only. No OpenHarvey runtime, model extraction, retrieval or memory writeback was executed."
+  "scope": "Offline materials/manifests only. No real model, application upload, extraction, publication or judge run."
 }

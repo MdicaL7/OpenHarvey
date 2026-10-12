@@ -1,0 +1,7 @@
+{
+  "roles": {
+    "memory_extraction": {"provider": "codex_subscription", "model": "gpt-6.1-sol", "timeout_seconds": 180},
+    "judge": {"provider": "codex_subscription", "model": "gpt-6.1-sol", "timeout_seconds": 180}
+  },
+  "available_alternative": {"provider": "openai_compatible", "base_url": "https://api.deepseek.com", "api_key_env": "DEEPSEEK_API_KEY", "model": "deepseek-flash", "extra_body": {"thinking": {"type": "disabled"}}}
+}

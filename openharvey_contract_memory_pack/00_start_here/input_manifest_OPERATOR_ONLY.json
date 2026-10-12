@@ -190,5 +190,11 @@
     "kind": "identity_context",
     "available_at": "2026-01-01T00:00:00+08:00",
     "path": "01_history/identity_map.txt"
+  },
+  {
+    "input_id": "F01-R2",
+    "kind": "revision_contract",
+    "available_at": "2026-08-21T09:00:00+08:00",
+    "path": "03_future/contracts_txt/F01_R2_工业控制终端补充采购合同.txt"
   }
 ]

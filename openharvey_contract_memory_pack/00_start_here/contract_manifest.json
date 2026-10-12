@@ -5,7 +5,11 @@
     "docx_path": "01_history/contracts_docx/H01_工业控制终端采购合同.docx",
     "txt_path": "01_history/contracts_txt/H01_工业控制终端采购合同.txt",
     "clauses": 14,
-    "text_characters": 2378
+    "text_characters": 2196,
+    "contract_number": "HZ-CG-2026-001",
+    "version": "R1",
+    "txt_sha256": "f2a63ec35e9ee76fab755d4dd1b3e96131caf7173f246d841a8bd80b3ca33832",
+    "docx_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e"
   },
   {
     "doc_id": "H02",
@@ -13,7 +17,11 @@
     "docx_path": "01_history/contracts_docx/H02_控制终端配套组件销售合同.docx",
     "txt_path": "01_history/contracts_txt/H02_控制终端配套组件销售合同.txt",
     "clauses": 14,
-    "text_characters": 2096
+    "text_characters": 1908,
+    "contract_number": "HZ-XS-2026-001",
+    "version": "R1",
+    "txt_sha256": "9f283ea38471e511b17d7747a9be674fa745107390c77b9a94d9590547b54aaa",
+    "docx_sha256": "e05947a9aac966cbff77bd0e926e000e24b56f4012d0cdffb6a112b33283e775"
   },
   {
     "doc_id": "H03",
@@ -21,7 +29,11 @@
     "docx_path": "01_history/contracts_docx/H03_流程协作软件试点服务合同.docx",
     "txt_path": "01_history/contracts_txt/H03_流程协作软件试点服务合同.txt",
     "clauses": 14,
-    "text_characters": 2290
+    "text_characters": 2109,
+    "contract_number": "HZ-CG-2026-002",
+    "version": "R1",
+    "txt_sha256": "a81845689d1aafd94c0530be891794872191fbb5be59df56fd67d465eb444dee",
+    "docx_sha256": "451284cb8546ccbfad90a4b9c9f301d25b085c80e4058bee095c73baf615e482"
   },
   {
     "doc_id": "H04",
@@ -29,7 +41,11 @@
     "docx_path": "01_history/contracts_docx/H04_商品目录数据清洗服务合同.docx",
     "txt_path": "01_history/contracts_txt/H04_商品目录数据清洗服务合同.txt",
     "clauses": 14,
-    "text_characters": 2261
+    "text_characters": 2065,
+    "contract_number": "HZ-CG-2026-003",
+    "version": "R1",
+    "txt_sha256": "586bb6bb607a1f7cf389825a17a0e4137258de5aa7f088bd749ffef77d942c96",
+    "docx_sha256": "71f67d6d1d1bb3747bb63b3579f30f2aed81bc09a8b6ccd8174d67f1311bdf41"
   },
   {
     "doc_id": "H05",
@@ -37,7 +53,11 @@
     "docx_path": "01_history/contracts_docx/H05_设备运行数据处理服务合同.docx",
     "txt_path": "01_history/contracts_txt/H05_设备运行数据处理服务合同.txt",
     "clauses": 14,
-    "text_characters": 2177
+    "text_characters": 1995,
+    "contract_number": "HZ-XS-2026-002",
+    "version": "R1",
+    "txt_sha256": "513d45ed74cf6e69e42593f2aa2d5c1d1e9aa3c5dda7a0fbc00fb3673162082e",
+    "docx_sha256": "4d6e1d07cad227241588b7b533674d19249ddedf8a0d6eea8baf61085133a36f"
   },
   {
     "doc_id": "H06",
@@ -45,7 +65,11 @@
     "docx_path": "01_history/contracts_docx/H06_产品交流会会务服务合同.docx",
     "txt_path": "01_history/contracts_txt/H06_产品交流会会务服务合同.txt",
     "clauses": 14,
-    "text_characters": 2133
+    "text_characters": 1943,
+    "contract_number": "HZ-CG-2026-004",
+    "version": "R1",
+    "txt_sha256": "6d5d0bb32b2b7dc9f7a2dd5baca352d08b1606b18df134bc7c757db81a173bb5",
+    "docx_sha256": "96669ab08e5504c29f5c7dd25ee018965bac965ce03913da2b070bbd3d55b076"
   },
   {
     "doc_id": "F01",
@@ -53,7 +77,11 @@
     "docx_path": "03_future/contracts_docx/F01_工业控制终端补充采购合同.docx",
     "txt_path": "03_future/contracts_txt/F01_工业控制终端补充采购合同.txt",
     "clauses": 14,
-    "text_characters": 2022
+    "text_characters": 1836,
+    "contract_number": "HZ-CG-2026-005",
+    "version": "R1",
+    "txt_sha256": "81bd134341685baf088ca2e08af1a49205eac5c7ceb5b5029d9e2994792d6a3e",
+    "docx_sha256": "26ad884e817448020e49b48ce5e2b56c6cd7dd6c2e9c2df9191ef517cca5925b"
   },
   {
     "doc_id": "F02",
@@ -61,7 +89,11 @@
     "docx_path": "03_future/contracts_docx/F02_协同接口开发及许可服务合同.docx",
     "txt_path": "03_future/contracts_txt/F02_协同接口开发及许可服务合同.txt",
     "clauses": 14,
-    "text_characters": 2256
+    "text_characters": 2064,
+    "contract_number": "HZ-XS-2026-003",
+    "version": "R1",
+    "txt_sha256": "dad2a803639ffdde6b4cbf0e28745b5c98cea1dbe42a97e128095e67cf6eb5ae",
+    "docx_sha256": "3010f59d2ebc7819b4918c206a985f1d16ff3227762744d9028f6300dc4e9587"
   },
   {
     "doc_id": "F03",
@@ -69,7 +101,11 @@
     "docx_path": "03_future/contracts_docx/F03_流程协作软件年度服务合同.docx",
     "txt_path": "03_future/contracts_txt/F03_流程协作软件年度服务合同.txt",
     "clauses": 14,
-    "text_characters": 2171
+    "text_characters": 1979,
+    "contract_number": "HZ-CG-2026-006",
+    "version": "R1",
+    "txt_sha256": "f83f765dd79435edb4734c2f798f2d18d4725b1c1c3df31bb91ac5f18556eb3e",
+    "docx_sha256": "c67572c3b664e4610bb4f71177a9224be91bd32c132cfa9361e8891ad066ff06"
   },
   {
     "doc_id": "F04",
@@ -77,6 +113,22 @@
     "docx_path": "03_future/contracts_docx/F04_商品知识库数据加工服务合同.docx",
     "txt_path": "03_future/contracts_txt/F04_商品知识库数据加工服务合同.txt",
     "clauses": 14,
-    "text_characters": 2131
+    "text_characters": 1937,
+    "contract_number": "HZ-CG-2026-007",
+    "version": "R1",
+    "txt_sha256": "d3fdb92cf78d0d982602bd0f8e3c78c12fc2eb9bca384c492e28d6691f7c1de3",
+    "docx_sha256": "ac576f55ca0e127a844cc953a5520eb3b4bb66c238ea9f5db475e7fbf85c2819"
+  },
+  {
+    "doc_id": "F01-R2",
+    "split": "future",
+    "docx_path": "03_future/contracts_docx/F01_R2_工业控制终端补充采购合同.docx",
+    "txt_path": "03_future/contracts_txt/F01_R2_工业控制终端补充采购合同.txt",
+    "clauses": 14,
+    "text_characters": 1848,
+    "contract_number": "HZ-CG-2026-005",
+    "version": "R2",
+    "txt_sha256": "badee8d4157cb24aac8e6311e1b62b2b2dbee8349dfb588d6380316b6a45ad53",
+    "docx_sha256": "c74ef813f7c5e1a958f2f1bcb8c8741edea6e47a654cbabdaffcfab1b1ccb98d"
   }
 ]

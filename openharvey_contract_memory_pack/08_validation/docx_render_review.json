@@ -1,0 +1,73 @@
+{
+  "documents": [
+    {
+      "doc_id": "H01",
+      "docx_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "H02",
+      "docx_sha256": "e05947a9aac966cbff77bd0e926e000e24b56f4012d0cdffb6a112b33283e775",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "H03",
+      "docx_sha256": "451284cb8546ccbfad90a4b9c9f301d25b085c80e4058bee095c73baf615e482",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "H04",
+      "docx_sha256": "71f67d6d1d1bb3747bb63b3579f30f2aed81bc09a8b6ccd8174d67f1311bdf41",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "H05",
+      "docx_sha256": "4d6e1d07cad227241588b7b533674d19249ddedf8a0d6eea8baf61085133a36f",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "H06",
+      "docx_sha256": "96669ab08e5504c29f5c7dd25ee018965bac965ce03913da2b070bbd3d55b076",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "F01",
+      "docx_sha256": "26ad884e817448020e49b48ce5e2b56c6cd7dd6c2e9c2df9191ef517cca5925b",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "F02",
+      "docx_sha256": "3010f59d2ebc7819b4918c206a985f1d16ff3227762744d9028f6300dc4e9587",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "F03",
+      "docx_sha256": "c67572c3b664e4610bb4f71177a9224be91bd32c132cfa9361e8891ad066ff06",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "F04",
+      "docx_sha256": "ac576f55ca0e127a844cc953a5520eb3b4bb66c238ea9f5db475e7fbf85c2819",
+      "exit_code": 0,
+      "pages": 3
+    },
+    {
+      "doc_id": "F01-R2",
+      "docx_sha256": "c74ef813f7c5e1a958f2f1bcb8c8741edea6e47a654cbabdaffcfab1b1ccb98d",
+      "exit_code": 0,
+      "pages": 3
+    }
+  ],
+  "visual_review": "PASS: every final page inspected; Chinese glyphs, headings, margins, signatures and clipping checked",
+  "real_models_executed": false,
+  "total_pages": 33
+}

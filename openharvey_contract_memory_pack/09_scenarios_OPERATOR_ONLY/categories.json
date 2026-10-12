@@ -1,0 +1,84 @@
+{
+  "facts": {
+    "title": "L1 事实准确性",
+    "layers": [
+      "L1"
+    ]
+  },
+  "nature": {
+    "title": "L1 信息性质",
+    "layers": [
+      "L1"
+    ]
+  },
+  "evidence": {
+    "title": "L1 证据与状态",
+    "layers": [
+      "L1"
+    ]
+  },
+  "experience": {
+    "title": "L2 经验沉淀",
+    "layers": [
+      "L2"
+    ]
+  },
+  "applicability": {
+    "title": "L2 跨合同适用",
+    "layers": [
+      "L2"
+    ]
+  },
+  "preference": {
+    "title": "L3 用户偏好",
+    "layers": [
+      "L3"
+    ]
+  },
+  "principle": {
+    "title": "L3 原则形成",
+    "layers": [
+      "L3"
+    ]
+  },
+  "confirmation": {
+    "title": "候选与正式记忆",
+    "layers": [
+      "L1",
+      "L2",
+      "L3"
+    ]
+  },
+  "conflict": {
+    "title": "更新与冲突",
+    "layers": [
+      "L1",
+      "L2",
+      "L3"
+    ]
+  },
+  "protection": {
+    "title": "人工保护",
+    "layers": [
+      "L2",
+      "L3"
+    ]
+  },
+  "scope": {
+    "title": "作用范围",
+    "layers": [
+      "L1",
+      "L2",
+      "L3"
+    ]
+  },
+  "reliability": {
+    "title": "可靠性",
+    "layers": [
+      "L0",
+      "L1",
+      "L2",
+      "L3"
+    ]
+  }
+}
