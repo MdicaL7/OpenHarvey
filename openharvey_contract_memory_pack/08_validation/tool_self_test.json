@@ -1,0 +1,46 @@
+{
+  "result": "PASS",
+  "python_syntax": "3 scripts compiled without execution errors",
+  "stage_materialization": [
+    {
+      "stage": "T1_before_guarantee",
+      "result": "PASS",
+      "history_inputs": 13,
+      "future_inputs": 0,
+      "queries": 1
+    },
+    {
+      "stage": "T2_after_guarantee",
+      "result": "PASS",
+      "history_inputs": 14,
+      "future_inputs": 0,
+      "queries": 1
+    },
+    {
+      "stage": "T3_before_withdrawal",
+      "result": "PASS",
+      "history_inputs": 17,
+      "future_inputs": 0,
+      "queries": 1
+    },
+    {
+      "stage": "T4_internal_withdrawal_only",
+      "result": "PASS",
+      "history_inputs": 24,
+      "future_inputs": 0,
+      "queries": 1
+    },
+    {
+      "stage": "T5_current_policy",
+      "result": "PASS",
+      "history_inputs": 28,
+      "future_inputs": 4,
+      "queries": 20
+    }
+  ],
+  "diagnostic_self_tests": [
+    "empty results explicitly report all 24 missing",
+    "controlled forbidden-authority and cross-tenant fixture flags both detected"
+  ],
+  "scope": "Tool behavior tests only; controlled examples are not model outputs or application evaluation."
+}

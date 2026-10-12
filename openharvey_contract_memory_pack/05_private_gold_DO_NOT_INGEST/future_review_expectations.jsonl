@@ -1,0 +1,4 @@
+{"doc_id": "F01", "expected_review_recommendation": "可参考同对手同角色已批让步；重新核对当前条款后交人工审批", "actual_final_contract_decision": null, "requires_human_decision": true}
+{"doc_id": "F02", "expected_review_recommendation": "识别30%上限保护华子供应商；不得移植旧采购审批或强套采购赔偿下限，交人工综合审阅", "actual_final_contract_decision": null, "requires_human_decision": true}
+{"doc_id": "F03", "expected_review_recommendation": "不得直接通过；调整赔偿上限，预付降至30%或取得新特批及本项目全额保函", "actual_final_contract_decision": null, "requires_human_decision": true}
+{"doc_id": "F04", "expected_review_recommendation": "不得按已撤回历史许可通过；删除/限缩泛用途许可或按当前政策取得具体用途授权", "actual_final_contract_decision": null, "requires_human_decision": true}

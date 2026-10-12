@@ -1,0 +1,1 @@
+{"query_id":"Q01","retrieved_logical_memory_ids":[],"normalized_evidence_refs":[],"memory_ids_used_to_authorize_queried_action":[],"normalized_decision":"UNSCORED","abstained":null,"cross_tenant_content_leaked":false,"human_semantic_verdict":"not_reviewed","human_confirmed_critical_failures":[],"raw_answer_path":"REPLACE_WITH_ACTUAL_RUN_OUTPUT","note":"空白结构示例，不是模型预测"}

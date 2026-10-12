@@ -1,0 +1,82 @@
+[
+  {
+    "doc_id": "H01",
+    "split": "history",
+    "docx_path": "01_history/contracts_docx/H01_工业控制终端采购合同.docx",
+    "txt_path": "01_history/contracts_txt/H01_工业控制终端采购合同.txt",
+    "clauses": 14,
+    "text_characters": 2378
+  },
+  {
+    "doc_id": "H02",
+    "split": "history",
+    "docx_path": "01_history/contracts_docx/H02_控制终端配套组件销售合同.docx",
+    "txt_path": "01_history/contracts_txt/H02_控制终端配套组件销售合同.txt",
+    "clauses": 14,
+    "text_characters": 2096
+  },
+  {
+    "doc_id": "H03",
+    "split": "history",
+    "docx_path": "01_history/contracts_docx/H03_流程协作软件试点服务合同.docx",
+    "txt_path": "01_history/contracts_txt/H03_流程协作软件试点服务合同.txt",
+    "clauses": 14,
+    "text_characters": 2290
+  },
+  {
+    "doc_id": "H04",
+    "split": "history",
+    "docx_path": "01_history/contracts_docx/H04_商品目录数据清洗服务合同.docx",
+    "txt_path": "01_history/contracts_txt/H04_商品目录数据清洗服务合同.txt",
+    "clauses": 14,
+    "text_characters": 2261
+  },
+  {
+    "doc_id": "H05",
+    "split": "history",
+    "docx_path": "01_history/contracts_docx/H05_设备运行数据处理服务合同.docx",
+    "txt_path": "01_history/contracts_txt/H05_设备运行数据处理服务合同.txt",
+    "clauses": 14,
+    "text_characters": 2177
+  },
+  {
+    "doc_id": "H06",
+    "split": "history",
+    "docx_path": "01_history/contracts_docx/H06_产品交流会会务服务合同.docx",
+    "txt_path": "01_history/contracts_txt/H06_产品交流会会务服务合同.txt",
+    "clauses": 14,
+    "text_characters": 2133
+  },
+  {
+    "doc_id": "F01",
+    "split": "future",
+    "docx_path": "03_future/contracts_docx/F01_工业控制终端补充采购合同.docx",
+    "txt_path": "03_future/contracts_txt/F01_工业控制终端补充采购合同.txt",
+    "clauses": 14,
+    "text_characters": 2022
+  },
+  {
+    "doc_id": "F02",
+    "split": "future",
+    "docx_path": "03_future/contracts_docx/F02_协同接口开发及许可服务合同.docx",
+    "txt_path": "03_future/contracts_txt/F02_协同接口开发及许可服务合同.txt",
+    "clauses": 14,
+    "text_characters": 2256
+  },
+  {
+    "doc_id": "F03",
+    "split": "future",
+    "docx_path": "03_future/contracts_docx/F03_流程协作软件年度服务合同.docx",
+    "txt_path": "03_future/contracts_txt/F03_流程协作软件年度服务合同.txt",
+    "clauses": 14,
+    "text_characters": 2171
+  },
+  {
+    "doc_id": "F04",
+    "split": "future",
+    "docx_path": "03_future/contracts_docx/F04_商品知识库数据加工服务合同.docx",
+    "txt_path": "03_future/contracts_txt/F04_商品知识库数据加工服务合同.txt",
+    "clauses": 14,
+    "text_characters": 2131
+  }
+]

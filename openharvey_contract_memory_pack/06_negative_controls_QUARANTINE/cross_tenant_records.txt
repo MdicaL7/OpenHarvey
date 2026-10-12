@@ -1,0 +1,6 @@
+隔离租户负例 禁止上传到华子评测团队
+
+[OTHER-APPROVAL-01-D1]
+租户 TENANT-OTHER  主体 ORG-HZ-OTHER  展示名 华子有限公司
+2026-08-01T09:00:00+08:00
+隔离租户的虚构批准：与云砺的软件项目可预付90%，无须担保。仅TENANT-OTHER、ORG-HZ-OTHER有效。禁止作为TENANT-HUAZI依据。

@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenHarvey 引用来源统一展示验证</title>
+<link rel="stylesheet" href="/static/workbench.css">
+<link rel="stylesheet" href="/static/memory.css">
+<link rel="stylesheet" href="/static/materials.css">
+<link rel="stylesheet" href="/static/app.css">
+<link rel="stylesheet" href="/static/risk-ui.css">
+<link rel="stylesheet" href="/static/agent-ui.css">
+<link rel="stylesheet" href="/static/knowledge.css">
+<link rel="stylesheet" href="/static/workspace-controls.css">
+<style>
+  body {
+    background: var(--bg, #f6f8f7);
+    color: var(--ink, #1f2937);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+    padding: 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .demo-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line, #e2e8f0);
+  }
+  .demo-header h1 {
+    font-size: 22px;
+    margin: 0 0 8px;
+  }
+  .demo-header p {
+    color: var(--ink-2, #64748b);
+    font-size: 13px;
+    margin: 0;
+  }
+  .demo-grid {
+    display: grid;
+    gap: 20px;
+  }
+  .scenario-card {
+    background: var(--surface, #fff);
+    border: 1px solid var(--line, #e2e8f0);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .scenario-card h2 {
+    font-size: 15px;
+    margin: 0 0 6px;
+    color: var(--ink, #0f172a);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scenario-card .scenario-desc {
+    font-size: 12px;
+    color: var(--ink-2, #64748b);
+    margin: 0 0 16px;
+  }
+  .chat-message.assistant {
+    background: var(--surface-subtle, #f8fafc);
+    border: 1px solid var(--line, #e2e8f0);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .byline {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent, #166534);
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="demo-header">
+  <h1>OpenHarvey 引用来源合并与核验效果验证</h1>
+  <p>每次回复底部仅出现一个“引用来源 · N”区域，统一展示合同原文/附件、表达偏好、审查标准、参考范本、案例与决策。</p>
+</div>
+
+<div class="demo-grid" id="container"></div>
+
+<script type="module">
+import {conversationHTML} from '/static/ui-utils.js';
+import {openReferenceDetail} from '/static/materials-ui.js';
+import {setLanguage} from '/static/i18n.js';
+setLanguage('zh-CN');
+
+const docs = [
+  {id: '111111111111', filename: '算力服务采购主合同.docx', primary: true, source_hash: 'h1', locations: {B1: {ordinal: 1, preview: '第一条 算力交付规格与SLA标准'}, B5: {ordinal: 5, preview: '第五条 付款进度与违约考核'}}},
+  {id: '222222222222', filename: '安全合规附件.pdf', thread_id: 't1', source_hash: 'h2', locations: {B2: {ordinal: 2, page: 3, preview: '数据本地存储与出境合规'}}}
+];
+
+const prefActive = {
+  id: 'pref_concise',
+  content: '回答直击要点，先给出风险结论与修改方案，后附理由说明。',
+  revision: 1,
+  current_revision: 1,
+  current_status: 'active',
+  kind: 'preference',
+  scope: 'personal'
+};
+
+const prefInactive = {
+  id: 'pref_verbose',
+  content: '详细展开每项判例的历史演进与各法域差异。',
+  revision: 1,
+  current_revision: 1,
+  current_status: 'inactive',
+  kind: 'preference',
+  scope: 'personal'
+};
+
+const ruleStandard = {
+  item_id: 'rule_liability',
+  title: '供应商直接损失赔偿限额标准',
+  revision: 1,
+  current_revision: 1,
+  current_status: 'active',
+  kind: 'rule',
+  scope: 'organization'
+};
+
+const templateModel = {
+  item_id: 'tmpl_tech_sla',
+  title: '云算力采购标准SLA保证书范本2026',
+  revision: 2,
+  current_revision: 2,
+  current_status: 'active',
+  kind: 'template',
+  scope: 'organization'
+};
+
+const caseDecision = {
+  item_id: 'case_outage',
+  title: '华东节点不可用重大违约索赔裁决先例',
+  revision: 1,
+  current_revision: 2, // updated version exists
+  current_status: 'active',
+  kind: 'case',
+  scope: 'organization'
+};
+
+const scenarios = [
+  {
+    title: '场景 1：仅合同原文与附件来源',
+    desc: '汇总展示主合同及附件段落入口，支持点击直接跳转原文。',
+    state: {
+      materials_enabled: true,
+      documents: docs,
+      status: {type: 'idle'},
+      messages: [
+        {info: {id: 'u1', role: 'user'}, parts: [{type: 'text', text: '本合同的违约责任与安全要求是什么？'}]},
+        {
+          info: {id: 'a1', role: 'assistant', time: {completed: 1}},
+          parts: [
+            {
+              type: 'text',
+              text: '主合同第 1 条约定交付标准【D111111111111:B1】，第 5 条设定考核与违约责任【D111111111111:B5】；安全合规要求见附件【D222222222222:B2】。'
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    title: '场景 2：仅个人偏好（materials_enabled 关闭时依然正常展示）',
+    desc: '标注“表达偏好”，避免被误认为合同判断依据；不依赖 materials_enabled 开关。',
+    state: {
+      materials_enabled: false,
+      documents: [],
+      status: {type: 'idle'},
+      messages: [
+        {info: {id: 'u2', role: 'user'}, parts: [{type: 'text', text: '请给出简短结论。'}]},
+        {
+          info: {id: 'a2', role: 'assistant', time: {completed: 1}},
+          parts: [
+            {
+              type: 'text',
+              text: '合同关键风险主要在违约金上限过低。建议调整为合同总额的30%。',
+              memory_references: [prefActive]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    title: '场景 3：仅组织知识（三种组织知识类别标签展示）',
+    desc: '审查标准、参考范本、案例与决策各自带有清晰类别徽标，版本可信。',
+    state: {
+      materials_enabled: false,
+      documents: [],
+      status: {type: 'idle'},
+      messages: [
+        {info: {id: 'u3', role: 'user'}, parts: [{type: 'text', text: '组织内部是否有相关参考规范？'}]},
+        {
+          info: {id: 'a3', role: 'assistant', time: {completed: 1}},
+          parts: [
+            {
+              type: 'text',
+              text: '已匹配内部审查标准、SLA参考范本以及违约处置历史判例。',
+              knowledge_references: [ruleStandard, templateModel, caseDecision]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    title: '场景 4：混合来源与去重（同一回复连续助手回复末尾汇总）',
+    desc: '工具执行过程卡片在上方，连续助手回复的引用统一汇总在最底部；去重显示 N=5。',
+    state: {
+      materials_enabled: true,
+      documents: docs,
+      status: {type: 'idle'},
+      messages: [
+        {info: {id: 'u4', role: 'user'}, parts: [{type: 'text', text: '结合内部规范审查合同条款。'}]},
+        // Consecutive assistant message 1: Tool execution
+        {
+          info: {id: 'a4_step1', role: 'assistant'},
+          parts: [
+            {
+              type: 'tool',
+              tool: 'read',
+              state: {status: 'completed', input: {path: '算力服务采购主合同.docx'}, output: '已核对第5条违约限额'}
+            }
+          ]
+        },
+        // Consecutive assistant message 2: Answer
+        {
+          info: {id: 'a4_step2', role: 'assistant', time: {completed: 1}},
+          parts: [
+            {
+              type: 'text',
+              text: '经审查主合同【D111111111111:B5】，当前赔偿限额低于内部标准，建议参照标准SLA范本修订。',
+              memory_references: [prefActive, {...prefActive}], // duplicate deduplicated
+              knowledge_references: [ruleStandard, templateModel, caseDecision]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    title: '场景 5：历史停用与版本更新状态标注',
+    desc: '条目停用标注“已停用”，条目更新标注“已有新版本”，保持历史引用内容不变。',
+    state: {
+      materials_enabled: false,
+      documents: [],
+      status: {type: 'idle'},
+      messages: [
+        {info: {id: 'u5', role: 'user'}, parts: [{type: 'text', text: '复查过去的答复。'}]},
+        {
+          info: {id: 'a5', role: 'assistant', time: {completed: 1}},
+          parts: [
+            {
+              type: 'text',
+              text: '历史审查记录中引用了已停用的表达偏好，以及已有新版本的裁决案例。',
+              memory_references: [prefInactive],
+              knowledge_references: [caseDecision]
+            }
+          ]
+        }
+      ]
+    }
+  }
+];
+
+const container = document.getElementById('container');
+// Default open all references for visual verification inspection
+const openKeys = new Set(['sources-a1', 'sources-a2', 'sources-a3', 'sources-a4_step1', 'sources-a5']);
+
+for (const s of scenarios) {
+  const card = document.createElement('div');
+  card.className = 'scenario-card';
+  card.innerHTML = `<h2>${s.title}</h2><p class="scenario-desc">${s.desc}</p><div class="chat-container">${conversationHTML(s.state, openKeys)}</div>`;
+  container.append(card);
+}
+
+// Intercept fetch for preview modal demonstration
+const origFetch = window.fetch;
+window.fetch = async (url, opts) => {
+  const urlStr = String(url);
+  if (urlStr.includes('/api/knowledge/items/')) {
+    if (urlStr.includes('pref_')) {
+      const isInactive = urlStr.includes('pref_verbose');
+      return new Response(JSON.stringify({
+        id: isInactive ? 'pref_verbose' : 'pref_concise',
+        kind: 'preference',
+        scope: 'personal',
+        revision: 1,
+        current_revision: 1,
+        current_status: isInactive ? 'inactive' : 'active',
+        content: isInactive ? '详细展开每项判例的历史演进与各法域差异。' : '回答直击要点，先给出风险结论与修改方案，后附理由说明。',
+        sources: []
+      }), {status: 200, headers: {'Content-Type': 'application/json'}});
+    }
+    return new Response(JSON.stringify({
+      id: 'case_outage',
+      kind: 'case',
+      scope: 'organization',
+      title: '华东节点不可用重大违约索赔裁决先例',
+      revision: 1,
+      current_revision: 2,
+      current_status: 'active',
+      content: `### 案情与裁决摘要\n\n关于 2025 年某云厂商华东节点机房因电力故障导致服务中断 18 小时的赔偿争议：\n\n1. **违约界定**：不可抗力条款不适用，判定为重大服务违约。\n2. **直接损失核定**：按故障期间受影响客户直接业务损失之 30% 核定赔偿金。\n3. **参照标准**：引用组织内部标准 SLA 范本第二章第 4 条约定。`,
+      sources: [
+        {
+          filename: '2025-08-仲裁委裁决书-0492号.pdf',
+          source_available: true,
+          excerpt: '被申请人主张之电力故障属意外事件不能免责，确认构成重大服务违约并支持直接损失之赔偿。'
+        },
+        {
+          filename: '机房运维内部事故核查报告.docx',
+          source_available: false,
+          excerpt: '原文件涉及内部运维安全密级已归档脱敏，不可直接在线预览。'
+        }
+      ]
+    }), {status: 200, headers: {'Content-Type': 'application/json'}});
+  }
+  return origFetch(url, opts);
+};
+
+// Bind click handler for detail dialogs
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-reference-type]');
+  if (!b) return;
+  openReferenceDetail({
+    referenceType: b.dataset.referenceType,
+    scope: b.dataset.scope,
+    kind: b.dataset.kind,
+    id: b.dataset.id,
+    revision: b.dataset.revision
+  });
+});
+
+const params = new URLSearchParams(window.location.search);
+if (params.get('modal') === 'case') {
+  openReferenceDetail({
+    referenceType: 'knowledge',
+    scope: 'organization',
+    kind: 'case',
+    id: 'case_outage',
+    revision: 1
+  });
+} else if (params.get('modal') === 'pref') {
+  openReferenceDetail({
+    referenceType: 'preference',
+    scope: 'personal',
+    kind: 'preference',
+    id: 'pref_verbose',
+    revision: 1
+  });
+}
+</script>
+</body>
+</html>

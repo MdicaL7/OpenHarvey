@@ -1,0 +1,56 @@
+{
+  "fictional": true,
+  "tenant_id": "TENANT-HUAZI",
+  "entities": [
+    {
+      "entity_id": "ORG-HZ-001",
+      "display_name": "华子有限公司",
+      "aliases": [
+        "华子"
+      ],
+      "kind": "our_party",
+      "registered_city": "上海市"
+    },
+    {
+      "entity_id": "ORG-QH-001",
+      "display_name": "启衡设备有限公司",
+      "aliases": [
+        "启衡设备",
+        "启衡"
+      ],
+      "kind": "counterparty",
+      "registered_city": "苏州市"
+    },
+    {
+      "entity_id": "ORG-YL-001",
+      "display_name": "云砺信息技术有限公司",
+      "aliases": [
+        "云砺信息",
+        "云砺"
+      ],
+      "kind": "counterparty",
+      "registered_city": "杭州市"
+    },
+    {
+      "entity_id": "ORG-JS-001",
+      "display_name": "景澍数字服务有限公司",
+      "aliases": [
+        "景澍数字",
+        "景澍"
+      ],
+      "kind": "counterparty",
+      "registered_city": "南京市"
+    },
+    {
+      "entity_id": "ORG-TX-001",
+      "display_name": "棠序会展服务有限公司",
+      "aliases": [
+        "棠序会展",
+        "棠序"
+      ],
+      "kind": "counterparty",
+      "registered_city": "上海市"
+    }
+  ],
+  "identity_rule": "entity_id 来自测试夹具映射。展示名不是身份凭据；不要把近似名称、另租户同名公司或合同上的甲乙角色当作稳定身份。"
+}

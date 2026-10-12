@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "checks": 995,
+  "contracts": 10,
+  "history_contracts": 6,
+  "future_contracts": 4,
+  "clauses": 140,
+  "source_events": 21,
+  "queries": 24,
+  "current_gold_memories": 15,
+  "memory_versions": 21,
+  "temporal_stages": 5,
+  "errors": [],
+  "scope": "Local fixture integrity only. No OpenHarvey runtime, model extraction, retrieval or memory writeback was executed."
+}
