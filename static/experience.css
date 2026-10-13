@@ -13,8 +13,8 @@ button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min
 button:hover:not(:disabled){background:var(--surface-subtle);border-color:var(--accent);color:var(--accent)}
 button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 button:disabled{opacity:.52;cursor:not-allowed}
-button.primary,#add,#save,.card .actions button[data-action=confirm],.card .actions button[data-action=approve]{background:var(--accent);border-color:var(--accent);color:#fff}
-button.primary:hover:not(:disabled),#add:hover:not(:disabled),#save:hover:not(:disabled),.card .actions button[data-action=confirm]:hover:not(:disabled),.card .actions button[data-action=approve]:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 86%,#000);border-color:color-mix(in srgb,var(--accent) 86%,#000);color:#fff}
+button.primary,#add,#save,.card .actions button[data-action=confirm],.card .actions button[data-action=approve]{background:var(--primary-bg);border-color:var(--primary-bg);color:var(--primary-ink)}
+button.primary:hover:not(:disabled),#add:hover:not(:disabled),#save:hover:not(:disabled),.card .actions button[data-action=confirm]:hover:not(:disabled),.card .actions button[data-action=approve]:hover:not(:disabled){background:var(--primary-hover);border-color:var(--primary-hover);color:var(--primary-ink)}
 button.danger,.card .actions button[data-action=delete],.card .actions button[data-action=reject]{background:var(--crit-bg);border-color:color-mix(in srgb,var(--crit) 32%,var(--line));color:var(--crit)}
 button.danger:hover:not(:disabled),.card .actions button[data-action=delete]:hover:not(:disabled),.card .actions button[data-action=reject]:hover:not(:disabled){background:color-mix(in srgb,var(--crit) 16%,var(--crit-bg));border-color:var(--crit);color:var(--crit)}
 select,input:not([type=checkbox]):not([type=radio]),textarea{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:9px 11px;background:var(--surface-subtle);color:var(--ink);font-size:13px}
@@ -62,3 +62,10 @@ dialog h2{margin:0 0 12px;font-size:19px;color:var(--ink)}
 .sources{font-size:13px;margin:14px 0}
 @media(max-width:720px){header.topbar,header{height:auto;min-height:54px;flex-wrap:wrap;gap:6px;padding:8px 14px}.brand small{display:none}header nav{gap:4px}header nav a{padding:6px 8px;font-size:11.5px}main{width:calc(100% - 28px);padding:26px 0 28px}.intro{flex-direction:column;align-items:flex-start;gap:14px}.team-picker{width:100%;max-width:100%;justify-content:space-between;flex-wrap:wrap;height:auto;min-height:36px;padding:6px 10px}.team-picker select{flex:1 1 160px;max-width:100%}.grid{grid-template-columns:1fr}.tabs button{padding:10px 12px}dialog{padding:18px}}
 @media(prefers-reduced-motion:reduce){.loading-spinner{animation:none}}
+
+/* Solid actions keep readable text independently of link/accent colors. */
+:root{--primary-bg:#264d79;--primary-ink:#fff;--primary-hover:#1b3c63;--primary-disabled-bg:#dce3ed;--primary-disabled-ink:#526176}
+@media(prefers-color-scheme:dark){:root{--primary-bg:#315f99;--primary-ink:#fff;--primary-hover:#3b6aa6;--primary-disabled-bg:#263750;--primary-disabled-ink:#aebbd0}}
+
+button.primary:disabled,#add:disabled,#save:disabled,.card .actions button[data-action=confirm]:disabled,.card .actions button[data-action=approve]:disabled{opacity:1;background:var(--primary-disabled-bg,#dce3ed);border-color:var(--primary-disabled-bg,#dce3ed);color:var(--primary-disabled-ink,#526176);cursor:not-allowed}
+button.primary:focus-visible,#add:focus-visible,#save:focus-visible,.card .actions button[data-action=confirm]:focus-visible,.card .actions button[data-action=approve]:focus-visible{outline:2px solid var(--accent);outline-offset:3px}

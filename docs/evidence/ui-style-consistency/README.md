@@ -12,3 +12,7 @@
 
 ![深色经验面板](after-11_experience_desktop_dark.png)
 ![深色资料弹窗](after-04_materials_dialog_dark.png)
+
+## 四项回归修复
+
+本节及修复报告记录验收时状态（当时尚未提交）；后续提交、合并以 Git 历史为准。后续修复及准确复合树验收见 [修复报告](fixes/README.md)。上面的归属与截图记录保留为 `03f34d4` 的历史证据；最新代码、测试、截图归属以 fixes/code-manifest.json 与 fixes/browser-results.json 为准。

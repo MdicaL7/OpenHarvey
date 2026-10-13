@@ -1323,3 +1323,7 @@
   #artTabs button { display: inline-flex; align-items: center; gap: 5px; flex: none; max-width: 240px; min-height: 34px; padding: 5px 8px; }
   #artTabs .file-icon { width: 20px; height: 22px; background: transparent; }
   #artTabs .file-icon .ui-icon { width: 20px; height: 20px; }
+
+/* Solid actions keep readable text independently of link/accent colors. */
+:root{--primary-bg:#264d79;--primary-ink:#fff;--primary-hover:#1b3c63;--primary-disabled-bg:#dce3ed;--primary-disabled-ink:#526176}
+@media(prefers-color-scheme:dark){:root{--primary-bg:#315f99;--primary-ink:#fff;--primary-hover:#3b6aa6;--primary-disabled-bg:#263750;--primary-disabled-ink:#aebbd0}}

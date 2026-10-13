@@ -1,6 +1,8 @@
 import {t as tr} from './i18n.js';
 
-let dialogEl=null;
+let dialogEl=null,pendingCancel=null;
+
+export function cancelConfirmDialog(){pendingCancel?.();}
 
 function ensureConfirmDialog(){
   if(dialogEl&&dialogEl.isConnected)return dialogEl;
@@ -15,7 +17,9 @@ function ensureConfirmDialog(){
   return dialogEl;
 }
 
-export function confirmDialog({title,message='',confirmText=tr('确认删除'),cancelText=tr('取消'),danger=true,trigger=null}={}){
+export function confirmDialog({title,message='',confirmText=tr('确认删除'),cancelText=tr('取消'),danger=true,trigger=null,isCurrent=()=>true}={}){
+  cancelConfirmDialog();
+  if(!isCurrent())return Promise.resolve(false);
   const opener=trigger||document.activeElement;
   const dialog=ensureConfirmDialog();
   const titleNode=dialog.querySelector('[data-confirm-title]');
@@ -31,11 +35,19 @@ export function confirmDialog({title,message='',confirmText=tr('确认删除'),c
   okBtn.classList.toggle('primary',!danger);
   dialog.returnValue='cancel';
   return new Promise(resolve=>{
-    dialog.onclose=()=>{
-      const confirmed=dialog.returnValue==='confirm';
-      if(opener&&opener.isConnected&&!opener.disabled&&typeof opener.focus==='function')opener.focus();
-      resolve(confirmed);
+    let settled=false;
+    const finish=confirmed=>{
+      if(settled)return;
+      settled=true;dialog.onclose=null;pendingCancel=null;
+      const current=isCurrent();
+      if(dialog.open)dialog.close('cancel');
+      // Each request owns its node: a queued close event cannot settle a new dialog.
+      dialog.remove?.();dialogEl=null;
+      if(current&&opener&&opener.isConnected&&!opener.disabled&&typeof opener.focus==='function')opener.focus();
+      resolve(confirmed&&current);
     };
+    pendingCancel=()=>finish(false);
+    dialog.onclose=()=>finish(dialog.returnValue==='confirm');
     if(typeof dialog.showModal==='function')dialog.showModal();
     else dialog.setAttribute('open','');
     cancelBtn.focus();

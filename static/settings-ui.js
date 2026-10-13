@@ -7,7 +7,7 @@ import {renderUsers,orcaConnect} from './account-ui.js?v=20260914-loading-all';
 import {api} from './api.js';
 import {esc} from './markdown.js';
 import {settingsPaths,settingsTab,savedWorkbenchURL} from './settings-routes.js';
-import {confirmDialog} from './confirm-dialog.js';
+import {confirmDialog,cancelConfirmDialog} from './confirm-dialog.js';
 
 const scopes=liveLabels({builtin:'内置',public:'公开示例',personal:'我的'});
 export function preferenceValues(previous,entries){
@@ -46,18 +46,18 @@ export function setupSettings({notice,onClose,onOpen}){
     try{await render();}catch(error){$('#settingsPage').innerHTML='<p class="settings-empty" role="alert">'+esc(error.message)+'</p>';throw error;}
   }
   async function close({historyMode='push'}={}){
-    if(!leave())return false;dirty=false;generation++;root.hidden=true;root.replaceChildren();document.getElementById('appShell').inert=false;
+    if(!leave())return false;dirty=false;generation++;cancelConfirmDialog();root.hidden=true;root.replaceChildren();document.getElementById('appShell').inert=false;
     if(historyMode!=='none')history.pushState(null,'',returnURL||'/');await onClose?.();
     return true;
   }
   const heading=(title,caption,actions='')=>`<div class="settings-heading"><div><h2>${title}</h2><p>${caption}</p></div>${actions}</div>`;
   async function render(){
-    const g=++generation;shell();$('#settingsPage').innerHTML=loadingHTML(tr('正在读取设置…'));
+    const g=++generation;cancelConfirmDialog();shell();$('#settingsPage').innerHTML=loadingHTML(tr('正在读取设置…'));
     if(tab==='members'){await renderUsers($('#settingsPage'),notice);return;}
     if(tab==='providers'&&identity.account_kind==='demo'){$('#settingsPage').replaceChildren();orcaConnect($('#settingsPage'),identity);return;}
     if(['providers','members'].includes(tab)){
       const {renderAdmin}=await import('./admin-ui.js?v=20260916-provider-config');if(g!==generation)return;
-      await renderAdmin($('#settingsPage'),{mode:tab,identity,notice,dirty:value=>dirty=value,leave});if(g===generation)orcaConnect($('#settingsPage'),identity);return;
+      await renderAdmin($('#settingsPage'),{mode:tab,identity,notice,dirty:value=>dirty=value,leave,isCurrent:()=>g===generation&&!root.hidden});if(g===generation)orcaConnect($('#settingsPage'),identity);return;
     }
     if(tab==='labs'){
       const {renderLabs}=await import('./labs-ui.js');if(g!==generation)return;
@@ -73,7 +73,7 @@ export function setupSettings({notice,onClose,onOpen}){
     }
     if(tab==='risks'){
       const {renderRiskSettings}=await import('./risk-settings-ui.js?v=20260913-2');if(g!==generation)return;
-      await renderRiskSettings($('#settingsPage'),{identity,notice,dirty:value=>dirty=value,leave});return;
+      await renderRiskSettings($('#settingsPage'),{identity,notice,dirty:value=>dirty=value,leave,isCurrent:()=>g===generation&&!root.hidden});return;
     }
     if(tab==='skills'){
       items=await api('/api/skills');if(g!==generation)return;
@@ -104,7 +104,7 @@ export function setupSettings({notice,onClose,onOpen}){
     $('#skillForm').onsubmit=run(async e=>{e.preventDefault();const f=e.target,d=Object.fromEntries(new FormData(f));const body={content:{label:d.label,description:d.description,body:d.body,files},enabled:d.enabled==='on',revision:item?.revision,scope:d.scope||'personal'};const saved=await api('/api/skills'+(item?'/'+item.id:''),{method:item?'PUT':'POST',body});dirty=false;items=await api('/api/skills');renderList();editor(saved);notice(tr('Skill 已保存。'));});
     if(item){
       $('[data-copy-skill]').onclick=run(async()=>{if(!leave())return;const copy=await api(`/api/skills/${item.id}/copy`,{method:'POST',body:{}});dirty=false;items=await api('/api/skills');editor(copy);renderList();notice(tr('已复制到我的 Skills。'));});
-      if(!readonly)$('[data-delete-skill]').onclick=run(async e=>{const b=e.currentTarget;if(!await confirmDialog({title:ui`删除“${c.label}”？`,message:tr('历史执行仍保留原版本。'),confirmText:tr('删除'),trigger:b}))return;await api(`/api/skills/${item.id}?revision=${item.revision}`,{method:'DELETE'});dirty=false;selected=null;await render();notice(tr('Skill 已删除。'));});
+      if(!readonly)$('[data-delete-skill]').onclick=run(async e=>{const b=e.currentTarget,g=generation,isCurrent=()=>g===generation&&!root.hidden&&b.isConnected&&selected?.id===item.id;if(!await confirmDialog({title:ui`删除“${c.label}”？`,message:tr('历史执行仍保留原版本。'),confirmText:tr('删除'),trigger:b,isCurrent})||!isCurrent())return;await api(`/api/skills/${item.id}?revision=${item.revision}`,{method:'DELETE'});dirty=false;selected=null;await render();notice(tr('Skill 已删除。'));});
       if(item.scope!=='builtin')loadVersions(item);
     }
   }
@@ -138,6 +138,6 @@ export function setupSettings({notice,onClose,onOpen}){
     if(next){if(root.hidden||next!==tab)await open(next,{historyMode:'none'});}
     else if(!root.hidden)await close({historyMode:'none'});
   }));
-  document.addEventListener('session-expired',()=>{dirty=false;generation++;root.hidden=true;root.replaceChildren();document.getElementById('appShell').inert=false;});
+  document.addEventListener('session-expired',()=>{dirty=false;generation++;cancelConfirmDialog();root.hidden=true;root.replaceChildren();document.getElementById('appShell').inert=false;});
   return {open,close,isOpen:()=>!root.hidden};
 }

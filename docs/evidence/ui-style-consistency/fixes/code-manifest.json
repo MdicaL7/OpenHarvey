@@ -1,0 +1,21 @@
+{
+  "ui_tip": "cb1dbdf45b18fb1e6b43a53985e69b80088fe075",
+  "target_tip": "8c9a3dbb05752ad28792bcd8fb726abcf2c68c29",
+  "base": "bc49476681bfb3956995f58745fdc9cb05683b9d",
+  "committed_merge_tree": "473e31a0ad799b92f758b1258301944d9d87e569",
+  "tested_code_tree": "d9d5687e726695792164f598109b24aa5da311ff",
+  "sha256": {
+    "static/confirm-dialog.js": "3e0ea1009b18010a21e933fd232830213e5296969da71b6d17579e36bdc1c1b7",
+    "static/risk-settings-ui.js": "dd5cb94bf5417147193ee1ce9d2921590144a6b08176d0ac4352e00116ae3dbe",
+    "static/admin-ui.js": "3d335eb1de4a960c4d06bc913bcebf88f0dfc6f8fe6539ef850a36eb445a3213",
+    "static/experience.js": "783c9c414c0b9e80b0a672d7581b51acbc656a51efc0b1682e93e552c346e2c6",
+    "static/experience.css": "929b9174e7e00e4a4c5c11b611436782fb9d4e1baef1c7e253e17ae0e9176c98",
+    "static/connectors-ui.css": "bb3e434356b3b5fd7fef108aa9563f962102159e5182140c380e475e771a0eec",
+    "static/settings-ui.css": "fbdfa835ee441f82016f152be5b82c1928de0eb9f0929d02ee98d2cd591116a3",
+    "static/settings-ui.js": "1359b19755154e18a5636102b39a6daa765979b73d008fc41d825c57dd8ef190",
+    "static/workspace-controls.css": "f04c3db8c77f040d05ca0e6b4b6df6438e82d6c6292300b54ca948a46dd8ccc8",
+    "static/workbench.css": "454ba201f02283b39de7395cac16e463b246114d5c50785abf773900ff5ec777",
+    "tests/ui-regressions.test.mjs": "f895e22bb1bc2644a6fa9a0738961c84f379fbe00a8716c07b9152016d8a0d53",
+    "tests/ui-browser-regressions.cjs": "232a34adecb7424a4aca4f1be97151edd72b8d213c9942f43cd234413fbe5a8b"
+  }
+}
