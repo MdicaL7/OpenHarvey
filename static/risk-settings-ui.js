@@ -2,6 +2,7 @@ import {t as tr,ui} from './i18n.js';
 import {getLanguage} from './i18n.js';
 import {api} from './api.js';
 import {esc} from './markdown.js';
+import {confirmDialog} from './confirm-dialog.js';
 
 import {labels as liveLabels} from './i18n.js';
 const scopeLabels=liveLabels({public:'公开示例',personal:'我的'});
@@ -120,7 +121,8 @@ export async function renderRiskSettings(host,{identity,notice,dirty,leave}){
     if(b.dataset.scheme&&leave()){dirty(false);editor(items.find(s=>s.id===b.dataset.scheme));}
     if(b.hasAttribute('data-delete-scheme')){
       if(deleting||!current?.editable)return;const target=current;
-      if(!confirm(ui`删除审查方案“${target.content.label}”？\n\n包含 ${target.content.rules.length} 个风险点。未保存修改也会丢弃。使用此方案的默认选择将恢复默认，历史报告与执行快照保留。`))return;
+      if(!await confirmDialog({title:ui`删除审查方案“${target.content.label}”？`,message:ui`包含 ${target.content.rules.length} 个风险点。未保存修改也会丢弃。使用此方案的默认选择将恢复默认，历史报告与执行快照保留。`,confirmText:tr('删除方案'),trigger:b}))return;
+      if(deleting||current?.id!==target.id)return;
       deleting=true;b.disabled=true;
       try{
         await api(`/api/risk-schemes/${target.id}?revision=${target.revision}`,{method:'DELETE'});

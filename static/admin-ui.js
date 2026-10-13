@@ -4,6 +4,7 @@ import {PROVIDER_PRESETS,EXTRA_PRESETS,parseExtraBody} from './provider-presets.
 import {api} from './api.js';
 import {esc} from './markdown.js';
 import {addDiscoveredModel,waitForOperation} from './provider-utils.js';
+import {confirmDialog} from './confirm-dialog.js';
 const stateLabel=r=>!r?tr('尚未开通'):r.status==='disabled'?tr('已停用'):r.status==='failed'?tr('开通失败'):r.status==='provisioning'?tr('开通中'):r.error?tr('生效失败'):r.desired_revision!==r.applied_revision?tr('待生效'):tr('可用');
 const time=v=>v?new Date(v*1000).toLocaleString(getLanguage()):'';
 export async function renderAdmin(host,{mode,identity,notice,dirty,leave}){
@@ -164,9 +165,11 @@ export async function renderAdmin(host,{mode,identity,notice,dirty,leave}){
   if(b.dataset.extraPreset!==undefined){$('#providerForm').elements.extra_body.value=JSON.stringify(EXTRA_PRESETS[Number(b.dataset.extraPreset)][1],null,2);validateExtra();edited({target:$('#providerForm').elements.extra_body});}
   if(b.dataset.exampleModel){collectModels();currentModels=addDiscoveredModel(currentModels,b.dataset.exampleModel);modelForms();dirty(true);}
   if(b.hasAttribute('data-delete-provider')&&selected&&!pending){
-   if(!confirm(ui`删除“${selected.label}”及其模型配置？历史任务和文件仍保留，运行中的任务结束后生效。`))return;
+   const target=selected;
+   if(!await confirmDialog({title:ui`删除“${target.label}”及其模型配置？`,message:tr('历史任务和文件仍保留，运行中的任务结束后生效。'),confirmText:tr('删除供应商'),trigger:b}))return;
+   if(pending||selected?.id!==target.id)return;
    pending=true;managementButtons();
-   try{const result=await api(`/api/providers/${encodeURIComponent(selected.id)}?revision=${selected.revision}`,{method:'DELETE'});dirty(false);await loadList();presetPicker();notice(tr('供应商已删除。'));await operation(result);}
+   try{const result=await api(`/api/providers/${encodeURIComponent(target.id)}?revision=${target.revision}`,{method:'DELETE'});dirty(false);await loadList();presetPicker();notice(tr('供应商已删除。'));await operation(result);}
    finally{pending=false;managementButtons();}
   }
   if(b.hasAttribute('data-retry-member'))await operation(await api(`/api/admin/members/${selected.id}/retry`,{method:'POST',body:{}}));

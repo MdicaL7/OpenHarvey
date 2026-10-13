@@ -7,6 +7,7 @@ import {renderUsers,orcaConnect} from './account-ui.js?v=20260914-loading-all';
 import {api} from './api.js';
 import {esc} from './markdown.js';
 import {settingsPaths,settingsTab,savedWorkbenchURL} from './settings-routes.js';
+import {confirmDialog} from './confirm-dialog.js';
 
 const scopes=liveLabels({builtin:'内置',public:'公开示例',personal:'我的'});
 export function preferenceValues(previous,entries){
@@ -103,7 +104,7 @@ export function setupSettings({notice,onClose,onOpen}){
     $('#skillForm').onsubmit=run(async e=>{e.preventDefault();const f=e.target,d=Object.fromEntries(new FormData(f));const body={content:{label:d.label,description:d.description,body:d.body,files},enabled:d.enabled==='on',revision:item?.revision,scope:d.scope||'personal'};const saved=await api('/api/skills'+(item?'/'+item.id:''),{method:item?'PUT':'POST',body});dirty=false;items=await api('/api/skills');renderList();editor(saved);notice(tr('Skill 已保存。'));});
     if(item){
       $('[data-copy-skill]').onclick=run(async()=>{if(!leave())return;const copy=await api(`/api/skills/${item.id}/copy`,{method:'POST',body:{}});dirty=false;items=await api('/api/skills');editor(copy);renderList();notice(tr('已复制到我的 Skills。'));});
-      if(!readonly)$('[data-delete-skill]').onclick=run(async()=>{if(!confirm(ui`删除“${c.label}”？历史执行仍保留原版本。`))return;await api(`/api/skills/${item.id}?revision=${item.revision}`,{method:'DELETE'});dirty=false;selected=null;await render();notice(tr('Skill 已删除。'));});
+      if(!readonly)$('[data-delete-skill]').onclick=run(async e=>{const b=e.currentTarget;if(!await confirmDialog({title:ui`删除“${c.label}”？`,message:tr('历史执行仍保留原版本。'),confirmText:tr('删除'),trigger:b}))return;await api(`/api/skills/${item.id}?revision=${item.revision}`,{method:'DELETE'});dirty=false;selected=null;await render();notice(tr('Skill 已删除。'));});
       if(item.scope!=='builtin')loadVersions(item);
     }
   }
