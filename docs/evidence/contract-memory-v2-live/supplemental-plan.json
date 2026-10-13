@@ -1,0 +1,22 @@
+{
+  "baseline_pack_sha": "3f301503aaef1e654a948e02973df6699f38c0ddf4230787d399d492e22d4d68",
+  "authorization": "2026-10-13 user-approved full v2 deployment and real experiments",
+  "scenarios": [
+    {"id":"LIVE-ABC","procedure":"Fresh team, H01 and F01 separate spaces; save real EX-PAY, EX-ACCEPT and EX-LIABILITY feedback and retrieve all three from the second contract.","expect":"Correct source versions and conditions; no automatic feedback or report rewrite."},
+    {"id":"LIVE-ROLE","procedure":"Review a new space from the opposite transaction role and query the same risk.","expect":"Opposite-role cases excluded."},
+    {"id":"LIVE-STANDARD","procedure":"Copy a review scheme through the UI API, create a report using it, then update its payment standard and query again.","expect":"Historical standard difference shown; applicability downgraded."},
+    {"id":"LIVE-CORRECTION","procedure":"Update a saved feedback to judgment incorrect, then withdraw it; check both history and recall.","expect":"Original report retained; current case version and eligibility change."},
+    {"id":"LIVE-PERMISSIONS","procedure":"Two teams for one user, another same-team member and another application organization; request real personal entries, report and candidate IDs under other identities.","expect":"Denied reads and writes; no personal contract details leaked."},
+    {"id":"LIVE-SHARING","procedure":"User manually saves a permission-test experience, submits sanitized sharing text, member attempts approval, admin approves, then remove the member.","expect":"No team visibility before approval, publication afterward, restricted sources, immediate subsequent denial after removal."},
+    {"id":"LIVE-CONFLICT","procedure":"Establish and confirm a long-term preference; later issue a conflicting long-term preference; inspect conflict, stale version and explicit human resolution.","expect":"No automatic replacement; conflict references correct version; stale update rejected."},
+    {"id":"LIVE-IGNORE","procedure":"Ignore an actual candidate and observe later source processing.","expect":"Same source does not repeatedly prompt."},
+    {"id":"LIVE-LEGACY","procedure":"Read legacy history and exercise authenticated legacy write endpoints against a managed contract Agent.","expect":"Legacy retained, absent from v2 views; write bypass denied."},
+    {"id":"LIVE-PROVIDER","procedure":"Use ordinary provider in a fresh session; separately open a connected report.","expect":"No new business memory capture or identity injection; report lookup remains independently scoped."},
+    {"id":"LIVE-AUXILIARY","procedure":"Observe real title/compaction request classification and associated L0 snapshots.","expect":"Auxiliary request skips business memory capture and injection."},
+    {"id":"LIVE-RESTART","procedure":"Capture read-only state, restart app/Core/Proxy, resume checkpoint and compare versions/tombstones.","expect":"Persisted state and mapping preserved."},
+    {"id":"LIVE-PROXY-FAIL","procedure":"Stop contract Proxy during an isolated test request, observe visible failure, restore and retry normally.","expect":"No model fallback or false memory receipt; recovery succeeds."},
+    {"id":"LIVE-EXTRACTION-FAIL","procedure":"Stop structured bridge during test feedback extraction, preserve saved feedback and failed jobs, restore bridge and invoke allowed retry.","expect":"Saved feedback survives, failure is observable, replay produces no duplicate case."},
+    {"id":"LIVE-CONCURRENCY","procedure":"Repeat idempotent confirmation and submit stale concurrent edits; repeat feedback delivery through normal retry.","expect":"Single publication, 409 stale edit, stable case identity/version."},
+    {"id":"LIVE-BROWSER","procedure":"Separate fresh browser team: upload/read, report and source navigation, feedback, candidate confirmation, cross-session recall, sharing review, downloaded report; inspect light/dark cards.","expect":"Visible receipts match persisted state and actual tool results."}
+  ]
+}

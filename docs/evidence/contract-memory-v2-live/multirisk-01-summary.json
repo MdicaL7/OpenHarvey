@@ -1,0 +1,23 @@
+{
+  "run_id": "2d84e67e1e6c47b583ada52dbe8ca3f8",
+  "steps_completed": [
+    "ABC-01",
+    "ABC-02",
+    "ABC-03",
+    "ABC-04",
+    "ABC-05",
+    "ABC-06",
+    "ABC-07",
+    "ABC-08",
+    "ABC-09",
+    "ABC-10",
+    "ABC-11",
+    "ABC-12",
+    "ABC-13",
+    "ABC-14",
+    "ABC-15",
+    "ABC-16"
+  ],
+  "blocked": null,
+  "source_run": "multirisk-01"
+}

@@ -1,0 +1,21 @@
+{
+  "run_id": "0f2cf60961af466281ac36d3be39f3cd",
+  "steps_completed": [
+    "PREF-01",
+    "PREF-02",
+    "PREF-03",
+    "PREF-04",
+    "PREF-05",
+    "PREF-06",
+    "PREF-07",
+    "PREF-08",
+    "PREF-09",
+    "PREF-10",
+    "PREF-11",
+    "PREF-12",
+    "PREF-13",
+    "PREF-14"
+  ],
+  "blocked": null,
+  "source_run": "preferences-02"
+}

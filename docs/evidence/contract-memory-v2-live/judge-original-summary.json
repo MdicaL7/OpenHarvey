@@ -1,0 +1,257 @@
+{
+  "source_run_id": "aaedff205aa74a91bd3a39f649c2af67",
+  "same_configured_model": true,
+  "results": [
+    {
+      "case_id": "V2-BOUNDARY",
+      "verdict": "needs_review",
+      "reason": "真实记录支持新团队空状态、个人内容访问限制及角色权限拒绝；但未提供独立验证 Agent 隔离以及各作用范围历史数据不混入的充分证据，无法确认完整满足 Team+Agent+User 隔离要求。",
+      "evidence": [
+        {
+          "source_id": "V2-S002",
+          "quote": "\"scope\": {\n      \"agent\": \"agt-310ff7dz9i\",\n      \"instance\": \"default\",\n      \"team\": \"team-310f20ga3a\",\n      \"user\": \"usr-xmmveljrfz\"\n    }"
+        },
+        {
+          "source_id": "V2-S002",
+          "quote": "\"personal\": {\n    \"items\": []\n  },\n  \"team\": {\n    \"items\": []\n  }"
+        },
+        {
+          "source_id": "SUPPLEMENT-0",
+          "quote": "\"evidence\": {\n        \"detail\": \"内容不存在\"\n      },\n      \"name\": \"other_team_cannot_read_private\",\n      \"status\": \"pass\""
+        },
+        {
+          "source_id": "SUPPLEMENT-0",
+          "quote": "\"evidence\": {\n        \"detail\": \"需要团队管理员身份\"\n      },\n      \"name\": \"member_approval_denied\",\n      \"status\": \"pass\""
+        }
+      ],
+      "critical_failures": []
+    },
+    {
+      "case_id": "V2-CASE",
+      "verdict": "pass",
+      "reason": "冻结记录显示EX-PAY风险反馈第1版已形成真实处置案例及事件，关联已保存报告和原文版本；完整保留60天、20%预付款及仅限本项目条件，批准和执行均标为未核验。此结论依据实际记录，不以助手宣称保存或风险模型结论作为通过依据。",
+      "evidence": [
+        {
+          "source_id": "V2-S005",
+          "quote": "\"conditions\": [\n              \"本项目拟将尾款账期调整为60天\",\n              \"预付款为合同价的20%\",\n              \"仅限H01_工业控制终端采购项目\"\n            ]"
+        },
+        {
+          "source_id": "V2-S005",
+          "quote": "\"approval_status\": \"not_verified\""
+        },
+        {
+          "source_id": "V2-S005",
+          "quote": "\"execution_status\": \"not_verified\""
+        },
+        {
+          "source_id": "V2-S005",
+          "quote": "\"note\": \"现稿付款期限仍以原文为准。若本项目拟将尾款账期调整为60天，我方作为供货方可接受的条件是20%预付款，仅限本项目；这是附条件处理意见，未核验实际修订、批准或执行。\""
+        },
+        {
+          "source_id": "V2-S005",
+          "quote": "\"report_id\": \"72524037a2c0c50478a3bde3\",\n            \"revision\": 1"
+        },
+        {
+          "source_id": "V2-S005",
+          "quote": "\"id\": \"case_f5d248be00e165f72a226245b13796d3\",\n          \"instance\": \"default\",\n          \"session\": \"ses_eccd81f64ffeB6KMi8q6NYQ2Zy\",\n          \"status\": \"active\",\n          \"task\": \"task-310gx8yl7z\",\n          \"team\": \"team-310f20ga3a\",\n          \"user\": \"usr-xmmveljrfz\",\n          \"version\": 1"
+        }
+      ],
+      "critical_failures": []
+    },
+    {
+      "case_id": "V2-LEVELS",
+      "verdict": "pass",
+      "reason": "冻结记录显示：S006单案例时无方法候选或生效条目；S010在两个不同工作空间的EX-PAY案例及反馈第1版基础上生成方法候选，引用两案版本并保留不同保障条件，状态为pending且entries为空；S011确认后才出现active个人条目及用户修订记录。判断依据为真实结构记录，不依赖助手保存声明或模型判定。",
+      "evidence": [
+        {
+          "source_id": "V2-S006",
+          "quote": "\"atoms\": [],\n    \"candidates\": [],\n    \"entries\": []"
+        },
+        {
+          "source_id": "V2-S010",
+          "quote": "\"source_ids\": [\n              \"case_f5d248be00e165f72a226245b13796d3@1\",\n              \"case_4c33f29d48a12591d5b30f7c1e12a6ee@1\"\n            ],\n            \"subtype\": \"disposition_method\""
+        },
+        {
+          "source_id": "V2-S010",
+          "quote": "\"status\": \"pending\",\n          \"target_id\": null"
+        },
+        {
+          "source_id": "V2-S010",
+          "quote": "\"entries\": []"
+        },
+        {
+          "source_id": "V2-S010",
+          "quote": "\"workspace_id\": \"f6b9fbd4c2f55e19284aca12\""
+        },
+        {
+          "source_id": "V2-S010",
+          "quote": "\"workspace_id\": \"a35725b079db1df978f00d94\""
+        },
+        {
+          "source_id": "V2-S010",
+          "quote": "两案仅支持结合项目保障条件评估的方法，不能据此统一接受60天账期。"
+        },
+        {
+          "source_id": "V2-S011",
+          "quote": "\"status\": \"confirmed\",\n          \"target_id\": null"
+        },
+        {
+          "source_id": "V2-S011",
+          "quote": "\"actor\": \"usr-xmmveljrfz\",\n          \"created\": \"2026-10-13T02:59:30.790Z\""
+        },
+        {
+          "source_id": "V2-S011",
+          "quote": "\"protected\": 1,\n    \"scope\": \"personal\",\n    \"status\": \"active\""
+        }
+      ],
+      "critical_failures": []
+    },
+    {
+      "case_id": "V2-RECALL",
+      "verdict": "pass",
+      "reason": "当前材料仅列新合同；真实查询返回历史案例v1、文档版本、EX-PAY报告关联、附条件意见、差异及来源链接。报告结合当前项目独立结算和付款原文核对适用性，未将历史接受意见当作本次批准。其他风险查询限制已如实记录，不影响指定付款历史案例的召回验证。",
+      "evidence": [
+        {
+          "source_id": "V2-S007",
+          "quote": "双方先前项目各自独立结算，不因同一交易方自动合并义务。"
+        },
+        {
+          "source_id": "V2-S008",
+          "quote": "{\\\"items\\\":[{\\\"case_id\\\":\\\"case_f5d248be00e165f72a226245b13796d3\\\",\\\"version\\\":1,\\\"workspace_id\\\":\\\"f6b9fbd4c2f55e19284aca12\\\",\\\"report_id\\\":\\\"72524037a2c0c50478a3bde3\\\",\\\"risk_id\\\":\\\"EX-PAY\\\",\\\"decision\\\":\\\"接受风险\\\""
+        },
+        {
+          "source_id": "V2-S009",
+          "quote": "\"conditions\": [\n        \"本项目拟将尾款账期调整为60天\",\n        \"预付款为合同价的20%\",\n        \"仅限H01_工业控制终端采购项目\"\n      ]"
+        },
+        {
+          "source_id": "V2-S009",
+          "quote": "\"source_url\": \"/agent?artifact=72524037a2c0c50478a3bde3&risk=EX-PAY#f6b9fbd4c2f55e19284aca12\",\n      \"version\": 1"
+        },
+        {
+          "source_id": "V2-S008",
+          "quote": "历史限定H01的条件不满足，不能据此认为本次付款风险已被接受，也不能自动填写处理意见。"
+        }
+      ],
+      "critical_failures": []
+    },
+    {
+      "case_id": "V2-PREFERENCE",
+      "verdict": "fail",
+      "reason": "真实记录显示两项偏好分别保存为独立、active 的个人条目，团队条目为空；但新会话最终正文未采用已确认的“大哥”称呼，且S012回复包含确认流程说明，未完全满足预期。",
+      "evidence": [
+        {
+          "source_id": "V2-S016",
+          "quote": "\"id\": \"d491b34a-6c7d-4eea-a4c0-45b758fdaa24\",\n          \"instance\": \"default\",\n          \"protected\": 1,\n          \"scope\": \"personal\",\n          \"status\": \"active\""
+        },
+        {
+          "source_id": "V2-S016",
+          "quote": "\"id\": \"d4553a57-006c-43f5-8808-6f70c8e4abbe\",\n          \"instance\": \"default\",\n          \"protected\": 1,\n          \"scope\": \"personal\",\n          \"status\": \"active\""
+        },
+        {
+          "source_id": "V2-S016",
+          "quote": "\"team\": {\n      \"items\": []\n    }"
+        },
+        {
+          "source_id": "V2-S016",
+          "quote": "按乙方（供货方）立场，下一步优先关注三件事："
+        },
+        {
+          "source_id": "V2-S012",
+          "quote": "若要跨会话长期生效，请在建议卡片或“经验与偏好”页面确认这两项偏好；目前尚未确认长期保存。"
+        }
+      ],
+      "critical_failures": [
+        "S016新会话最终正文未使用已确认的长期称呼“大哥”。",
+        "S012回复正文出现建议卡片及“经验与偏好”页面的确认流程说明。"
+      ]
+    },
+    {
+      "case_id": "V2-TEMPORARY",
+      "verdict": "pass",
+      "reason": "用户明确限定为本次三句话和临时称呼。前后快照及最终记录未新增相关长期候选、偏好或正式条目；已有长期偏好仍指向此前用户消息，未将本次助手回复作为用户来源。结论依据真实记录，不依据助手保存声明或模型任务完成状态。",
+      "evidence": [
+        {
+          "source_id": "V2-S017",
+          "quote": "这次回复只写三句话，这次叫我同事即可。"
+        },
+        {
+          "source_id": "V2-S017",
+          "quote": "\"after\": {\n    \"candidates\": {\n      \"items\": [],"
+        },
+        {
+          "source_id": "V2-S017",
+          "quote": "\"before\": {\n    \"candidates\": {\n      \"items\": [],"
+        },
+        {
+          "source_id": "V2-S018",
+          "quote": "\"source_ids\": [\n            \"msg_87bbd2f4b4f79e285686b41c460f90b5\"\n          ],"
+        },
+        {
+          "source_id": "V2-S018",
+          "quote": "\"role\": \"assistant\",\n          \"source_event_id\": \"01a13336-83e8-75e8-bf20-45fa5cb410f4:message:1\""
+        }
+      ],
+      "critical_failures": []
+    },
+    {
+      "case_id": "V2-UPDATE",
+      "verdict": "pass",
+      "reason": "H01待处理反馈已更新为第2版，案例状态为withdrawn；指定召回结果为空，依赖旧版本的正式经验已移出个人有效列表并列入来源变化待复核。旧接受意见及正式经验第1版仍保留在历史记录中。底层active字段不单独视为仍可召回。",
+      "evidence": [
+        {
+          "source_id": "V2-S019",
+          "quote": "\"id\": \"case_f5d248be00e165f72a226245b13796d3\",\n          \"instance\": \"default\",\n          \"session\": \"ses_eccd81f64ffeB6KMi8q6NYQ2Zy\",\n          \"status\": \"withdrawn\",\n          \"task\": \"task-310gx8yl7z\",\n          \"team\": \"team-310f20ga3a\",\n          \"user\": \"usr-xmmveljrfz\",\n          \"version\": 2"
+        },
+        {
+          "source_id": "V2-S020",
+          "quote": "{\n  \"items\": [],\n  \"schema_version\": 2\n}"
+        },
+        {
+          "source_id": "V2-S021",
+          "quote": "\"id\": \"97ac27e3-d8c1-40c2-b511-315c8d3794e5\",\n        \"reason\": \"来源版本已变化，请重新核对\""
+        },
+        {
+          "source_id": "V2-S019",
+          "quote": "\"decision\": \"接受风险\",\n        \"note\": \"现稿付款期限仍以原文为准。若本项目拟将尾款账期调整为60天，我方作为供货方可接受的条件是20%预付款，仅限本项目；这是附条件处理意见，未核验实际修订、批准或执行。\",\n        \"revision\": 1"
+        },
+        {
+          "source_id": "V2-S021",
+          "quote": "\"id\": \"97ac27e3-d8c1-40c2-b511-315c8d3794e5\",\n        \"status\": \"active\",\n        \"version\": 1"
+        }
+      ],
+      "critical_failures": []
+    },
+    {
+      "case_id": "V2-PROTECTION",
+      "verdict": "needs_review",
+      "critical_failures": [
+        "Judge citation validation failed"
+      ],
+      "evidence": []
+    },
+    {
+      "case_id": "V2-RELIABILITY",
+      "verdict": "pass",
+      "reason": "冻结证据包含操作员重启核验记录，确认原始记录、案例版本与状态、正式版本及删除标记保留且本地服务健康；真实业务接口记录同时证明越权访问、非管理员审批和缺少业务凭据的写入被拒绝。通过依据为操作员及接口证据，不依赖助手保存声明或模型风险判定。",
+      "evidence": [
+        {
+          "source_id": "SUPPLEMENT-2",
+          "quote": "\"checks\": [\n    \"raw retained\",\n    \"case versions and status retained\",\n    \"formal versions retained\",\n    \"tombstones retained\",\n    \"all local services healthy\"\n  ],\n  \"run_id\": \"aaedff205aa74a91bd3a39f649c2af67\",\n  \"status\": \"pass\",\n  \"step_id\": \"V2-S026\""
+        },
+        {
+          "source_id": "SUPPLEMENT-0",
+          "quote": "\"evidence\": {\n        \"detail\": \"需要团队管理员身份\"\n      },\n      \"name\": \"member_approval_denied\",\n      \"status\": \"pass\""
+        },
+        {
+          "source_id": "SUPPLEMENT-0",
+          "quote": "\"evidence\": {\n        \"detail\": \"没有此团队的访问权限\"\n      },\n      \"name\": \"revoked_member_mutation_denied\",\n      \"status\": \"pass\""
+        },
+        {
+          "source_id": "SUPPLEMENT-1",
+          "quote": "\"action\": \"core/write\",\n      \"response\": {\n        \"code\": 403,\n        \"message\": \"合同记忆写入需要业务控制端凭据\",\n        \"request_id\": \"req-0700ccd8f8a2467e\"\n      },\n      \"status\": 403"
+        }
+      ],
+      "critical_failures": []
+    }
+  ]
+}

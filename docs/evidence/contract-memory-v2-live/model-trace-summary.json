@@ -1,0 +1,11 @@
+{
+  "completed_trace_count": 78,
+  "stages": {
+    "l1|codex_subscription|gpt-6.1-sol": 39,
+    "l3|codex_subscription|gpt-6.1-sol": 10,
+    "case_relevance|codex_subscription|gpt-6.1-sol": 24,
+    "l2|codex_subscription|gpt-6.1-sol": 2,
+    "conflict|codex_subscription|gpt-6.1-sol": 3
+  },
+  "actual_model_unverified": 78
+}

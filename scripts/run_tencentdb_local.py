@@ -14,6 +14,8 @@ sys.path.insert(0, str(ROOT))
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--username', default='openharvey-local', help='独立实验账号名称')
+    parser.add_argument('--require-login', action='store_true', help='关闭本机自动登录，用于多角色验收')
     parser.add_argument('--data', type=Path, default=Path.home()/'.local/share/openharvey/tencentdb-experiment')
     parser.add_argument('--port', type=int, default=8080)
     parser.add_argument('--memory-control-key-file', type=Path, help='仅控制端读取的合同记忆管理凭据')
@@ -27,7 +29,7 @@ def main():
         raise SystemExit('请用 --opencode-bin 指定隔离 OpenCode 1.16.2 可执行文件')
     os.umask(0o077)
     origin = f'http://127.0.0.1:{args.port}'
-    os.environ.update(CW_DATA_DIR=str(args.data.resolve()), CW_SANDBOX_BACKEND='local', CW_LOCAL_DEV_USER='openharvey-local',
+    os.environ.update(CW_DATA_DIR=str(args.data.resolve()), CW_SANDBOX_BACKEND='local', CW_LOCAL_DEV_USER='' if args.require_login else args.username,
                       CW_SECURE_COOKIE='0', CW_PUBLIC_ORIGIN=origin,
                       PATH=str(args.opencode_bin.parent)+os.pathsep+os.environ.get('PATH',''))
     os.environ['CW_TDAI_ADMIN_KEY_FILE'] = str(args.admin_key_file.resolve())
@@ -41,15 +43,15 @@ def main():
     from contract_web.tencentdb_memory import TencentDBMemory
     from contract_web.runtime_manager import RuntimeManager
     store = Store(args.data)
-    u = store.one("SELECT * FROM users WHERE username='openharvey-local'")
+    u = store.one('SELECT * FROM users WHERE username=?', (args.username,))
     created = u is None
     if not u:
         password = secrets.token_urlsafe(24)
-        uid = store.add_user('openharvey-local', password)
+        uid = store.add_user(args.username, password)
         store.execute("UPDATE users SET role='admin' WHERE id=?", (uid,))
         u = store.one('SELECT * FROM users WHERE id=?', (uid,))
         path = store.root/'login.json'
-        path.write_text(json.dumps({'username':'openharvey-local','password':password}))
+        path.write_text(json.dumps({'username':args.username,'password':password}))
         path.chmod(0o600)
     settings = Settings(store, ROOT/'runtime/skills')
     from contract_web.risk_settings import RiskSettings
@@ -66,11 +68,11 @@ def main():
     async def prepare():
         if not store.one('SELECT 1 FROM tdai_users WHERE user_id=?', (u['id'],)):
             result = await adapter.connect(u, admin_key=args.admin_key_file.read_text().strip(),
-                core_url=args.core_url, proxy_url=args.proxy_url)
+                core_url=args.core_url, proxy_url=args.proxy_url, username=args.username)
             store.execute('UPDATE users SET model=? WHERE id=?', (result['model'], u['id']))
         row = store.one('SELECT * FROM tdai_users WHERE user_id=?', (u['id'],))
         provider = store.one("SELECT secret FROM providers WHERE org_id=? AND id='tencentdb-memory'", (models.scope(u),))
-        login = {'username':'openharvey-local','user_key':models.decrypt(provider['secret']),
+        login = {'username':args.username,'user_key':models.decrypt(provider['secret']),
                  'team_id':row['team_id'],'agent_id':row['agent_id']}
         path=store.root/'memory-login.json';path.write_text(json.dumps(login,indent=2));path.chmod(0o600)
         if args.contract_memory:
@@ -84,7 +86,7 @@ def main():
         await RuntimeManager(settings,models).ensure(u)
     asyncio.run(prepare())
     print(f'OpenHarvey 本机实验：{origin}/spaces', flush=True)
-    print('专用账号：openharvey-local；本机浏览器自动登录。记忆登录凭据位于数据目录 memory-login.json。', flush=True)
+    print(f'专用账号：{args.username}；登录凭据位于数据目录 login.json，Memory 凭据位于 memory-login.json。', flush=True)
     import uvicorn
     uvicorn.run('contract_web.app:create_app', factory=True, host='127.0.0.1', port=args.port, timeout_graceful_shutdown=3)
 

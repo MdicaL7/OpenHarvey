@@ -1,0 +1,51 @@
+{
+  "common_base": "bc49476",
+  "ui_branch": "codex/ui-style-consistency",
+  "ui_head": "cb1dbdf45b18fb1e6b43a53985e69b80088fe075",
+  "ui_worktree": "/Users/dicam/.codex/worktrees/ui-style-consistency/OpenHarvey",
+  "memory_branch": "codex/contract-memory",
+  "memory_worktree": "/Users/dicam/CodeDir/OpenHarvey",
+  "ui_not_merged": true,
+  "online_code_directory": "/Users/dicam/CodeDir/OpenHarvey",
+  "branch_switch_performed_while_apps_stopped": true,
+  "backup": "/Users/dicam/.local/share/openharvey/branch-separation-backups/20261013-125618",
+  "ui_paths": [
+    "static/account-ui.css",
+    "static/admin-ui.js",
+    "static/agent-ui.css",
+    "static/agent-ui.js",
+    "static/app.css",
+    "static/connectors-ui.css",
+    "static/experience.css",
+    "static/experience.html",
+    "static/experience.js",
+    "static/index.html",
+    "static/labs.css",
+    "static/materials-ui.js",
+    "static/materials.css",
+    "static/risk-settings-ui.js",
+    "static/settings-ui.css",
+    "static/settings-ui.js",
+    "static/spaces.css",
+    "static/workbench.css",
+    "static/workspace-controls.css",
+    "tests/frontend.test.mjs",
+    "static/confirm-dialog.js"
+  ],
+  "memory_tracked_paths": [
+    "contract_web/runtime_manager.py",
+    "scripts/run_tencentdb_local.py",
+    "docs/designs/contract-memory-v2.md"
+  ],
+  "shared_file_review": "Memory behavior retained in common baseline; only UI delta transferred. No shared uncommitted memory hunks were found.",
+  "ui_regression": {
+    "frontend": 163,
+    "python_related": 74
+  },
+  "memory_separated_regression": {
+    "frontend": 158,
+    "runtime_relocation": 1,
+    "precedents": 10
+  },
+  "real_experiments_repeated": false
+}

@@ -1,6 +1,6 @@
 # 合同记忆 v2：风险处置闭环
 
-状态：代码及模拟验证；尚未部署到当前实验服务，未运行真实抽取或 judge。版本 contract-v2。
+状态：contract-v2 已部署到本机服务，真实实验及失败修复记录见 [在线验收报告](../evidence/contract-memory-v2-live/README.md)。
 
 ## 数据含义
 

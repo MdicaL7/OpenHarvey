@@ -118,7 +118,14 @@ class RuntimeManager:
         async with self.lock('runtime-map'):
             path=self.store.root/'runtimes.json'
             configs=json.loads(path.read_text()) if path.exists() else {}
-            if u['username'] in configs:return configs[u['username']]
+            if u['username'] in configs:
+                config=configs[u['username']]
+                # Managed local runtimes must use the same checkout as the
+                # generated plugin and permissions after a worktree move.
+                if config.get('local') and config.get('skill_root')!=str(ROOT/'runtime'):
+                    config['skill_root']=str(ROOT/'runtime')
+                    tmp=path.with_suffix('.tmp');tmp.write_text(encoded(configs));tmp.chmod(0o600);tmp.replace(path)
+                return config
             with socket.socket() as sock:
                 sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
             root=self.store.user_root(u['id'])

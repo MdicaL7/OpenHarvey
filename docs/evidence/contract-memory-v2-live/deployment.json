@@ -1,0 +1,28 @@
+{
+  "images": [
+    {
+      "name": "tdai-contract-core",
+      "id": "sha256:252e7f3332184e5b19c5eb941ffb72b95c9d216b5bc6b5d9d78ef6ae3945b123",
+      "tag": "contract-v2-c9b07209-18220fd3",
+      "base_revision": "8b86874a"
+    },
+    {
+      "name": "tdai-contract-proxy",
+      "id": "sha256:189c6450c0a6f8f2830e40e9f144b280f2cb44e51868a83c718379d1fe5d3830",
+      "tag": "contract-v2-c9b07209-18220fd3",
+      "base_revision": "8b86874a"
+    }
+  ],
+  "ports": {
+    "core": 8430,
+    "proxy": 8106
+  },
+  "prompt_version": "contract-v2",
+  "source_sha256": "18220fd32b2e320da8e8a1ca4597d35449a6c3617f9e2ecd9400be498e8717d2",
+  "git": "c9b0720992f04a41fca868e85cf8b1e2bc2371c4",
+  "config_sha256": {
+    "core.yaml": "615adaac1fe8aa464d9bce0cf291870a364e0121129be5b964acf4caea187088",
+    "proxy.yaml": "3d4686310e8ebd083ddeb9951e78cdd50ebb6c678a86cdb26c0d14b00c70305f",
+    "contract-model.json": "6241bf9ca5f9cbed600f02117c1db0299c45e32698ff87271414f5bba7c64f64"
+  }
+}
