@@ -1,0 +1,725 @@
+{
+  "original_summary": "../judge-original-summary.json",
+  "original_counts": {
+    "pass": 6,
+    "fail": 1,
+    "needs_review": 2
+  },
+  "reviews": [
+    {
+      "case_id": "V2-BOUNDARY",
+      "result": {
+        "case_id": "V2-BOUNDARY",
+        "verdict": "pass",
+        "reason": "系统缺陷：未发现真实违反隔离断言；新Team列表为空，跨Team和个人User读取受限，普通成员无审批权限，撤销成员后的读取及修改均被拒绝，跨Team及伪造Agent、伪造User请求均被拒绝，管理员也不能读取他人私有来源。评分规则错误：按澄清核验每Team一个受管合同Agent，不要求同Team多个合同Agent；旧接口列出的额外私有Agent不能直接判为隔离失败。证据不足：本项核验无实质缺口，结论依据实际空列表、拒绝响应及配置数据，不以报告中的pass标签或保存声明代替验证。",
+        "evidence": [
+          {
+            "source_id": "ev_576cd2dd622189ed",
+            "quote": "[]"
+          },
+          {
+            "source_id": "ev_1b7755002953e781",
+            "quote": "内容不存在"
+          },
+          {
+            "source_id": "ev_575285312a0f31fa",
+            "quote": "内容不存在"
+          },
+          {
+            "source_id": "ev_b7b025a6697dcd55",
+            "quote": "需要团队管理员身份"
+          },
+          {
+            "source_id": "ev_cebe7e6b1de2d680",
+            "quote": "没有此团队的访问权限"
+          },
+          {
+            "source_id": "ev_8e250597401c3239",
+            "quote": "没有此团队的访问权限"
+          },
+          {
+            "source_id": "ev_36858ec37e07459d",
+            "quote": "403"
+          },
+          {
+            "source_id": "ev_754a077ddcaca715",
+            "quote": "403"
+          },
+          {
+            "source_id": "ev_949f2d6b0cb5da67",
+            "quote": "记忆身份或归属不匹配"
+          },
+          {
+            "source_id": "ev_f8d0ac5d43302e83",
+            "quote": "合同工作区不存在"
+          },
+          {
+            "source_id": "ev_6f3cba33108843b0",
+            "quote": "产出物不存在"
+          },
+          {
+            "source_id": "ev_393dfd50c2460cce",
+            "quote": "原文不存在或不属于当前账号"
+          },
+          {
+            "source_id": "ev_b16ed76765fb8f11",
+            "quote": "one managed contract Agent per Team"
+          },
+          {
+            "source_id": "ev_af25e728d3eed539",
+            "quote": "1"
+          },
+          {
+            "source_id": "ev_7e80657329a05e05",
+            "quote": "1"
+          },
+          {
+            "source_id": "ev_25a815ec52b2c1d0",
+            "quote": "private"
+          },
+          {
+            "source_id": "ev_146cc7e1512439fe",
+            "quote": "{}"
+          }
+        ],
+        "critical_failures": []
+      },
+      "model_metadata": {
+        "provider": "codex_subscription",
+        "requested_model": "gpt-6.1-sol",
+        "actual_model": null,
+        "model_verified": false,
+        "cli_version": "codex-cli 0.162.0-alpha.17.2",
+        "prompt_sha256": "b9f704b007adf86525cefc31504aa6e281f42ee89af823ca312035e48ddf94d8",
+        "input_sha256": "84c214be7bb0c17b2250ade0a791a4365869201049ffa183a335770f46e2d630",
+        "usage": {
+          "input_tokens": 25646,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 581,
+          "reasoning_output_tokens": 23
+        },
+        "elapsed_seconds": 31.661,
+        "stage": "judge",
+        "role": "judge"
+      },
+      "quoted_evidence": [
+        {
+          "source_id": "ev_576cd2dd622189ed",
+          "quote": "[]",
+          "source_file": "access-02.json",
+          "json_pointer": "/checks/0/evidence/items",
+          "source_sha256": "32040905833c955be6550f48aadb127a1bfdead090104ab174b1b0597fb56eb9",
+          "source_value": []
+        },
+        {
+          "source_id": "ev_1b7755002953e781",
+          "quote": "内容不存在",
+          "source_file": "access-02.json",
+          "json_pointer": "/checks/2/evidence/detail",
+          "source_sha256": "32040905833c955be6550f48aadb127a1bfdead090104ab174b1b0597fb56eb9",
+          "source_value": "内容不存在"
+        },
+        {
+          "source_id": "ev_575285312a0f31fa",
+          "quote": "内容不存在",
+          "source_file": "access-02.json",
+          "json_pointer": "/checks/3/evidence/detail",
+          "source_sha256": "32040905833c955be6550f48aadb127a1bfdead090104ab174b1b0597fb56eb9",
+          "source_value": "内容不存在"
+        },
+        {
+          "source_id": "ev_b7b025a6697dcd55",
+          "quote": "需要团队管理员身份",
+          "source_file": "access-02.json",
+          "json_pointer": "/checks/7/evidence/detail",
+          "source_sha256": "32040905833c955be6550f48aadb127a1bfdead090104ab174b1b0597fb56eb9",
+          "source_value": "需要团队管理员身份"
+        },
+        {
+          "source_id": "ev_cebe7e6b1de2d680",
+          "quote": "没有此团队的访问权限",
+          "source_file": "access-02.json",
+          "json_pointer": "/checks/12/evidence/detail",
+          "source_sha256": "32040905833c955be6550f48aadb127a1bfdead090104ab174b1b0597fb56eb9",
+          "source_value": "没有此团队的访问权限"
+        },
+        {
+          "source_id": "ev_8e250597401c3239",
+          "quote": "没有此团队的访问权限",
+          "source_file": "access-02.json",
+          "json_pointer": "/checks/13/evidence/detail",
+          "source_sha256": "32040905833c955be6550f48aadb127a1bfdead090104ab174b1b0597fb56eb9",
+          "source_value": "没有此团队的访问权限"
+        },
+        {
+          "source_id": "ev_36858ec37e07459d",
+          "quote": "403",
+          "source_file": "closeout-01/boundary-raw.json",
+          "json_pointer": "/requests/1/http_status",
+          "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+          "source_value": 403
+        },
+        {
+          "source_id": "ev_754a077ddcaca715",
+          "quote": "403",
+          "source_file": "closeout-01/boundary-raw.json",
+          "json_pointer": "/requests/2/http_status",
+          "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+          "source_value": 403
+        },
+        {
+          "source_id": "ev_949f2d6b0cb5da67",
+          "quote": "记忆身份或归属不匹配",
+          "source_file": "closeout-01/boundary-raw.json",
+          "json_pointer": "/requests/3/response/message",
+          "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+          "source_value": "记忆身份或归属不匹配"
+        },
+        {
+          "source_id": "ev_f8d0ac5d43302e83",
+          "quote": "合同工作区不存在",
+          "source_file": "team-admin-private-source.json",
+          "json_pointer": "/checks/0/response/detail",
+          "source_sha256": "65bfc6bc7ad2899771a3287e73884112a10844680480b5454a993bcd6b7543ec",
+          "source_value": "合同工作区不存在"
+        },
+        {
+          "source_id": "ev_6f3cba33108843b0",
+          "quote": "产出物不存在",
+          "source_file": "team-admin-private-source.json",
+          "json_pointer": "/checks/1/response/detail",
+          "source_sha256": "65bfc6bc7ad2899771a3287e73884112a10844680480b5454a993bcd6b7543ec",
+          "source_value": "产出物不存在"
+        },
+        {
+          "source_id": "ev_393dfd50c2460cce",
+          "quote": "原文不存在或不属于当前账号",
+          "source_file": "team-admin-private-source.json",
+          "json_pointer": "/checks/2/response/detail",
+          "source_sha256": "65bfc6bc7ad2899771a3287e73884112a10844680480b5454a993bcd6b7543ec",
+          "source_value": "原文不存在或不属于当前账号"
+        },
+        {
+          "source_id": "ev_b16ed76765fb8f11",
+          "quote": "one managed contract Agent per Team",
+          "source_file": "closeout-01/boundary-raw.json",
+          "json_pointer": "/product_scope",
+          "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+          "source_value": "one managed contract Agent per Team"
+        },
+        {
+          "source_id": "ev_af25e728d3eed539",
+          "quote": "1",
+          "source_file": "closeout-01/boundary-raw.json",
+          "json_pointer": "/requests/4/managed_contract_agents",
+          "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+          "source_value": 1
+        },
+        {
+          "source_id": "ev_7e80657329a05e05",
+          "quote": "1",
+          "source_file": "closeout-01/boundary-raw.json",
+          "json_pointer": "/requests/5/managed_contract_agents",
+          "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+          "source_value": 1
+        },
+        {
+          "source_id": "ev_25a815ec52b2c1d0",
+          "quote": "private",
+          "source_file": "closeout-01/boundary-raw.json",
+          "json_pointer": "/requests/4/response/data/items/1/visibility",
+          "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+          "source_value": "private"
+        },
+        {
+          "source_id": "ev_146cc7e1512439fe",
+          "quote": "{}",
+          "source_file": "closeout-01/boundary-raw.json",
+          "json_pointer": "/requests/4/response/data/items/1/metadata_json",
+          "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+          "source_value": "{}"
+        }
+      ],
+      "original_attempt_file": "closeout-01/judge-review-03/V2-BOUNDARY.json",
+      "original_result_unchanged": true
+    },
+    {
+      "case_id": "V2-PREFERENCE",
+      "result": {
+        "case_id": "V2-PREFERENCE",
+        "verdict": "pass",
+        "reason": "系统缺陷：当前证据显示两类偏好经分别确认形成不同ID的个人正式条目，均为personal，未进入L2；最新data.content均无确认流程说明。新会话实际使用最新称呼“老师”及“先给结论，再列原文证据与建议”的结构，未用旧声明或旧标题替代正式正文。评分规则错误：将助手回复中的确认流程解释视为正式正文污染，或要求每次回复机械重复称呼，均不符合澄清。证据不足：本项业务断言无未闭合缺口；结论依据真实条目及新会话行为，不依据保存声明或检查器的pass，也不覆盖此前真实失败。",
+        "evidence": [
+          {
+            "source_id": "ev_654cc8b096c7b378",
+            "quote": "cc60d32c-0172-4c79-b9c5-ae022d36353e"
+          },
+          {
+            "source_id": "ev_c691c00ec54223f3",
+            "quote": "5e9dcf1f-9717-4a59-81be-e0040fd102aa"
+          },
+          {
+            "source_id": "ev_821190f5d2966e22",
+            "quote": "personal"
+          },
+          {
+            "source_id": "ev_4407c49799766361",
+            "quote": "personal"
+          },
+          {
+            "source_id": "ev_c1c308e837705aa2",
+            "quote": "confirm"
+          },
+          {
+            "source_id": "ev_2c70345224d8343c",
+            "quote": "confirm"
+          },
+          {
+            "source_id": "ev_0d46fa21603a66d4",
+            "quote": "合同报告先给结论，再列原文证据与建议。"
+          },
+          {
+            "source_id": "ev_fd7694109bd10aeb",
+            "quote": "称呼用户为“老师”。"
+          },
+          {
+            "source_id": "ev_78c1f32147da8894",
+            "quote": "new_thread"
+          },
+          {
+            "source_id": "ev_85f12eced69bc5c1",
+            "quote": "老师，已查询相关历史声明，并核对当前已确认的正式正文。当前应使用以下约定："
+          },
+          {
+            "source_id": "ev_85f12eced69bc5c1",
+            "quote": "| 称呼 | 称呼您为“老师” | “今后请称呼我为大哥” |\n| 报告结构 | 合同报告先给结论，再列原文证据与建议 | “以后所有合同报告先给结论，再分点说明” |"
+          }
+        ],
+        "critical_failures": []
+      },
+      "model_metadata": {
+        "provider": "codex_subscription",
+        "requested_model": "gpt-6.1-sol",
+        "actual_model": null,
+        "model_verified": false,
+        "cli_version": "codex-cli 0.162.0-alpha.17.2",
+        "prompt_sha256": "7d4a06e0407d36a5c5dd2aa9fa3d2c71e7b47d87b2e2f9f7f1db7cf05610c651",
+        "input_sha256": "ae4f3746296ac74cf7c03bd3f181ac8c88fa926d20c3543c8a095ac66ce47b29",
+        "usage": {
+          "input_tokens": 68133,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 592,
+          "reasoning_output_tokens": 33
+        },
+        "elapsed_seconds": 34.403,
+        "stage": "judge",
+        "role": "judge"
+      },
+      "quoted_evidence": [
+        {
+          "source_id": "ev_654cc8b096c7b378",
+          "quote": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/after/core/entries/0/id",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "cc60d32c-0172-4c79-b9c5-ae022d36353e"
+        },
+        {
+          "source_id": "ev_c691c00ec54223f3",
+          "quote": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/after/core/entries/1/id",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "5e9dcf1f-9717-4a59-81be-e0040fd102aa"
+        },
+        {
+          "source_id": "ev_821190f5d2966e22",
+          "quote": "personal",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/after/core/entries/0/scope",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "personal"
+        },
+        {
+          "source_id": "ev_4407c49799766361",
+          "quote": "personal",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/after/core/entries/1/scope",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "personal"
+        },
+        {
+          "source_id": "ev_c1c308e837705aa2",
+          "quote": "confirm",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/after/core/audit/0/action",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "confirm"
+        },
+        {
+          "source_id": "ev_2c70345224d8343c",
+          "quote": "confirm",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/after/core/audit/1/action",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "confirm"
+        },
+        {
+          "source_id": "ev_0d46fa21603a66d4",
+          "quote": "合同报告先给结论，再列原文证据与建议。",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/after/core/entries/0/data/content",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "合同报告先给结论，再列原文证据与建议。"
+        },
+        {
+          "source_id": "ev_fd7694109bd10aeb",
+          "quote": "称呼用户为“老师”。",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/after/core/entries/1/data/content",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "称呼用户为“老师”。"
+        },
+        {
+          "source_id": "ev_78c1f32147da8894",
+          "quote": "new_thread",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-10.json",
+          "json_pointer": "/step/action",
+          "source_sha256": "3f4c67b065a579de175e5eff41717495b56b9c13794592b1e461e1904ebb9ade",
+          "source_value": "new_thread"
+        },
+        {
+          "source_id": "ev_85f12eced69bc5c1",
+          "quote": "老师，已查询相关历史声明，并核对当前已确认的正式正文。当前应使用以下约定：",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/final_assistant_text",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "老师，已查询相关历史声明，并核对当前已确认的正式正文。当前应使用以下约定：\n\n| 项目 | 当前正式正文（版本 2） | 旧声明，仅用于溯源 |\n|---|---|---|\n| 称呼 | 称呼您为“老师” | “今后请称呼我为大哥” |\n| 报告结构 | 合同报告先给结论，再列原文证据与建议 | “以后所有合同报告先给结论，再分点说明” |\n\n当前账号配置未设置称呼，因此采用已确认正式正文中的“老师”。称呼记忆的标题仍写着“称呼用户为大哥”，但标题与正文不一致时，应以最新正式正文为准。\n\n这两项正式偏好未列明适用条件或例外，按一般称呼和合同报告场景使用；您本次的明确要求及当前配置优先。历史声明不替代正式正文，以上偏好也不代表任何合同事项已经批准。本轮仅查询核对，未修改或保存偏好。"
+        },
+        {
+          "source_id": "ev_85f12eced69bc5c1",
+          "quote": "| 称呼 | 称呼您为“老师” | “今后请称呼我为大哥” |\n| 报告结构 | 合同报告先给结论，再列原文证据与建议 | “以后所有合同报告先给结论，再分点说明” |",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/final_assistant_text",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "老师，已查询相关历史声明，并核对当前已确认的正式正文。当前应使用以下约定：\n\n| 项目 | 当前正式正文（版本 2） | 旧声明，仅用于溯源 |\n|---|---|---|\n| 称呼 | 称呼您为“老师” | “今后请称呼我为大哥” |\n| 报告结构 | 合同报告先给结论，再列原文证据与建议 | “以后所有合同报告先给结论，再分点说明” |\n\n当前账号配置未设置称呼，因此采用已确认正式正文中的“老师”。称呼记忆的标题仍写着“称呼用户为大哥”，但标题与正文不一致时，应以最新正式正文为准。\n\n这两项正式偏好未列明适用条件或例外，按一般称呼和合同报告场景使用；您本次的明确要求及当前配置优先。历史声明不替代正式正文，以上偏好也不代表任何合同事项已经批准。本轮仅查询核对，未修改或保存偏好。"
+        }
+      ],
+      "original_attempt_file": "closeout-01/judge-post-fix/V2-PREFERENCE.json",
+      "original_result_unchanged": true
+    },
+    {
+      "case_id": "V2-PROTECTION",
+      "result": {
+        "case_id": "V2-PROTECTION",
+        "verdict": "pass",
+        "reason": "逐项验收：人工修改后的正文与版本在真实同来源L3再提炼后保持不变，后续回复采用最新正式正文；两次旧版本修改均返回409；删除条目退出正式召回，后续回复仅计入仍有效的报告结构约定；历史版本1、2及删除版本3保留；重复确认返回相同ID和版本，重复修改及删除返回原操作结果，符合幂等；真实再提炼包含原始来源，但忽略、删除来源未新增待确认候选，删除状态保持。L3原始输出中的旧内容及保留的历史候选不等于正式条目重生，幂等重放返回旧响应也不等于恢复当前状态。未发现系统缺陷、评分规则错误或证据缺口；本结论仅针对当前独立验收，不改写此前结果。",
+        "evidence": [
+          {
+            "source_id": "ev_b6aba1f3692da095",
+            "quote": "合同报告先给结论，再列原文证据与建议。"
+          },
+          {
+            "source_id": "ev_b88e1a950100e98d",
+            "quote": "2"
+          },
+          {
+            "source_id": "ev_ae9625d97394dc1b",
+            "quote": "true"
+          },
+          {
+            "source_id": "ev_85f12eced69bc5c1",
+            "quote": "称呼记忆的标题仍写着“称呼用户为大哥”，但标题与正文不一致时，应以最新正式正文为准。"
+          },
+          {
+            "source_id": "ev_69f5d788cc6be025",
+            "quote": "409"
+          },
+          {
+            "source_id": "ev_34add03eeedf259e",
+            "quote": "409"
+          },
+          {
+            "source_id": "ev_9975a36101292711",
+            "quote": "deleted"
+          },
+          {
+            "source_id": "ev_173d1552a53ca66d",
+            "quote": "true"
+          },
+          {
+            "source_id": "ev_bbb0a66efef3ab07",
+            "quote": "以上说明依据查询结果中的当前正式正文，未将历史原话或已删除条目计入有效约定。"
+          },
+          {
+            "source_id": "ev_30b535615a323452",
+            "quote": "1"
+          },
+          {
+            "source_id": "ev_36911c26d904d127",
+            "quote": "2"
+          },
+          {
+            "source_id": "ev_d327f02e8ab017a2",
+            "quote": "3"
+          },
+          {
+            "source_id": "ev_42c926bbb53b90f5",
+            "quote": "deleted"
+          },
+          {
+            "source_id": "ev_c150933ccf82c2ff",
+            "quote": "cc60d32c-0172-4c79-b9c5-ae022d36353e"
+          },
+          {
+            "source_id": "ev_67a9cab612c1d72a",
+            "quote": "cc60d32c-0172-4c79-b9c5-ae022d36353e"
+          },
+          {
+            "source_id": "ev_16018ac39b2f30bb",
+            "quote": "1"
+          },
+          {
+            "source_id": "ev_7d202fc47e3abacb",
+            "quote": "1"
+          },
+          {
+            "source_id": "ev_5316940f77db8b59",
+            "quote": "true"
+          },
+          {
+            "source_id": "ev_3fa5ef726add8beb",
+            "quote": "true"
+          },
+          {
+            "source_id": "ev_e8e9d5a15afcf099",
+            "quote": "pref_34cfd7058912c5d767dca7cfe8d54759"
+          },
+          {
+            "source_id": "ev_76eeacae33a77383",
+            "quote": "pref_8c4fd58f54098c1b75087d354a2a3e3c"
+          },
+          {
+            "source_id": "ev_137335d6aa32e0d6",
+            "quote": "true"
+          },
+          {
+            "source_id": "ev_aea9375a2aeea1a3",
+            "quote": "ignored"
+          }
+        ],
+        "critical_failures": []
+      },
+      "model_metadata": {
+        "provider": "codex_subscription",
+        "requested_model": "gpt-6.1-sol",
+        "actual_model": null,
+        "model_verified": false,
+        "cli_version": "codex-cli 0.162.0-alpha.17.2",
+        "prompt_sha256": "7d4a06e0407d36a5c5dd2aa9fa3d2c71e7b47d87b2e2f9f7f1db7cf05610c651",
+        "input_sha256": "cf1a90f4670878e2da89cc4a3c5cc12b51e3418b4137a2b5387ac2eb82c841e2",
+        "usage": {
+          "input_tokens": 134206,
+          "cached_input_tokens": 0,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 859,
+          "reasoning_output_tokens": 30
+        },
+        "elapsed_seconds": 37.958,
+        "stage": "judge",
+        "role": "judge"
+      },
+      "quoted_evidence": [
+        {
+          "source_id": "ev_b6aba1f3692da095",
+          "quote": "合同报告先给结论，再列原文证据与建议。",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/protected_current_entry/data/content",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": "合同报告先给结论，再列原文证据与建议。"
+        },
+        {
+          "source_id": "ev_b88e1a950100e98d",
+          "quote": "2",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/protected_current_entry/version",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": 2
+        },
+        {
+          "source_id": "ev_ae9625d97394dc1b",
+          "quote": "true",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/checks/protected_version_and_body_unchanged",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": true
+        },
+        {
+          "source_id": "ev_85f12eced69bc5c1",
+          "quote": "称呼记忆的标题仍写着“称呼用户为大哥”，但标题与正文不一致时，应以最新正式正文为准。",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+          "json_pointer": "/result/final_assistant_text",
+          "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+          "source_value": "老师，已查询相关历史声明，并核对当前已确认的正式正文。当前应使用以下约定：\n\n| 项目 | 当前正式正文（版本 2） | 旧声明，仅用于溯源 |\n|---|---|---|\n| 称呼 | 称呼您为“老师” | “今后请称呼我为大哥” |\n| 报告结构 | 合同报告先给结论，再列原文证据与建议 | “以后所有合同报告先给结论，再分点说明” |\n\n当前账号配置未设置称呼，因此采用已确认正式正文中的“老师”。称呼记忆的标题仍写着“称呼用户为大哥”，但标题与正文不一致时，应以最新正式正文为准。\n\n这两项正式偏好未列明适用条件或例外，按一般称呼和合同报告场景使用；您本次的明确要求及当前配置优先。历史声明不替代正式正文，以上偏好也不代表任何合同事项已经批准。本轮仅查询核对，未修改或保存偏好。"
+        },
+        {
+          "source_id": "ev_69f5d788cc6be025",
+          "quote": "409",
+          "source_file": "closeout-01/protection-01/api-receipts.json",
+          "json_pointer": "/12/http_status",
+          "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+          "source_value": 409
+        },
+        {
+          "source_id": "ev_34add03eeedf259e",
+          "quote": "409",
+          "source_file": "closeout-01/protection-01/api-receipts.json",
+          "json_pointer": "/14/http_status",
+          "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+          "source_value": 409
+        },
+        {
+          "source_id": "ev_9975a36101292711",
+          "quote": "deleted",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/deleted_entry/status",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": "deleted"
+        },
+        {
+          "source_id": "ev_173d1552a53ca66d",
+          "quote": "true",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/checks/deleted_entry_absent_from_formal_list",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": true
+        },
+        {
+          "source_id": "ev_bbb0a66efef3ab07",
+          "quote": "以上说明依据查询结果中的当前正式正文，未将历史原话或已删除条目计入有效约定。",
+          "source_file": "closeout-01/protection-01/steps/PROTECT-16.json",
+          "json_pointer": "/result/final_assistant_text",
+          "source_sha256": "f5021201a62c9a52c79ab160c95b1479ff119cd5019ae20ec799dd6ea7f569f1",
+          "source_value": "本次查询找到 **1 条当前有效的已确认工作约定**：\n\n“合同报告先给结论，再列原文证据与建议。”（正式版本：第 2 版）\n\n据此，报告结构为：\n\n1. **结论**：先说明主要判断与处理重点。\n2. **原文证据**：列出支持判断的合同条款，保留完整文档 ID 和段落引用。\n3. **建议**：结合证据提出处理或修改建议。\n\n该条正式记录未列明适用条件或例外，不能据此推定它无条件适用于所有场景；您本次的明确要求仍优先。\n\n历史原话“以后所有合同报告先给结论，再分点说明”被标记为历史来源，不作为现行偏好。以上说明依据查询结果中的当前正式正文，未将历史原话或已删除条目计入有效约定。"
+        },
+        {
+          "source_id": "ev_30b535615a323452",
+          "quote": "1",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/revisions/0/version",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": 1
+        },
+        {
+          "source_id": "ev_36911c26d904d127",
+          "quote": "2",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/revisions/1/version",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": 2
+        },
+        {
+          "source_id": "ev_d327f02e8ab017a2",
+          "quote": "3",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/revisions/4/version",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": 3
+        },
+        {
+          "source_id": "ev_42c926bbb53b90f5",
+          "quote": "deleted",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/revisions/4/status",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": "deleted"
+        },
+        {
+          "source_id": "ev_c150933ccf82c2ff",
+          "quote": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "source_file": "closeout-01/protection-01/api-receipts.json",
+          "json_pointer": "/4/response/id",
+          "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+          "source_value": "cc60d32c-0172-4c79-b9c5-ae022d36353e"
+        },
+        {
+          "source_id": "ev_67a9cab612c1d72a",
+          "quote": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "source_file": "closeout-01/protection-01/api-receipts.json",
+          "json_pointer": "/5/response/id",
+          "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+          "source_value": "cc60d32c-0172-4c79-b9c5-ae022d36353e"
+        },
+        {
+          "source_id": "ev_16018ac39b2f30bb",
+          "quote": "1",
+          "source_file": "closeout-01/protection-01/api-receipts.json",
+          "json_pointer": "/4/response/version",
+          "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+          "source_value": 1
+        },
+        {
+          "source_id": "ev_7d202fc47e3abacb",
+          "quote": "1",
+          "source_file": "closeout-01/protection-01/api-receipts.json",
+          "json_pointer": "/5/response/version",
+          "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+          "source_value": 1
+        },
+        {
+          "source_id": "ev_5316940f77db8b59",
+          "quote": "true",
+          "source_file": "closeout-01/protection-01/post-checks.json",
+          "json_pointer": "/repeated_saved_operations_equal",
+          "source_sha256": "74391e2b57503809101e46fb6feb8d913a5e2d38b6f1d419dfdddeb4d4b867b2",
+          "source_value": true
+        },
+        {
+          "source_id": "ev_3fa5ef726add8beb",
+          "quote": "true",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/checks/same_original_sources_present_in_real_L3_input",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": true
+        },
+        {
+          "source_id": "ev_e8e9d5a15afcf099",
+          "quote": "pref_34cfd7058912c5d767dca7cfe8d54759",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/actual_l3_runs/0/data/output/entries/1/source_ids/0",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": "pref_34cfd7058912c5d767dca7cfe8d54759"
+        },
+        {
+          "source_id": "ev_76eeacae33a77383",
+          "quote": "pref_8c4fd58f54098c1b75087d354a2a3e3c",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/actual_l3_runs/0/data/output/entries/2/source_ids/0",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": "pref_8c4fd58f54098c1b75087d354a2a3e3c"
+        },
+        {
+          "source_id": "ev_137335d6aa32e0d6",
+          "quote": "true",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/checks/ignored_deleted_fingerprints_absent_from_pending",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": true
+        },
+        {
+          "source_id": "ev_aea9375a2aeea1a3",
+          "quote": "ignored",
+          "source_file": "closeout-01/protection-replay/same-source-proof.json",
+          "json_pointer": "/candidates_after_reprocessing/2/status",
+          "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+          "source_value": "ignored"
+        }
+      ],
+      "original_attempt_file": "closeout-01/judge-protection-complete/V2-PROTECTION.json",
+      "original_result_unchanged": true
+    }
+  ],
+  "note": "Boundary citations were revalidated allowing exact complete short scalar values. Preference/protection use new real post-fix experiments; original failures are retained."
+}

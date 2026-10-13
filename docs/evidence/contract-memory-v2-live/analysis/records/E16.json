@@ -1,0 +1,335 @@
+{
+  "title": "个人、团队共享审核及撤销成员访问",
+  "evidence": [
+    {
+      "source_file": "access-02.json",
+      "source_sha256": "32040905833c955be6550f48aadb127a1bfdead090104ab174b1b0597fb56eb9",
+      "json_pointer": "",
+      "value": {
+        "run_id": "4b458ea4c79d4dbfa2971ac9bdcd174b",
+        "method": "real business APIs; manually authored entry management only",
+        "checks": [
+          {
+            "name": "same_user_new_team_empty",
+            "status": "pass",
+            "evidence": {
+              "items": []
+            }
+          },
+          {
+            "name": "manual_entry_saved",
+            "status": "pass",
+            "evidence": {
+              "id": "e1ba666e-fa9c-4e9b-83d7-dc2b77b3c87c",
+              "instance": "default",
+              "team": "team-3142738dgk",
+              "agent": "agt-3142bvd3c2",
+              "user": "usr-xmmveljrfz",
+              "scope": "personal",
+              "status": "active",
+              "data": {
+                "kind": "experience",
+                "title": "验收异议处理方法",
+                "content": "先核对验收标准与具体异议，再约定整改和复验期限。",
+                "topic": "验收",
+                "conditions": [
+                  "有书面异议和可验证的交付记录"
+                ],
+                "exceptions": [
+                  "不直接推定验收通过"
+                ],
+                "source_ids": [],
+                "schema_version": 2,
+                "subtype": "disposition_method"
+              },
+              "version": 1,
+              "protected": 1,
+              "created": "2026-10-13T02:49:40.863Z",
+              "updated": "2026-10-13T02:49:40.863Z"
+            }
+          },
+          {
+            "name": "member_cannot_read_private",
+            "status": "pass",
+            "evidence": {
+              "detail": "内容不存在"
+            }
+          },
+          {
+            "name": "other_team_cannot_read_private",
+            "status": "pass",
+            "evidence": {
+              "detail": "内容不存在"
+            }
+          },
+          {
+            "name": "outsider_denied",
+            "status": "pass",
+            "evidence": {
+              "detail": "没有此团队的访问权限"
+            }
+          },
+          {
+            "name": "identity_forgery_rejected",
+            "status": "pass",
+            "evidence": {
+              "detail": "请求字段无效"
+            }
+          },
+          {
+            "name": "before_approval_private",
+            "status": "pass",
+            "evidence": {
+              "id": "6d48f708-de18-4aa2-8ca5-18228a13c074",
+              "instance": "default",
+              "team": "team-3142738dgk",
+              "agent": "agt-3142bvd3c2",
+              "user": "usr-xmmveljrfz",
+              "target_id": "e1ba666e-fa9c-4e9b-83d7-dc2b77b3c87c",
+              "target_version": 1,
+              "operation": "share",
+              "status": "pending",
+              "data": {
+                "kind": "experience",
+                "title": "验收异议处理方法",
+                "content": "先核对验收标准与具体异议，再约定整改和复验期限。",
+                "topic": "验收",
+                "conditions": [
+                  "有书面异议和可验证的交付记录"
+                ],
+                "exceptions": [
+                  "不直接推定验收通过"
+                ],
+                "source_ids": [],
+                "schema_version": 2,
+                "subtype": "disposition_method"
+              },
+              "before_data": "null",
+              "created": "2026-10-13T02:49:40.918Z",
+              "updated": "2026-10-13T02:49:40.918Z",
+              "before": null
+            }
+          },
+          {
+            "name": "member_approval_denied",
+            "status": "pass",
+            "evidence": {
+              "detail": "需要团队管理员身份"
+            }
+          },
+          {
+            "name": "published_copy_without_private_sources",
+            "status": "pass",
+            "evidence": {
+              "approval": {
+                "id": "6d48f708-de18-4aa2-8ca5-18228a13c074",
+                "status": "approved"
+              },
+              "detail": {
+                "entry": {
+                  "id": "9878ee12-3425-4b7c-8a41-8ae4b2fb6730",
+                  "instance": "default",
+                  "team": "team-3142738dgk",
+                  "agent": "agt-3142bvd3c2",
+                  "user": "",
+                  "scope": "team",
+                  "status": "active",
+                  "data": {
+                    "kind": "experience",
+                    "title": "验收异议处理方法",
+                    "content": "先核对验收标准与具体异议，再约定整改和复验期限。",
+                    "topic": "验收",
+                    "conditions": [
+                      "有书面异议和可验证的交付记录"
+                    ],
+                    "exceptions": [
+                      "不直接推定验收通过"
+                    ],
+                    "source_ids": [],
+                    "schema_version": 2,
+                    "subtype": "disposition_method"
+                  },
+                  "version": 1,
+                  "protected": 1,
+                  "created": "2026-10-13T02:49:40.964Z",
+                  "updated": "2026-10-13T02:49:40.964Z"
+                },
+                "versions": [
+                  {
+                    "id": "9878ee12-3425-4b7c-8a41-8ae4b2fb6730",
+                    "version": 1,
+                    "data": {
+                      "kind": "experience",
+                      "title": "验收异议处理方法",
+                      "content": "先核对验收标准与具体异议，再约定整改和复验期限。",
+                      "topic": "验收",
+                      "conditions": [
+                        "有书面异议和可验证的交付记录"
+                      ],
+                      "exceptions": [
+                        "不直接推定验收通过"
+                      ],
+                      "source_ids": [],
+                      "schema_version": 2,
+                      "subtype": "disposition_method"
+                    },
+                    "status": "active",
+                    "actor": "usr-xmmveljrfz",
+                    "created": "2026-10-13T02:49:40.964Z"
+                  }
+                ],
+                "sources": [
+                  {
+                    "restricted": true,
+                    "label": "来源合同受限或手动添加"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "idempotent_edit",
+            "status": "pass",
+            "evidence": {
+              "id": "e1ba666e-fa9c-4e9b-83d7-dc2b77b3c87c",
+              "instance": "default",
+              "team": "team-3142738dgk",
+              "agent": "agt-3142bvd3c2",
+              "user": "usr-xmmveljrfz",
+              "scope": "personal",
+              "status": "active",
+              "data": {
+                "kind": "experience",
+                "title": "验收异议处理方法",
+                "content": "先核对客观验收标准、具体异议与交付记录，再明确整改和复验期限。",
+                "topic": "验收",
+                "conditions": [
+                  "有书面异议和可验证的交付记录"
+                ],
+                "exceptions": [
+                  "不直接推定验收通过"
+                ],
+                "source_ids": [],
+                "schema_version": 2,
+                "subtype": "disposition_method"
+              },
+              "version": 2,
+              "protected": 1,
+              "created": "2026-10-13T02:49:40.863Z",
+              "updated": "2026-10-13T02:49:41.014Z"
+            }
+          },
+          {
+            "name": "stale_version_rejected",
+            "status": "pass",
+            "evidence": {
+              "detail": "内容已更新，请刷新后重试"
+            }
+          },
+          {
+            "name": "personal_edit_does_not_overwrite_team",
+            "status": "pass",
+            "evidence": {
+              "team_entry_id": "9878ee12-3425-4b7c-8a41-8ae4b2fb6730"
+            }
+          },
+          {
+            "name": "revoked_member_denied",
+            "status": "pass",
+            "evidence": {
+              "detail": "没有此团队的访问权限"
+            }
+          },
+          {
+            "name": "revoked_member_mutation_denied",
+            "status": "pass",
+            "evidence": {
+              "detail": "没有此团队的访问权限"
+            }
+          },
+          {
+            "name": "deletion_exits_personal_list",
+            "status": "pass",
+            "evidence": {
+              "id": "e1ba666e-fa9c-4e9b-83d7-dc2b77b3c87c",
+              "instance": "default",
+              "team": "team-3142738dgk",
+              "agent": "agt-3142bvd3c2",
+              "user": "usr-xmmveljrfz",
+              "scope": "personal",
+              "status": "deleted",
+              "data": {
+                "kind": "experience",
+                "title": "验收异议处理方法",
+                "content": "先核对客观验收标准、具体异议与交付记录，再明确整改和复验期限。",
+                "topic": "验收",
+                "conditions": [
+                  "有书面异议和可验证的交付记录"
+                ],
+                "exceptions": [
+                  "不直接推定验收通过"
+                ],
+                "source_ids": [],
+                "schema_version": 2,
+                "subtype": "disposition_method"
+              },
+              "version": 3,
+              "protected": 1,
+              "created": "2026-10-13T02:49:40.863Z",
+              "updated": "2026-10-13T02:49:41.092Z"
+            }
+          }
+        ],
+        "teams": [
+          {
+            "id": "44b49e4786baaf9ffe80677b",
+            "org_id": "default",
+            "name": "v2 权限 A 4b458ea4",
+            "owner_id": "0cc7d08420a9b12c75a26dd2",
+            "tdai_team_id": "team-3142738dgk",
+            "agent_id": "agt-3142bvd3c2",
+            "role": "admin"
+          },
+          {
+            "id": "dbc823fa4d23a582b368f831",
+            "org_id": "default",
+            "name": "v2 权限 B 4b458ea4",
+            "owner_id": "0cc7d08420a9b12c75a26dd2",
+            "tdai_team_id": "team-3142ecesdd",
+            "agent_id": "agt-31429zbl8f",
+            "role": "admin"
+          }
+        ],
+        "private_entry": {
+          "id": "e1ba666e-fa9c-4e9b-83d7-dc2b77b3c87c",
+          "instance": "default",
+          "team": "team-3142738dgk",
+          "agent": "agt-3142bvd3c2",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "experience",
+            "title": "验收异议处理方法",
+            "content": "先核对验收标准与具体异议，再约定整改和复验期限。",
+            "topic": "验收",
+            "conditions": [
+              "有书面异议和可验证的交付记录"
+            ],
+            "exceptions": [
+              "不直接推定验收通过"
+            ],
+            "source_ids": [],
+            "schema_version": 2,
+            "subtype": "disposition_method"
+          },
+          "version": 1,
+          "protected": 1,
+          "created": "2026-10-13T02:49:40.863Z",
+          "updated": "2026-10-13T02:49:40.863Z"
+        },
+        "status": "pass"
+      }
+    }
+  ]
+}

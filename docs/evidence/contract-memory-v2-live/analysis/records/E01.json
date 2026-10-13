@@ -1,0 +1,260 @@
+{
+  "title": "H01真实风险处理案例及原文定位",
+  "evidence": [
+    {
+      "source_file": "core-03-audit/steps/V2-S005.json",
+      "source_sha256": "65d363f985b383aea3dae5b6c8f80f5e1ac578f635e83431c49f90f45f7e5525",
+      "json_pointer": "/result/after/core/review_cases/0",
+      "value": {
+        "id": "case_f5d248be00e165f72a226245b13796d3",
+        "instance": "default",
+        "team": "team-310f20ga3a",
+        "agent": "agt-310ff7dz9i",
+        "user": "usr-xmmveljrfz",
+        "task": "task-310gx8yl7z",
+        "session": "ses_eccd81f64ffeB6KMi8q6NYQ2Zy",
+        "workspace": "f6b9fbd4c2f55e19284aca12",
+        "status": "active",
+        "version": 1,
+        "data": {
+          "actor_user_id": "usr-xmmveljrfz",
+          "clause_text": "合同生效且收到合格发票后十个工作日内甲方支付20%，即45,200元；全部设备终验合格且收到对应发票后十五个工作日内支付70%，即158,200元；质保期届满且无未解决质量缺陷后十五个工作日内支付10%，即22,600元。甲方对有合理依据的争议金额可暂缓支付，无争议部分按期支付。款项仅付至乙方核验后的对公账户。\n未出具书面终验合格记录不视为验收，甲方试运行或未及时反馈不构成默示验收。",
+          "contract_filename": "H01_工业控制终端采购合同.docx",
+          "contract_title": "H01_工业控制终端采购合同.docx",
+          "created": "2026-10-13T02:51:56.477708+00:00",
+          "decision": "接受风险",
+          "document_refs": [
+            {
+              "document_id": "5c7affb14f8c",
+              "paragraph_id": "B12",
+              "quote": "合同生效且收到合格发票后十个工作日内甲方支付20%，即45,200元；全部设备终验合格且收到对应发票后十五个工作日内支付70%，即158,200元；质保期届满且无未解决质量缺陷后十五个工作日内支付10%，即22,600元。甲方对有合理依据的争议金额可暂缓支付，无争议部分按期支付。款项仅付至乙方核验后的对公账户。",
+              "version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e"
+            },
+            {
+              "document_id": "5c7affb14f8c",
+              "paragraph_id": "B10",
+              "quote": "未出具书面终验合格记录不视为验收，甲方试运行或未及时反馈不构成默示验收。",
+              "version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e"
+            }
+          ],
+          "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "event_id": "feedback_bb0db7c98e5e943e82969ecc858dd06e5038410598bab37700eeb55a5d6aed56",
+          "note": "现稿付款期限仍以原文为准。若本项目拟将尾款账期调整为60天，我方作为供货方可接受的条件是20%预付款，仅限本项目；这是附条件处理意见，未核验实际修订、批准或执行。",
+          "our_role": "乙方启衡设备有限公司（供货方）",
+          "perspective": "乙方启衡设备有限公司（供货方）",
+          "report_id": "72524037a2c0c50478a3bde3",
+          "revision": 1,
+          "risk_definition": {
+            "baseline": "示例标准：预付款为合同价的20%，里程碑款50%，验收款30%，付款期限为收到合规发票后30日。",
+            "category": "付款",
+            "definition": "检查付款触发条件是否客观明确，是否附带无法控制的第三方回款条件，尾款比例和期限是否可接受。以上比例为虚构示例，不代表任何公司的真实制度。",
+            "id": "EX-PAY",
+            "name": "付款安排"
+          },
+          "risk_definition_hash": "68bcc97082f5bc6207f06e77d428f588fa7714440e70436b5a071238ba84a57c",
+          "risk_id": "EX-PAY",
+          "risk_name": "付款安排",
+          "risk_scheme_version": 1,
+          "session_id": "ses_eccd81f64ffeB6KMi8q6NYQ2Zy",
+          "task_id": "task-310gx8yl7z",
+          "team_id": "1cdff9e00d494dd50062f6cc",
+          "topic": "付款",
+          "verdict": "命中",
+          "workspace_id": "f6b9fbd4c2f55e19284aca12",
+          "schema_version": 2,
+          "kind": "risk_disposition",
+          "content": "在H01_工业控制终端采购项目中，我方乙方启衡设备有限公司作为供货方，对拟将尾款账期调整为60天的安排，提出以合同价20%预付款为条件的可接受意见，仅限本项目；现稿付款期限仍以合同原文为准。",
+          "conditions": [
+            "本项目拟将尾款账期调整为60天",
+            "预付款为合同价的20%",
+            "仅限H01_工业控制终端采购项目"
+          ],
+          "exceptions": [
+            "现稿付款期限仍以合同原文为准"
+          ],
+          "execution_status": "not_verified",
+          "approval_status": "not_verified"
+        },
+        "created": "2026-10-13T02:51:56.477708+00:00"
+      }
+    },
+    {
+      "source_file": "core-03-audit/mappings/V2-S003.json",
+      "source_sha256": "7ffad6a92d344710556f1959e983211de0eb1e08f1a3d1d8cb44cc361652b5f5",
+      "json_pointer": "",
+      "value": [
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C01",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B3",
+            "B4"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C02",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B5",
+            "B6"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C03",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B7",
+            "B8"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C04",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B9",
+            "B10"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C05",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B11",
+            "B12"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C06",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B13",
+            "B14"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C07",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B15",
+            "B16"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C08",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B17",
+            "B18"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C09",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B19",
+            "B20"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C10",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B21",
+            "B22"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C11",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B23",
+            "B24"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C12",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B25",
+            "B26"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C13",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B27",
+            "B28"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        },
+        {
+          "fixture_input_id": "H01",
+          "fixture_clause_id": "H01-C14",
+          "fixture_file_sha256": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+          "runtime_document_id": "5c7affb14f8c",
+          "runtime_block_ids": [
+            "B29",
+            "B30",
+            "B31",
+            "B32",
+            "B33"
+          ],
+          "mapping_status": "matched",
+          "native_read_verified": true
+        }
+      ]
+    }
+  ]
+}

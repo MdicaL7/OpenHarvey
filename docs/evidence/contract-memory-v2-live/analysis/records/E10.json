@@ -1,0 +1,43 @@
+{
+  "title": "旧L1覆盖人工修改L3的实际失败",
+  "evidence": [
+    {
+      "source_file": "preferences-02/steps/PREF-11.json",
+      "source_sha256": "f0fa159026cecc7345d75fa648572ff089577d9808501485468933b34a8808fe",
+      "json_pointer": "/result/mutation",
+      "value": {
+        "id": "1ab3814b-e498-4d5d-ab2f-9aa61547241d",
+        "instance": "default",
+        "team": "team-35jgb49z4e",
+        "agent": "agt-35jg04t6rm",
+        "user": "usr-xmmveljrfz",
+        "scope": "personal",
+        "status": "active",
+        "data": {
+          "kind": "preference",
+          "title": "称呼用户为大哥",
+          "content": "称呼用户为“老师”。",
+          "topic": "称呼语气",
+          "conditions": [],
+          "exceptions": [],
+          "source_ids": [
+            "pref_89fce46ab79b08c836cc46de00c2ec37"
+          ],
+          "schema_version": 2,
+          "subtype": "communication_preference",
+          "conflicts": []
+        },
+        "version": 2,
+        "protected": 1,
+        "created": "2026-10-13T04:04:08.500Z",
+        "updated": "2026-10-13T04:07:25.908Z"
+      }
+    },
+    {
+      "source_file": "preferences-02/steps/PREF-13.json",
+      "source_sha256": "84e025dab9bc0a524f396faffe4a37b424619baff75e87800b58163d141d1210",
+      "json_pointer": "/result/native/messages/3/parts/0/text",
+      "value": "根据本次记忆查询，您已确认的长期约定是：\n\n- **称呼**：今后称呼您为“大哥”。\n- **报告结构**：所有合同报告先给结论，再分点说明。\n\n注：长期记忆摘要另出现“老师”的称呼，与本次查询记录不一致；以上按本次查到的确认记录说明。"
+    }
+  ]
+}

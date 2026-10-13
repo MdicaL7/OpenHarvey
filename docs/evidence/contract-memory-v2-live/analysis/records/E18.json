@@ -1,0 +1,442 @@
+{
+  "title": "故障、实际保存与记忆同步恢复证据",
+  "evidence": [
+    {
+      "source_file": "faults-01.json",
+      "source_sha256": "b1a55a7cbd1fc59152c676c4d2933a8eb75709e54ac1fed63ea6445bbc30af1d",
+      "json_pointer": "/checks/0",
+      "value": {
+        "name": "proxy_failure_visible_without_memory_write",
+        "value": {
+          "accepted": {
+            "id": "68beb3028c5aa27d10016845",
+            "status": "failed",
+            "queue": {
+              "current": null,
+              "paused": true,
+              "reason": "有消息未能发送，后续消息已暂停。",
+              "resume_on_send": false,
+              "active": false,
+              "items": [
+                {
+                  "id": "68beb3028c5aa27d10016845",
+                  "request_id": "8c5137ddf65e46409cc9090125214faf",
+                  "message_id": "msg_1336b11ce000bc05441411da40",
+                  "status": "failed",
+                  "body": {
+                    "materials": {
+                      "f9ff2ab25f5e": "26ad884e817448020e49b48ce5e2b56c6cd7dd6c2e9c2df9191ef517cca5925b"
+                    },
+                    "model": "tencentdb-memory/gpt-6.1-sol",
+                    "risk_scheme": "public-risk-examples",
+                    "text": "仅回复服务恢复检查。"
+                  },
+                  "error": "合同记忆 Proxy 暂时不可用，请检查独立组件或主动选择普通模型",
+                  "created": 1791864017.335522,
+                  "stage": "checking"
+                }
+              ]
+            }
+          },
+          "queue": {
+            "current": null,
+            "paused": true,
+            "reason": "有消息未能发送，后续消息已暂停。",
+            "resume_on_send": false,
+            "active": false,
+            "items": [
+              {
+                "id": "68beb3028c5aa27d10016845",
+                "request_id": "8c5137ddf65e46409cc9090125214faf",
+                "message_id": "msg_1336b11ce000bc05441411da40",
+                "status": "failed",
+                "body": {
+                  "materials": {
+                    "f9ff2ab25f5e": "26ad884e817448020e49b48ce5e2b56c6cd7dd6c2e9c2df9191ef517cca5925b"
+                  },
+                  "model": "tencentdb-memory/gpt-6.1-sol",
+                  "risk_scheme": "public-risk-examples",
+                  "text": "仅回复服务恢复检查。"
+                },
+                "error": "合同记忆 Proxy 暂时不可用，请检查独立组件或主动选择普通模型",
+                "created": 1791864017.335522,
+                "stage": "checking"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "source_file": "faults-01.json",
+      "source_sha256": "b1a55a7cbd1fc59152c676c4d2933a8eb75709e54ac1fed63ea6445bbc30af1d",
+      "json_pointer": "/checks/2",
+      "value": {
+        "name": "core_outage_feedback_durable",
+        "value": {
+          "saved": {
+            "risk_id": "EX-LIABILITY",
+            "decision": "补充材料",
+            "note": "请补充一般责任上限及例外的风险承受说明，尚未作出批准。",
+            "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+            "created": 1791864030.951448,
+            "revision": 1,
+            "history": [],
+            "memory_sync": {
+              "event_id": "feedback_f10e17b336775d343bb62744c76f8baf08592718c5f16c3dc2918b5e5520eff1",
+              "status": "pending",
+              "attempts": 0
+            }
+          },
+          "sync": {
+            "event_id": "feedback_f10e17b336775d343bb62744c76f8baf08592718c5f16c3dc2918b5e5520eff1",
+            "status": "failed",
+            "attempts": 1
+          }
+        }
+      }
+    },
+    {
+      "source_file": "faults-01.json",
+      "source_sha256": "b1a55a7cbd1fc59152c676c4d2933a8eb75709e54ac1fed63ea6445bbc30af1d",
+      "json_pointer": "/checks/3",
+      "value": {
+        "name": "outbox_retry_idempotent",
+        "value": {
+          "case_id": "case_d220bba4f741b75ddebefe94fdd38331",
+          "version": 1
+        }
+      }
+    },
+    {
+      "source_file": "faults-01.json",
+      "source_sha256": "b1a55a7cbd1fc59152c676c4d2933a8eb75709e54ac1fed63ea6445bbc30af1d",
+      "json_pointer": "/checks/4",
+      "value": {
+        "name": "extraction_failure_observable",
+        "value": {
+          "saved": {
+            "risk_id": "EX-LIABILITY",
+            "decision": "补充材料",
+            "note": "补充意见：例外责任须明确对应触发条件，仅供本项目核对；未证明已执行。",
+            "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+            "created": 1791864072.1214058,
+            "revision": 2,
+            "history": [
+              {
+                "risk_id": "EX-LIABILITY",
+                "decision": "补充材料",
+                "note": "请补充一般责任上限及例外的风险承受说明，尚未作出批准。",
+                "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                "created": 1791864030.951448,
+                "revision": 1
+              }
+            ],
+            "memory_sync": {
+              "event_id": "feedback_3040cf2977c13f4625bbef227587d41f28af170b8c883ac50c5b94eabec49a6c",
+              "status": "pending",
+              "attempts": 0
+            }
+          },
+          "failed_jobs": [
+            {
+              "id": "event-e963a5401677d05f1ab615babc95244ce051ca07aa76d685cf065c582f0bc8ed",
+              "instance": "default",
+              "team": "team-33539401dz",
+              "agent": "agt-335303admi",
+              "user": "usr-xmmveljrfz",
+              "task": "task-3354reoon3",
+              "session": "ses_eccad7489ffeBlDuZ1YiEcbJnC",
+              "status": "failed",
+              "attempts": 3,
+              "error": "fetch failed",
+              "model": "gpt-6.1-sol",
+              "prompt_version": "contract-v2",
+              "created": "2026-10-13T04:01:14.808Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source_file": "faults-01.json",
+      "source_sha256": "b1a55a7cbd1fc59152c676c4d2933a8eb75709e54ac1fed63ea6445bbc30af1d",
+      "json_pointer": "/checks/5",
+      "value": {
+        "name": "extraction_recovered",
+        "value": {
+          "jobs": [
+            [
+              "94a73694-f423-4a18-a0cf-0e34e4736a4d",
+              "completed"
+            ],
+            [
+              "94b8b288-db2f-44cf-87f4-5da77e047b70",
+              "completed"
+            ],
+            [
+              "331feeb0-41d2-4467-b1da-c1b2403591ac",
+              "completed"
+            ],
+            [
+              "86b9d8f5-2f22-4583-a532-0fea4524a86c",
+              "completed"
+            ],
+            [
+              "585a6bd5-bf48-440e-9a24-4a23e5519dc4",
+              "completed"
+            ],
+            [
+              "f1dbdaee-c66c-4fe2-af67-acc4c4ce8dfe",
+              "completed"
+            ],
+            [
+              "2a68eac4-3ddd-4a3c-a8f0-e6ddf1136fc9",
+              "completed"
+            ],
+            [
+              "e0f7f730-3f79-492b-ac7a-60089bf56db4",
+              "completed"
+            ],
+            [
+              "event-2fa8a9390cc6f812a7eba72703f1217813b3157c47400bbeb70b9d6b09dc2706",
+              "completed"
+            ],
+            [
+              "event-31859b4f81d0969d2cd554b7d0f50478b85b4727b1501719dbce4202b7b0db21",
+              "completed"
+            ],
+            [
+              "event-bfd8bca36012d2daf9219467efba75cc1ea4b3bfda6847cbc39d927e745569b8",
+              "completed"
+            ],
+            [
+              "c6c0fdd5-78fa-4205-b456-843e45e79685",
+              "completed"
+            ],
+            [
+              "9ee0e579-7706-43dd-9df7-807919e6c065",
+              "completed"
+            ],
+            [
+              "e12be2a7-3ff6-4088-aaf0-53af023dd69f",
+              "completed"
+            ],
+            [
+              "02da6e3e-c20d-4252-bcdb-2d9bb5fde94a",
+              "completed"
+            ],
+            [
+              "7349b43a-3c0d-4a51-8d57-0984fc8af725",
+              "completed"
+            ],
+            [
+              "99fd3016-21d3-4f5a-9864-5f1b0f478b66",
+              "completed"
+            ],
+            [
+              "a3efd51d-5659-4bad-8f4f-9b9746023dcb",
+              "completed"
+            ],
+            [
+              "86b46259-807a-4c7b-8b80-fcf8b6d07946",
+              "completed"
+            ],
+            [
+              "74d2fefc-9468-4c5c-81a5-7d01ba92cc38",
+              "completed"
+            ],
+            [
+              "a1412742-0eae-4826-8132-b6c7045e17e0",
+              "completed"
+            ],
+            [
+              "76ae2191-9867-42e2-ac2c-d594c73af532",
+              "completed"
+            ],
+            [
+              "e4496ed8-fde6-4652-ba76-59e8ef1edf17",
+              "completed"
+            ],
+            [
+              "571a23f7-acaf-49e3-b10f-c3d4745e536a",
+              "completed"
+            ],
+            [
+              "1a486eb0-b43d-4940-add8-2b8be2f1a783",
+              "completed"
+            ],
+            [
+              "c0be8c32-e6be-40be-b025-ad1b4b519564",
+              "completed"
+            ],
+            [
+              "8eeed645-e1f3-42c0-b52e-f697f2d254ce",
+              "completed"
+            ],
+            [
+              "c699d0a4-bea7-47fe-94ef-6f8c0efdf945",
+              "completed"
+            ],
+            [
+              "471ce265-de75-47b3-a19a-4810a14274e0",
+              "completed"
+            ],
+            [
+              "3ca1dfd3-dbcc-4faf-90cc-0470d43bc0b3",
+              "completed"
+            ],
+            [
+              "0c2ae28f-58f9-4998-b72a-702f6eee618a",
+              "completed"
+            ],
+            [
+              "d37a33ab-d633-4eed-9947-8fa28035d27c",
+              "completed"
+            ],
+            [
+              "628fa41d-64ad-4f46-a87c-1e5160d83c41",
+              "completed"
+            ],
+            [
+              "797647a8-731b-479f-aa54-8a3b055e4367",
+              "completed"
+            ],
+            [
+              "d3d28f70-fad2-49d1-93ff-cf84394968c2",
+              "completed"
+            ],
+            [
+              "270d2d53-7711-4d1d-b983-538edcdc0a56",
+              "completed"
+            ],
+            [
+              "0d7a7e85-c2cf-46cd-b422-54e206c73879",
+              "completed"
+            ],
+            [
+              "6fc7f3dd-27e8-4b29-8b29-416c58294e15",
+              "completed"
+            ],
+            [
+              "3d9b4d7b-add1-48d8-8d1f-520ad314cfe4",
+              "completed"
+            ],
+            [
+              "558edf30-8700-43da-8923-fbb937e7c5fc",
+              "completed"
+            ],
+            [
+              "06ed3f22-d314-46da-b064-940ca7bf60ca",
+              "completed"
+            ],
+            [
+              "event-9a45edc1db91f66b998bb652c2f636fd78b2581789b22b0f161c7544aed646d9",
+              "completed"
+            ],
+            [
+              "6667dbdd-f846-4c2b-bf64-b5de4d958bb4",
+              "completed"
+            ],
+            [
+              "event-7b31d20c403b1084c6d637f51c5fb198a381ebd88fb1124f4669c2f3d944f143",
+              "completed"
+            ],
+            [
+              "event-e963a5401677d05f1ab615babc95244ce051ca07aa76d685cf065c582f0bc8ed",
+              "completed"
+            ]
+          ],
+          "cases": [
+            [
+              "case_eb15e5461273f3deea027469f0ccb14d",
+              1
+            ],
+            [
+              "case_cecc0428312852a88f831d486516d099",
+              2
+            ],
+            [
+              "case_a9377fbd81206d701b12407349a1c3b3",
+              1
+            ],
+            [
+              "case_d220bba4f741b75ddebefe94fdd38331",
+              2
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "source_file": "faults-01.json",
+      "source_sha256": "b1a55a7cbd1fc59152c676c4d2933a8eb75709e54ac1fed63ea6445bbc30af1d",
+      "json_pointer": "/checks/1/value/messages",
+      "value": [
+        {
+          "info": {
+            "id": "msg_1336b1704000b636af29bbbb38",
+            "sessionID": "ses_ecc94e938ffe7dX1Cn5i0n3kEN",
+            "role": "user",
+            "time": {
+              "created": 1791864018794
+            }
+          },
+          "parts": [
+            {
+              "id": "prt_1336b176b001oLw2FsGM9SWObM",
+              "messageID": "msg_1336b1704000b636af29bbbb38",
+              "sessionID": "ses_ecc94e938ffe7dX1Cn5i0n3kEN",
+              "type": "text",
+              "text": "服务恢复检查：请只回复恢复成功。"
+            }
+          ]
+        },
+        {
+          "info": {
+            "id": "msg_1336b17b7001YWgroGiquw564z",
+            "sessionID": "ses_ecc94e938ffe7dX1Cn5i0n3kEN",
+            "role": "assistant",
+            "time": {
+              "created": 1791864018871,
+              "completed": 1791864030505
+            },
+            "parentID": "msg_1336b1704000b636af29bbbb38",
+            "mode": "contract",
+            "finish": "stop"
+          },
+          "parts": [
+            {
+              "id": "prt_1336b4522001m13UpPeiTcZCfv",
+              "messageID": "msg_1336b17b7001YWgroGiquw564z",
+              "sessionID": "ses_ecc94e938ffe7dX1Cn5i0n3kEN",
+              "type": "text",
+              "text": "恢复成功"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "restart-evidence.json",
+      "source_sha256": "a7e24a90d9dde3385ff924953f7125c8b9347b6acad5bfb67d40f63c8ba19e9f",
+      "json_pointer": "",
+      "value": {
+        "run_id": "aaedff205aa74a91bd3a39f649c2af67",
+        "step_id": "V2-S026",
+        "status": "pass",
+        "artifact_paths": [
+          "/Users/dicam/.local/share/openharvey/contract-v2-experiment/20261013/restart-before.json",
+          "/Users/dicam/.local/share/openharvey/contract-v2-experiment/20261013/restart-after.json"
+        ],
+        "checks": [
+          "raw retained",
+          "case versions and status retained",
+          "formal versions retained",
+          "tombstones retained",
+          "all local services healthy"
+        ]
+      }
+    }
+  ]
+}

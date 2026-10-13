@@ -1,0 +1,208 @@
+{
+  "title": "纠错、源合同删除和恢复对当前召回的影响",
+  "evidence": [
+    {
+      "source_file": "source-state-01.json",
+      "source_sha256": "3c79d5bae3f6aa7804a9a1bdee1a1c752f2aa266648d76db4d555f35d9c37f63",
+      "json_pointer": "",
+      "value": {
+        "checks": [
+          {
+            "name": "before_correction",
+            "result": {
+              "items": [
+                {
+                  "case_id": "case_cecc0428312852a88f831d486516d099",
+                  "version": 1,
+                  "workspace_id": "38fe297833c88938a4f6871c",
+                  "report_id": "56fb16dbb28a37ba5b2c6a58",
+                  "risk_id": "EX-ACCEPT",
+                  "decision": "要求修改",
+                  "note": "增加明确的终验期限、逾期处理及整改后复验期限，隐藏缺陷责任保留。",
+                  "conditions": [
+                    "适用于H01工业控制终端采购合同",
+                    "保留隐藏缺陷责任"
+                  ],
+                  "exceptions": [],
+                  "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                  "relation": "conditional",
+                  "matching_points": [
+                    "我方均为乙方启衡设备有限公司，承担供货方责任。",
+                    "均约定十个工作日内初验、安装调试后连续运行测试及书面终验记录，但未明确终验截止期限、逾期处理和整改后复验期限。",
+                    "风险定义及示例标准内容一致。"
+                  ],
+                  "differences": [
+                    "历史处置限于H01合同，当前为F01补充采购合同，不能直接沿用。",
+                    "历史条款整改后仍不合格即可退货，当前约定两次整改不合格时可退货。",
+                    "当前明确试用、付款或沉默均不视为放弃缺陷请求；历史要求保留隐藏缺陷责任，需核对当前条款是否完整覆盖该要求。",
+                    "风险方案版本由1变为2，给定风险定义未变化。"
+                  ],
+                  "reason": "验收风险实质及我方角色相近，历史修改要求可供参考；需核对合同范围、退货条件及隐藏缺陷责任保留，不能据此认定修改已完成。",
+                  "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-ACCEPT#38fe297833c88938a4f6871c",
+                  "source_label": "查看历史合同处理意见"
+                }
+              ],
+              "schema_version": 2
+            }
+          },
+          {
+            "name": "correcting_feedback_saved",
+            "result": {
+              "risk_id": "EX-ACCEPT",
+              "decision": "判断有误",
+              "note": "原审查把缺少终验期限当作完全没有验收安排，需要纠正；已有初验规则应保留，终验问题仍须单独处理。",
+              "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+              "created": 1791863876.5164878,
+              "revision": 2,
+              "history": [
+                {
+                  "risk_id": "EX-ACCEPT",
+                  "decision": "要求修改",
+                  "note": "增加明确的终验期限、逾期处理及整改后复验期限，隐藏缺陷责任保留。",
+                  "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                  "created": 1791862735.333911,
+                  "revision": 1
+                }
+              ],
+              "memory_sync": {
+                "event_id": "feedback_797fb2f9989844e2ce407ec1f58fd7a0110a8c21506e883801ceb89ab7429157",
+                "status": "pending",
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "name": "original_report_unchanged",
+            "result": {
+              "content_hash": "1d30947e4a4b58ecccf7fb292ce2efd1d80ed614e598535342faff6d0534fb3e",
+              "feedback": {
+                "risk_id": "EX-ACCEPT",
+                "decision": "判断有误",
+                "note": "原审查把缺少终验期限当作完全没有验收安排，需要纠正；已有初验规则应保留，终验问题仍须单独处理。",
+                "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                "created": 1791863876.5164878,
+                "revision": 2,
+                "history": [
+                  {
+                    "risk_id": "EX-ACCEPT",
+                    "decision": "要求修改",
+                    "note": "增加明确的终验期限、逾期处理及整改后复验期限，隐藏缺陷责任保留。",
+                    "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                    "created": 1791862735.333911,
+                    "revision": 1
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "corrected_case_recalled",
+            "result": {
+              "items": [
+                {
+                  "case_id": "case_cecc0428312852a88f831d486516d099",
+                  "version": 2,
+                  "workspace_id": "38fe297833c88938a4f6871c",
+                  "report_id": "56fb16dbb28a37ba5b2c6a58",
+                  "risk_id": "EX-ACCEPT",
+                  "decision": "判断有误",
+                  "note": "原审查把缺少终验期限当作完全没有验收安排，需要纠正；已有初验规则应保留，终验问题仍须单独处理。",
+                  "conditions": [],
+                  "exceptions": [],
+                  "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                  "relation": "applicable",
+                  "matching_points": [
+                    "我方均为乙方供货方，风险均涉及初验与终验安排。",
+                    "均约定到货十个工作日内初验、安装调试后连续运行七十二小时及书面终验记录，未明确终验完成期限。",
+                    "风险定义及示例标准内容一致；历史意见要求保留已有初验规则，单独处理终验问题。"
+                  ],
+                  "differences": [
+                    "当前为F01补充采购合同，历史为H01采购合同。",
+                    "当前约定两次整改不合格可退货，历史约定修复或更换后仍不合格可退货。",
+                    "当前明确付款不视为放弃缺陷请求；历史明确未出具书面终验合格记录不视为验收。",
+                    "风险方案版本由1变为2，但给定风险定义及标准内容未变。"
+                  ],
+                  "reason": "历史关于区分已有初验安排与终验期限问题的纠正意见可参考；不能据此认定当前风险判断有误或合同获批。",
+                  "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-ACCEPT#38fe297833c88938a4f6871c",
+                  "source_label": "查看历史合同处理意见"
+                }
+              ],
+              "schema_version": 2
+            }
+          },
+          {
+            "name": "removed_source_exits_recall",
+            "result": {
+              "items": [],
+              "schema_version": 2
+            }
+          },
+          {
+            "name": "restored_source_revalidated",
+            "result": {
+              "items": [
+                {
+                  "case_id": "case_eb15e5461273f3deea027469f0ccb14d",
+                  "version": 1,
+                  "workspace_id": "38fe297833c88938a4f6871c",
+                  "report_id": "56fb16dbb28a37ba5b2c6a58",
+                  "risk_id": "EX-PAY",
+                  "decision": "接受风险",
+                  "note": "本项目可接受60天账期，但必须收取20%预付款，仅限本项目；尚未核验执行。",
+                  "conditions": [
+                    "必须收取合同价20%的预付款",
+                    "仅限H01工业控制终端采购项目"
+                  ],
+                  "exceptions": [],
+                  "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                  "relation": "conditional",
+                  "matching_points": [
+                    "我方均为乙方启衡设备有限公司供货方。",
+                    "均约定20%首付款、终验后70%付款及十二个月质保届满后10%付款。"
+                  ],
+                  "differences": [
+                    "历史接受60天账期以收取20%预付款为前提，且仅限H01项目；当前为F01补充采购合同。",
+                    "现行标准要求拟超过30天账期先核验足额银行保函，当前材料未提供保函核验信息。",
+                    "当前条款未约定60天账期，历史60天接受意见与所附条款的付款期限亦不一致。",
+                    "当前首付款约定不证明20%预付款已实际收取。"
+                  ],
+                  "reason": "付款结构及角色相近，但历史项目限定和保障前提不能直接沿用；须核对实际账期、预付款及现行保函要求，历史接受意见不构成当前批准。",
+                  "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-PAY#38fe297833c88938a4f6871c",
+                  "source_label": "查看历史合同处理意见"
+                },
+                {
+                  "case_id": "case_cecc0428312852a88f831d486516d099",
+                  "version": 2,
+                  "workspace_id": "38fe297833c88938a4f6871c",
+                  "report_id": "56fb16dbb28a37ba5b2c6a58",
+                  "risk_id": "EX-ACCEPT",
+                  "decision": "判断有误",
+                  "note": "原审查把缺少终验期限当作完全没有验收安排，需要纠正；已有初验规则应保留，终验问题仍须单独处理。",
+                  "conditions": [],
+                  "exceptions": [],
+                  "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                  "relation": "conditional",
+                  "matching_points": [
+                    "我方均为供货方，均有到货十个工作日内初验及安装调试后书面终验安排。",
+                    "当前70%付款以终验合格为触发条件，历史关于区分初验安排与终验期限问题的意见具有关联性。"
+                  ],
+                  "differences": [
+                    "历史处理针对验收判断纠正，当前风险为付款安排。",
+                    "历史明确连续运行七十二小时，当前未明确连续运行测试时长。",
+                    "当前两次整改不合格可退货，历史所附条款未明确整改次数。",
+                    "该意见未涉及现行超过30天账期的银行保函要求。"
+                  ],
+                  "reason": "可辅助核对终验付款触发条件，不能据此认定付款风险可接受；仍须单独核对终验期限及收款保障。",
+                  "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-ACCEPT#38fe297833c88938a4f6871c",
+                  "source_label": "查看历史合同处理意见"
+                }
+              ],
+              "schema_version": 2
+            }
+          }
+        ],
+        "status": "pass"
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "status": "real_experiments_executed_with_review_items",
+  "status": "memory_results_analyzed_with_bounded_support",
   "prompt_version": "contract-v2",
   "live_deployed": true,
   "real_extraction_and_judge_executed": true,
@@ -45,7 +45,8 @@
     "preferences": {
       "completed": 14,
       "total": 14,
-      "blocked": null
+      "blocked": null,
+      "interpretation": "Historical steps completed but latest-preference adoption failed; keyword-only assertion was insufficient. Superseded by closeout-01/protection-01 and protection-replay evidence."
     },
     "l2_use": {
       "completed": 4,
@@ -55,7 +56,8 @@
     "revision": {
       "completed": 3,
       "total": 3,
-      "blocked": null
+      "blocked": null,
+      "interpretation": "R2 changed delivery penalty 0.03% to 0.05%; payment and acceptance clauses were unchanged. Does not prove invalidation after their substantive change."
     },
     "ordinary_provider": {
       "completed": 2,
@@ -88,7 +90,8 @@
     "l2_native_read": "pass",
     "preference_source_vs_formal": {
       "completed": 1,
-      "passed": true
+      "passed": true,
+      "interpretation": "A later corrective answer does not erase the earlier incorrect adoption."
     },
     "legacy_separation": {
       "old_entries_retained": 9,
@@ -103,7 +106,30 @@
       "pass": true,
       "personal_and_published_team_visible": true,
       "no_model_or_memory_write_experiment_repeated": true
-    }
+    },
+    "post_fix_protection": {
+      "execution_complete": true,
+      "adoption_evidence": "analysis/records/E11.json",
+      "deletion_and_versions": "analysis/records/E12.json",
+      "real_same_source_reprocessing": "analysis/records/E13.json",
+      "actual_api_receipts": "analysis/records/E14.json"
+    },
+    "isolated_rollback": {
+      "status": "executed_with_recorded_scope",
+      "evidence_root": "closeout-01/rollback-old-conversations",
+      "old_data_counts": {
+        "users": 3,
+        "workspaces": 3,
+        "tasks": 3,
+        "conversations": 8,
+        "memory_entries": 9,
+        "memory_revisions": 13
+      },
+      "conversation_api_samples": 3,
+      "upgrade_back_to_v2": true,
+      "live_data_overwritten": false
+    },
+    "recall_quality_limit": "A payment query returned an insufficient termination-related candidate; no statistical retrieval precision has been established."
   },
   "original_judge": {
     "pass": 6,
@@ -120,20 +146,24 @@
     "python_runtime_relocation": 1,
     "frontend": 158,
     "core_total": 29,
-    "python_full": 362
+    "python_full": 362,
+    "closeout": {
+      "core": 30,
+      "proxy": 13,
+      "python_related": 22,
+      "no_new_tests_run_for_analysis": true
+    }
   },
   "limits": [
-    "Original judge results retained; preference criterion and citation failures require explicit review.",
-    "Real auxiliary title requests observed; native compaction was not naturally triggered.",
-    "Revision tested as a versioned attachment, not replacement of the immutable primary document.",
-    "Cross-organization boundary uses the separate 8082 application instance.",
-    "Rollback backup exists; destructive rollback drill was not run."
+    "Small, purposeful equipment-contract samples; not the full ten-contract/twenty-one-event corpus and not a statistical accuracy evaluation.",
+    "Complex approval, execution, policy-replacement and cross-domain principle formation are not comprehensively covered.",
+    "Revision attachment changed delivery penalty only; primary replacement and changed payment/acceptance invalidation remain unproven.",
+    "Cross-organization evidence uses a separate application instance; E2B, multi-node and sustained production concurrency untested.",
+    "Extraction and judge use the same configured model; actual resolved model identity remains unverified.",
+    "Native automatic compaction and isolated runtime issues are deferred independently by user; overall runtime acceptance is not complete.",
+    "Some edited memory titles still differ from latest content; current formal body takes precedence."
   ],
-  "pending_review": [
-    "Original judge preference assessment uses reply text rather than only persisted memory; focused live tests passed.",
-    "Original judge boundary assessment requests broader Agent variation than the one-Agent-per-team product configuration.",
-    "Original judge protection citations failed exact matching; deterministic and live operator evidence passed."
-  ],
+  "pending_review": [],
   "branch_separation": {
     "common_base": "bc49476",
     "ui_branch": "codex/ui-style-consistency",
@@ -185,5 +215,35 @@
     },
     "real_experiments_repeated": false
   },
-  "final_component_commit": "c9b0720992f04a41fca868e85cf8b1e2bc2371c4"
+  "final_component_commit": "0034bbb29e9923ad1c77a3c1a0cce4560935ce41",
+  "overall_acceptance_passed": false,
+  "analysis_report": "analysis-report.md",
+  "initial_acceptance_snapshot": "acceptance-initial.json",
+  "memory_conclusion": "Supported for limited local assisted trial with human confirmation, source verification and team review; not an overall production acceptance.",
+  "review_closure": {
+    "original_judge_preserved": true,
+    "original_counts": {
+      "pass": 6,
+      "fail": 1,
+      "needs_review": 2
+    },
+    "scope": "Current one-managed-contract-Agent-per-Team product configuration",
+    "evidence": "analysis/review-results.json",
+    "results": {
+      "V2-BOUNDARY": "pass_after_scope_and_evidence_review",
+      "V2-PREFERENCE": "pass_in_new_post_fix_session; prior_adoption_failure_retained",
+      "V2-PROTECTION": "pass_after_real_same_source_L3_reprocessing"
+    },
+    "system_defect": "Historical L1 preference statements could override the latest human-edited formal L3 in retrieval and Agent adoption. Fixed in component 7ef525f and runtime/agent.md."
+  },
+  "runtime_compaction": {
+    "status": "deferred_by_user",
+    "report": "runtime-compaction-deferred.md",
+    "manual_native_observed": true,
+    "automatic_acceptance_passed": false,
+    "blocks_memory_results_analysis": false
+  },
+  "running_component_commit": "7ef525fabee38936db318afefbe6ba626897fa5f",
+  "analysis_evidence_manifest_sha256": "67c7554c4035456fc26e1fc689547ceb72135cfcadf6fb714aa5d17b2fbcae8f",
+  "component_repository_delta_since_runtime": "Only an already-run Proxy regression test was committed after the running source revision; no additional production-code change."
 }

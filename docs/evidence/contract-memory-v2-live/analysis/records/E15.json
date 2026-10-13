@@ -1,0 +1,221 @@
+{
+  "title": "Team、User及伪造Agent的真实请求对照",
+  "evidence": [
+    {
+      "source_file": "closeout-01/boundary-raw.json",
+      "source_sha256": "68e6f0f4f4cb89c2848874db23c03611edb554501d34383ccfee3da3c8779b88",
+      "json_pointer": "",
+      "value": {
+        "product_scope": "one managed contract Agent per Team",
+        "requests": [
+          {
+            "name": "valid team user agent",
+            "path": "/v3/contract-memory/list",
+            "body": {
+              "team_id": "team-xmmvd5guym",
+              "agent_id": "agt-xmmvkd3zqu",
+              "user_id": "usr-xmmveljrfz"
+            },
+            "http_status": 200,
+            "response": {
+              "code": 0,
+              "message": "ok",
+              "data": {
+                "items": []
+              }
+            },
+            "expected_status": 200
+          },
+          {
+            "name": "cross team agent forged",
+            "path": "/v3/contract-memory/list",
+            "body": {
+              "team_id": "team-xmmvd5guym",
+              "agent_id": "agt-xnu6rxj2zt",
+              "user_id": "usr-xmmveljrfz"
+            },
+            "http_status": 403,
+            "response": {
+              "code": 403,
+              "message": "团队成员关系已失效"
+            },
+            "expected_status": 403
+          },
+          {
+            "name": "unknown agent forged",
+            "path": "/v3/contract-memory/list",
+            "body": {
+              "team_id": "team-xmmvd5guym",
+              "agent_id": "agt-forged-closeout",
+              "user_id": "usr-xmmveljrfz"
+            },
+            "http_status": 403,
+            "response": {
+              "code": 403,
+              "message": "团队成员关系已失效"
+            },
+            "expected_status": 403
+          },
+          {
+            "name": "other user forged",
+            "path": "/v3/contract-memory/list",
+            "body": {
+              "team_id": "team-xmmvd5guym",
+              "agent_id": "agt-xmmvkd3zqu",
+              "user_id": "usr-xnu69jjdsp"
+            },
+            "http_status": 403,
+            "response": {
+              "code": 403,
+              "message": "记忆身份或归属不匹配"
+            },
+            "expected_status": 403
+          },
+          {
+            "name": "managed agent configuration bca79511bf37e98809f1203a",
+            "path": "/v3/meta/agent/list",
+            "body": {
+              "team_id": "team-xmmvd5guym",
+              "limit": 100
+            },
+            "http_status": 200,
+            "response": {
+              "code": 0,
+              "message": "ok",
+              "request_id": "req-d1305a4559a54dd0",
+              "data": {
+                "items": [
+                  {
+                    "agent_id": "agt-xmmvkd3zqu",
+                    "team_id": "team-xmmvd5guym",
+                    "owner_user_id": "usr-xmmveljrfz",
+                    "name": "合同助手 · contract",
+                    "description": null,
+                    "prompt": null,
+                    "visibility": "team",
+                    "status": "active",
+                    "created_at": "2026-10-09T15:29:09.573Z",
+                    "updated_at": "2026-10-09T15:29:09.573Z",
+                    "metadata_json": "{\"managed_by\":\"OpenHarvey\",\"prompt_mode\":\"contract\"}"
+                  },
+                  {
+                    "agent_id": "agt-xmmvj0pkb4",
+                    "team_id": "team-xmmvd5guym",
+                    "owner_user_id": "usr-xmmveljrfz",
+                    "name": "合同助手",
+                    "description": "OpenHarvey 单合同 Agent 的独立记忆",
+                    "prompt": null,
+                    "visibility": "private",
+                    "status": "active",
+                    "created_at": "2026-10-09T15:29:09.550Z",
+                    "updated_at": "2026-10-09T15:29:09.550Z",
+                    "metadata_json": "{}"
+                  }
+                ],
+                "total": 2,
+                "limit": 100,
+                "offset": 0
+              }
+            },
+            "expected_status": 200,
+            "managed_contract_agents": 1
+          },
+          {
+            "name": "managed agent configuration 999fde9d4478c0f2570e9dca",
+            "path": "/v3/meta/agent/list",
+            "body": {
+              "team_id": "team-xnu6qv526k",
+              "limit": 100
+            },
+            "http_status": 200,
+            "response": {
+              "code": 0,
+              "message": "ok",
+              "request_id": "req-7ad144de690b4167",
+              "data": {
+                "items": [
+                  {
+                    "agent_id": "agt-xnu6rxj2zt",
+                    "team_id": "team-xnu6qv526k",
+                    "owner_user_id": "usr-xmmveljrfz",
+                    "name": "合同助手",
+                    "description": null,
+                    "prompt": null,
+                    "visibility": "team",
+                    "status": "active",
+                    "created_at": "2026-10-09T15:55:44.400Z",
+                    "updated_at": "2026-10-09T15:55:44.400Z",
+                    "metadata_json": "{\"managed_by\":\"OpenHarvey\",\"prompt_mode\":\"contract\"}"
+                  }
+                ],
+                "total": 1,
+                "limit": 100,
+                "offset": 0
+              }
+            },
+            "expected_status": 200,
+            "managed_contract_agents": 1
+          }
+        ],
+        "status": "pass"
+      }
+    },
+    {
+      "source_file": "scope-extra.json",
+      "source_sha256": "9fab20c9df94cf053a72c98cff0830125c7b2556f3987a2c4af37349be1c10e2",
+      "json_pointer": "",
+      "value": {
+        "status": "pass",
+        "checks": [
+          {
+            "name": "owner_cannot_read_member_personal_content",
+            "status": "pass",
+            "entry_id": "542b386c-afce-49e7-bf36-472e2491ff61"
+          },
+          {
+            "name": "agent_from_other_team",
+            "status": "pass",
+            "http_status": 403
+          },
+          {
+            "name": "forged_user_id",
+            "status": "pass",
+            "http_status": 403
+          }
+        ]
+      }
+    },
+    {
+      "source_file": "team-admin-private-source.json",
+      "source_sha256": "65bfc6bc7ad2899771a3287e73884112a10844680480b5454a993bcd6b7543ec",
+      "json_pointer": "",
+      "value": {
+        "status": "pass",
+        "role": "team admin, ordinary application member",
+        "checks": [
+          {
+            "path": "/api/workspaces/38fe297833c88938a4f6871c",
+            "response": {
+              "detail": "合同工作区不存在"
+            },
+            "http_status": 404
+          },
+          {
+            "path": "/api/artifacts/56fb16dbb28a37ba5b2c6a58",
+            "response": {
+              "detail": "产出物不存在"
+            },
+            "http_status": 404
+          },
+          {
+            "path": "/api/documents/84115e91d443",
+            "response": {
+              "detail": "原文不存在或不属于当前账号"
+            },
+            "http_status": 404
+          }
+        ]
+      }
+    }
+  ]
+}

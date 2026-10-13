@@ -1,0 +1,589 @@
+{
+  "title": "确认、忽略、人工更新、409及重复操作的实际接口回执",
+  "evidence": [
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/4",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/confirm",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "8750d390-d830-4a35-b04d-d35926f0f893",
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-04:candidate"
+        },
+        "http_status": 200,
+        "response": {
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "所有合同报告先给结论，再分点说明。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          },
+          "version": 1,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.007Z",
+          "updated": "2026-10-13T06:42:16.007Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/5",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/confirm",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "8750d390-d830-4a35-b04d-d35926f0f893",
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-04:candidate"
+        },
+        "http_status": 200,
+        "response": {
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "所有合同报告先给结论，再分点说明。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          },
+          "version": 1,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.007Z",
+          "updated": "2026-10-13T06:42:16.007Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/6",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/confirm",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "dbe97799-d584-4a51-9781-fc64cfaaf56f",
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-05:candidate"
+        },
+        "http_status": 200,
+        "response": {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“大哥”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "version": 1,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.236Z",
+          "updated": "2026-10-13T06:42:16.236Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/7",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/confirm",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "dbe97799-d584-4a51-9781-fc64cfaaf56f",
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-05:candidate"
+        },
+        "http_status": 200,
+        "response": {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“大哥”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "version": 1,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.236Z",
+          "updated": "2026-10-13T06:42:16.236Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/9",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/ignore",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "aaa1d117-e3f5-4b69-81b0-30a6627d0a9d",
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-07:ignore"
+        },
+        "http_status": 200,
+        "response": {
+          "ignored": true
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/10",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/ignore",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "aaa1d117-e3f5-4b69-81b0-30a6627d0a9d",
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-07:ignore"
+        },
+        "http_status": 200,
+        "response": {
+          "ignored": true
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/11",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/update",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "version": 1,
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-08:entry",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          }
+        },
+        "http_status": 200,
+        "response": {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "version": 2,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.236Z",
+          "updated": "2026-10-13T06:44:27.381Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/12",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/update",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "version": 1,
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-08:stale",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          }
+        },
+        "http_status": 409,
+        "response": {
+          "detail": "内容已更新，请刷新后重试"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/13",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/update",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "version": 1,
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-09:entry",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "合同报告先给结论，再列原文证据与建议。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          }
+        },
+        "http_status": 200,
+        "response": {
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "合同报告先给结论，再列原文证据与建议。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          },
+          "version": 2,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.007Z",
+          "updated": "2026-10-13T06:44:27.561Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/14",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/update",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "version": 1,
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-09:stale",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "合同报告先给结论，再列原文证据与建议。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          }
+        },
+        "http_status": 409,
+        "response": {
+          "detail": "内容已更新，请刷新后重试"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/17",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/delete",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "version": 2,
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-13:entry"
+        },
+        "http_status": 200,
+        "response": {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "deleted",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "version": 3,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.236Z",
+          "updated": "2026-10-13T06:47:22.531Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/20",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/update",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "version": 1,
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-08:entry",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          }
+        },
+        "http_status": 200,
+        "response": {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "version": 2,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.236Z",
+          "updated": "2026-10-13T06:44:27.381Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/21",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/update",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "version": 1,
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-09:entry",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "合同报告先给结论，再列原文证据与建议。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          }
+        },
+        "http_status": 200,
+        "response": {
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "合同报告先给结论，再列原文证据与建议。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          },
+          "version": 2,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.007Z",
+          "updated": "2026-10-13T06:44:27.561Z"
+        }
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/api-receipts.json",
+      "source_sha256": "0c76bd587974173cbeede8b753084788e393b4ae0d82f5cca63ca3c6f5a8fd77",
+      "json_pointer": "/22",
+      "value": {
+        "method": "POST",
+        "path": "/api/contract-memory/delete",
+        "body": {
+          "team_id": "83662a47693300ca56fc563a",
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "version": 2,
+          "operation_id": "748a96ceeccb4239bdc516bb7a9bea02:PROTECT-13:entry"
+        },
+        "http_status": 200,
+        "response": {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "deleted",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "version": 3,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.236Z",
+          "updated": "2026-10-13T06:47:22.531Z"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "title": "两合同形成L2草稿并经确认生效",
+  "evidence": [
+    {
+      "source_file": "core-03-audit/steps/V2-S010.json",
+      "source_sha256": "dbd20e162bfabb9354cee2de5a1f67e961e776fa411323babac1162ece1d4cad",
+      "json_pointer": "/result/after/candidates/items",
+      "value": [
+        {
+          "id": "5aaa2573-d506-412b-bae0-1cf11513cdb0",
+          "instance": "default",
+          "team": "team-310f20ga3a",
+          "agent": "agt-310ff7dz9i",
+          "user": "usr-xmmveljrfz",
+          "task": "task-319g3mwxug",
+          "session": "ses_eccd32b37ffeF6i2Odt3rhV8eN",
+          "status": "pending",
+          "data": {
+            "kind": "experience",
+            "title": "拟延长至60天账期时按项目保障条件分支评估",
+            "content": "我方启衡设备有限公司作为供货方，遇拟延长至60天的账期，应结合具体项目保障条件处理：H01仅对拟调整的尾款账期提出以合同价20%预付款为条件的可接受意见；F01要求增加银行保函后再评估，不照搬预付款方案。两案仅支持结合项目保障条件评估的方法，不能据此统一接受60天账期。",
+            "topic": "付款",
+            "conditions": [
+              "我方为乙方启衡设备有限公司（供货方）",
+              "H01工业控制终端采购项目：拟将尾款账期调整为60天，可接受意见以合同价20%预付款为条件，仅限该项目",
+              "F01工业控制终端补充采购项目：拟延长为60天账期，要求增加银行保函保障后再评估，仅限该项目"
+            ],
+            "exceptions": [
+              "H01现稿付款期限仍以合同原文为准",
+              "F01现稿付款期限须核验，拟议60天账期不能视为现行期限",
+              "F01不照搬H01的20%预付款方案，增加保函不等于已接受延长账期",
+              "项目保障方案不能自动推广至其他合同；当前合同原文和现行权威制度优先"
+            ],
+            "source_ids": [
+              "case_f5d248be00e165f72a226245b13796d3@1",
+              "case_4c33f29d48a12591d5b30f7c1e12a6ee@1"
+            ],
+            "schema_version": 2,
+            "subtype": "disposition_method",
+            "conflicts": []
+          },
+          "fingerprint": "bf4d68b70eebece69dcfd1f380066792da1d131eef243d90c4d6798d245ac177",
+          "target_id": null,
+          "created": "2026-10-13T02:59:28.327Z"
+        }
+      ]
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S010.json",
+      "source_sha256": "dbd20e162bfabb9354cee2de5a1f67e961e776fa411323babac1162ece1d4cad",
+      "json_pointer": "/result/after/personal/items",
+      "value": []
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S011.json",
+      "source_sha256": "ab6eecc8c1addc47ae47c2e5bfad8ae40429470764c4d392deac5e43ddc5880c",
+      "json_pointer": "/result/mutation",
+      "value": {
+        "id": "97ac27e3-d8c1-40c2-b511-315c8d3794e5",
+        "instance": "default",
+        "team": "team-310f20ga3a",
+        "agent": "agt-310ff7dz9i",
+        "user": "usr-xmmveljrfz",
+        "scope": "personal",
+        "status": "active",
+        "data": {
+          "kind": "experience",
+          "title": "拟延长至60天账期时按项目保障条件分支评估",
+          "content": "我方启衡设备有限公司作为供货方，遇拟延长至60天的账期，应结合具体项目保障条件处理：H01仅对拟调整的尾款账期提出以合同价20%预付款为条件的可接受意见；F01要求增加银行保函后再评估，不照搬预付款方案。两案仅支持结合项目保障条件评估的方法，不能据此统一接受60天账期。",
+          "topic": "付款",
+          "conditions": [
+            "我方为乙方启衡设备有限公司（供货方）",
+            "H01工业控制终端采购项目：拟将尾款账期调整为60天，可接受意见以合同价20%预付款为条件，仅限该项目",
+            "F01工业控制终端补充采购项目：拟延长为60天账期，要求增加银行保函保障后再评估，仅限该项目"
+          ],
+          "exceptions": [
+            "H01现稿付款期限仍以合同原文为准",
+            "F01现稿付款期限须核验，拟议60天账期不能视为现行期限",
+            "F01不照搬H01的20%预付款方案，增加保函不等于已接受延长账期",
+            "项目保障方案不能自动推广至其他合同；当前合同原文和现行权威制度优先"
+          ],
+          "source_ids": [
+            "case_f5d248be00e165f72a226245b13796d3@1",
+            "case_4c33f29d48a12591d5b30f7c1e12a6ee@1"
+          ],
+          "schema_version": 2,
+          "subtype": "disposition_method",
+          "conflicts": []
+        },
+        "version": 1,
+        "protected": 1,
+        "created": "2026-10-13T02:59:30.790Z",
+        "updated": "2026-10-13T02:59:30.790Z"
+      }
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "title": "修复后新会话实际采用最新正式约定",
+  "evidence": [
+    {
+      "source_file": "closeout-01/protection-01/steps/PROTECT-08.json",
+      "source_sha256": "9ec9f1df824ae16da3f473bc5df21f2a23316e385afd34ac3715325b82e3ac7a",
+      "json_pointer": "/result/mutation",
+      "value": {
+        "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+        "instance": "default",
+        "team": "team-4cuxwpznza",
+        "agent": "agt-4cuxt1gkhh",
+        "user": "usr-xmmveljrfz",
+        "scope": "personal",
+        "status": "active",
+        "data": {
+          "kind": "preference",
+          "title": "称呼用户为大哥",
+          "content": "称呼用户为“老师”。",
+          "topic": "称呼语气",
+          "conditions": [],
+          "exceptions": [],
+          "source_ids": [
+            "pref_34cfd7058912c5d767dca7cfe8d54759"
+          ],
+          "schema_version": 2,
+          "subtype": "communication_preference",
+          "conflicts": []
+        },
+        "version": 2,
+        "protected": 1,
+        "created": "2026-10-13T06:42:16.236Z",
+        "updated": "2026-10-13T06:44:27.381Z"
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/steps/PROTECT-09.json",
+      "source_sha256": "00589f7b15ca1ae78036c6ff6d74ad42f5944d8d8c1cc3bb065d133142bcfe8d",
+      "json_pointer": "/result/mutation",
+      "value": {
+        "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+        "instance": "default",
+        "team": "team-4cuxwpznza",
+        "agent": "agt-4cuxt1gkhh",
+        "user": "usr-xmmveljrfz",
+        "scope": "personal",
+        "status": "active",
+        "data": {
+          "kind": "preference",
+          "title": "合同报告先结论后分点",
+          "content": "合同报告先给结论，再列原文证据与建议。",
+          "topic": "报告风格",
+          "conditions": [],
+          "exceptions": [],
+          "source_ids": [
+            "pref_af3a9475b2c9ec25d446f716fa9388fb"
+          ],
+          "schema_version": 2,
+          "subtype": "delivery_preference",
+          "conflicts": []
+        },
+        "version": 2,
+        "protected": 1,
+        "created": "2026-10-13T06:42:16.007Z",
+        "updated": "2026-10-13T06:44:27.561Z"
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/steps/PROTECT-12.json",
+      "source_sha256": "5ed65167a3a8fdd613fbbad51f7f3de2ee5c0da2618ded8cca99a3e9fe2f8db3",
+      "json_pointer": "/result/final_assistant_text",
+      "value": "老师，已查询相关历史声明，并核对当前已确认的正式正文。当前应使用以下约定：\n\n| 项目 | 当前正式正文（版本 2） | 旧声明，仅用于溯源 |\n|---|---|---|\n| 称呼 | 称呼您为“老师” | “今后请称呼我为大哥” |\n| 报告结构 | 合同报告先给结论，再列原文证据与建议 | “以后所有合同报告先给结论，再分点说明” |\n\n当前账号配置未设置称呼，因此采用已确认正式正文中的“老师”。称呼记忆的标题仍写着“称呼用户为大哥”，但标题与正文不一致时，应以最新正式正文为准。\n\n这两项正式偏好未列明适用条件或例外，按一般称呼和合同报告场景使用；您本次的明确要求及当前配置优先。历史声明不替代正式正文，以上偏好也不代表任何合同事项已经批准。本轮仅查询核对，未修改或保存偏好。"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "private_evidence_root": "/Users/dicam/.local/share/openharvey/contract-v2-experiment/20261013",
+  "export_kind": "Selected exact values, with file SHA256 and JSON pointers; no model inference or new experiments",
+  "records": [
+    {
+      "id": "E01",
+      "title": "H01真实风险处理案例及原文定位",
+      "file": "records/E01.json",
+      "sha256": "525bb1d10bb311262dded90ed300b456a1ef472787920c5597c34b31c9c2f261"
+    },
+    {
+      "id": "E02",
+      "title": "单案例时没有L2候选或正式经验",
+      "file": "records/E02.json",
+      "sha256": "f2e14bab59f213465fc9e480c2806cf1a64da4825f41aa2c1a32f0f0b0d2f695"
+    },
+    {
+      "id": "E03",
+      "title": "F01返回历史案例版本、条件、差异及Agent实际采用",
+      "file": "records/E03.json",
+      "sha256": "3da0f369dbbcb02aabf8c7d219bea58e142852676e9675cfaa93a6532f15e879"
+    },
+    {
+      "id": "E04",
+      "title": "两合同形成L2草稿并经确认生效",
+      "file": "records/E04.json",
+      "sha256": "328e557b53b36d6b4963938bfe41f1401acd2db362d4155f2e0b5a3c7c599f9b"
+    },
+    {
+      "id": "E05",
+      "title": "L2实际正文读取及合同适用判断",
+      "file": "records/E05.json",
+      "sha256": "27359ac3383ffa116583354381fc6468aacd23675acf5d0df5321b8ddd61e779"
+    },
+    {
+      "id": "E06",
+      "title": "两条长期偏好单独存储；临时要求未生成为长期候选",
+      "file": "records/E06.json",
+      "sha256": "1842672c33bb7fe8159f123d6a78d9b5e6e06f08dd85d74616392c7965eeaf07"
+    },
+    {
+      "id": "E07",
+      "title": "撤回案例及依赖经验退出有效召回",
+      "file": "records/E07.json",
+      "sha256": "64391828c86c29a2d084c87eb24b9d4195a1d7aab21543f5e939aeaeee48ece5"
+    },
+    {
+      "id": "E08",
+      "title": "三风险分别保存及跨合同召回",
+      "file": "records/E08.json",
+      "sha256": "a9b4055401a7217f20e9ba500ed5a139ec0e2e6c27626ba98289c503f320640c"
+    },
+    {
+      "id": "E09",
+      "title": "标准变化及相反交易角色的适用性结果",
+      "file": "records/E09.json",
+      "sha256": "5f224421d05cde9ece0f5e8013a242451ac2184c904427ee24854821a0bd77d2"
+    },
+    {
+      "id": "E10",
+      "title": "旧L1覆盖人工修改L3的实际失败",
+      "file": "records/E10.json",
+      "sha256": "70871d8c91be12cb184d99c6e3bf93db5244d22bd1079c8e387febb76b2d9fec"
+    },
+    {
+      "id": "E11",
+      "title": "修复后新会话实际采用最新正式约定",
+      "file": "records/E11.json",
+      "sha256": "20ef156066de3f0f046d859acc9051a01d1268295fb4241b859fae6c3706b977"
+    },
+    {
+      "id": "E12",
+      "title": "删除后的真实回答和受保护历史版本",
+      "file": "records/E12.json",
+      "sha256": "cd1ae697c889d8d4999f8c3bac8466513a89b6874f69e8117ac96129999f8711"
+    },
+    {
+      "id": "E13",
+      "title": "同一来源再次进入真实L3模型调用后仍受人工保护",
+      "file": "records/E13.json",
+      "sha256": "bad9b873c3ce785aab1a8d607218933726ea2d193085a7cd01c9b9d08b5cd6e9"
+    },
+    {
+      "id": "E14",
+      "title": "确认、忽略、人工更新、409及重复操作的实际接口回执",
+      "file": "records/E14.json",
+      "sha256": "487a1bc69e08a45635a359c67752ded14c8f1f68358bb714d988e9d728193b34"
+    },
+    {
+      "id": "E15",
+      "title": "Team、User及伪造Agent的真实请求对照",
+      "file": "records/E15.json",
+      "sha256": "4d374c572efdb33b63be672d1089a203d260f1f66502a10b530407936650aba4"
+    },
+    {
+      "id": "E16",
+      "title": "个人、团队共享审核及撤销成员访问",
+      "file": "records/E16.json",
+      "sha256": "f56202d7966bf324b70ed8b8dbbf7eb65792d979c68eaff532d079e1b91dbd84"
+    },
+    {
+      "id": "E17",
+      "title": "纠错、源合同删除和恢复对当前召回的影响",
+      "file": "records/E17.json",
+      "sha256": "354081448f100d1d7527277bc5357d07d8d0f5e825213fe0799c7dd313b2a282"
+    },
+    {
+      "id": "E18",
+      "title": "故障、实际保存与记忆同步恢复证据",
+      "file": "records/E18.json",
+      "sha256": "d009e84dc4904c4a97b5982df22bc73af45267c5a2647ca6be097757e3f8714b"
+    },
+    {
+      "id": "E19",
+      "title": "修订稿实际读取及新旧条款比较",
+      "file": "records/E19.json",
+      "sha256": "5b38ebf06de2d1ca21c733f7450844f8a6bdee0b99c7db457d37590e72b05ec0"
+    },
+    {
+      "id": "E20",
+      "title": "旧写入接口与历史数据隔离",
+      "file": "records/E20.json",
+      "sha256": "2e39f12fe920eb24a3136612b6284b5dd4b222f996418450575073abaff2db26"
+    },
+    {
+      "id": "E21",
+      "title": "冲突被发现后由用户忽略，未自动替换",
+      "file": "records/E21.json",
+      "sha256": "13b82d0a51826d302a94f1c675988ba0164e92cccc9c63b9f00684eb49da410a"
+    }
+  ]
+}

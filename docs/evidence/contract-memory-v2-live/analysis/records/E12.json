@@ -1,0 +1,155 @@
+{
+  "title": "删除后的真实回答和受保护历史版本",
+  "evidence": [
+    {
+      "source_file": "closeout-01/protection-01/steps/PROTECT-13.json",
+      "source_sha256": "15aba6394d825278ee62789c0bd8db6c51de9314a41dca00d44c6427cead2ec3",
+      "json_pointer": "/result/mutation",
+      "value": {
+        "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+        "instance": "default",
+        "team": "team-4cuxwpznza",
+        "agent": "agt-4cuxt1gkhh",
+        "user": "usr-xmmveljrfz",
+        "scope": "personal",
+        "status": "deleted",
+        "data": {
+          "kind": "preference",
+          "title": "称呼用户为大哥",
+          "content": "称呼用户为“老师”。",
+          "topic": "称呼语气",
+          "conditions": [],
+          "exceptions": [],
+          "source_ids": [
+            "pref_34cfd7058912c5d767dca7cfe8d54759"
+          ],
+          "schema_version": 2,
+          "subtype": "communication_preference",
+          "conflicts": []
+        },
+        "version": 3,
+        "protected": 1,
+        "created": "2026-10-13T06:42:16.236Z",
+        "updated": "2026-10-13T06:47:22.531Z"
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/steps/PROTECT-16.json",
+      "source_sha256": "f5021201a62c9a52c79ab160c95b1479ff119cd5019ae20ec799dd6ea7f569f1",
+      "json_pointer": "/result/final_assistant_text",
+      "value": "本次查询找到 **1 条当前有效的已确认工作约定**：\n\n“合同报告先给结论，再列原文证据与建议。”（正式版本：第 2 版）\n\n据此，报告结构为：\n\n1. **结论**：先说明主要判断与处理重点。\n2. **原文证据**：列出支持判断的合同条款，保留完整文档 ID 和段落引用。\n3. **建议**：结合证据提出处理或修改建议。\n\n该条正式记录未列明适用条件或例外，不能据此推定它无条件适用于所有场景；您本次的明确要求仍优先。\n\n历史原话“以后所有合同报告先给结论，再分点说明”被标记为历史来源，不作为现行偏好。以上说明依据查询结果中的当前正式正文，未将历史原话或已删除条目计入有效约定。"
+    },
+    {
+      "source_file": "closeout-01/protection-01/steps/PROTECT-16.json",
+      "source_sha256": "f5021201a62c9a52c79ab160c95b1479ff119cd5019ae20ec799dd6ea7f569f1",
+      "json_pointer": "/result/after/core/revisions",
+      "value": [
+        {
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "version": 1,
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "所有合同报告先给结论，再分点说明。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          },
+          "status": "active",
+          "actor": "usr-xmmveljrfz",
+          "created": "2026-10-13T06:42:16.007Z"
+        },
+        {
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "version": 2,
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "合同报告先给结论，再列原文证据与建议。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          },
+          "status": "active",
+          "actor": "usr-xmmveljrfz",
+          "created": "2026-10-13T06:44:27.561Z"
+        },
+        {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "version": 1,
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“大哥”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "status": "active",
+          "actor": "usr-xmmveljrfz",
+          "created": "2026-10-13T06:42:16.236Z"
+        },
+        {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "version": 2,
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "status": "active",
+          "actor": "usr-xmmveljrfz",
+          "created": "2026-10-13T06:44:27.381Z"
+        },
+        {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "version": 3,
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "status": "deleted",
+          "actor": "usr-xmmveljrfz",
+          "created": "2026-10-13T06:47:22.531Z"
+        }
+      ]
+    }
+  ]
+}

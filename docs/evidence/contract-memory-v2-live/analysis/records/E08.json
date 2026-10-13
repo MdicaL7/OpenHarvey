@@ -1,0 +1,176 @@
+{
+  "title": "三风险分别保存及跨合同召回",
+  "evidence": [
+    {
+      "source_file": "multirisk-01/steps/ABC-12.json",
+      "source_sha256": "fcfcd8b0f12e886c322b8e571d4f3d9dbff31d06ec3fc8e35b5ba923d2ce623c",
+      "json_pointer": "/result",
+      "value": {
+        "checks": "parallel_recall",
+        "actual_results": {
+          "EX-PAY": {
+            "items": [
+              {
+                "case_id": "case_eb15e5461273f3deea027469f0ccb14d",
+                "version": 1,
+                "workspace_id": "38fe297833c88938a4f6871c",
+                "report_id": "56fb16dbb28a37ba5b2c6a58",
+                "risk_id": "EX-PAY",
+                "decision": "接受风险",
+                "note": "本项目可接受60天账期，但必须收取20%预付款，仅限本项目；尚未核验执行。",
+                "conditions": [
+                  "必须收取合同价20%的预付款",
+                  "仅限H01工业控制终端采购项目"
+                ],
+                "exceptions": [],
+                "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                "relation": "conditional",
+                "matching_points": [
+                  "我方均为乙方启衡设备有限公司供货方。",
+                  "付款风险定义及示例标准一致，条款均约定20%预付款、终验后70%付款及十二个月质保届满后10%付款。"
+                ],
+                "differences": [
+                  "历史接受意见仅限H01项目，当前为F01补充采购合同，未明确属于原处置范围。",
+                  "历史意见针对60天账期；当前分别约定十个、十五个工作日付款，不能等同于60天账期。",
+                  "当前约定20%预付款不证明已实际收取，历史要求必须收取。",
+                  "历史明确无争议部分按期支付，当前仅表述争议部分单独处理。"
+                ],
+                "reason": "付款结构及供货方角色相近，但须核对项目范围、账期含义和预付款收取条件，不能直接沿用原项目的接受意见。",
+                "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-PAY#38fe297833c88938a4f6871c",
+                "source_label": "查看历史合同处理意见"
+              },
+              {
+                "case_id": "case_cecc0428312852a88f831d486516d099",
+                "version": 1,
+                "workspace_id": "38fe297833c88938a4f6871c",
+                "report_id": "56fb16dbb28a37ba5b2c6a58",
+                "risk_id": "EX-ACCEPT",
+                "decision": "要求修改",
+                "note": "增加明确的终验期限、逾期处理及整改后复验期限，隐藏缺陷责任保留。",
+                "conditions": [
+                  "适用于H01工业控制终端采购合同",
+                  "保留隐藏缺陷责任"
+                ],
+                "exceptions": [],
+                "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                "relation": "conditional",
+                "matching_points": [
+                  "我方均为供货方，终验均影响主要款项的支付。",
+                  "两份条款均未明确终验完成期限、逾期处理及整改后复验期限，历史修改要求对付款触发条件有参考价值。"
+                ],
+                "differences": [
+                  "历史处置针对验收风险，当前针对付款风险，仅在终验与付款衔接方面相关。",
+                  "历史要求限于H01合同，当前为F01合同。",
+                  "历史约定连续运行七十二小时，当前未明确连续运行测试时长；当前明确两次整改不合格可退货。",
+                  "历史要求保留隐藏缺陷责任，当前保留缺陷请求的表述是否完整覆盖隐藏缺陷需核对。"
+                ],
+                "reason": "可有条件参考终验期限及复验流程的修改思路，以评估付款触发条件；不能将历史修改要求视为已完成或直接适用于当前合同。",
+                "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-ACCEPT#38fe297833c88938a4f6871c",
+                "source_label": "查看历史合同处理意见"
+              }
+            ],
+            "schema_version": 2
+          },
+          "EX-ACCEPT": {
+            "items": [
+              {
+                "case_id": "case_cecc0428312852a88f831d486516d099",
+                "version": 1,
+                "workspace_id": "38fe297833c88938a4f6871c",
+                "report_id": "56fb16dbb28a37ba5b2c6a58",
+                "risk_id": "EX-ACCEPT",
+                "decision": "要求修改",
+                "note": "增加明确的终验期限、逾期处理及整改后复验期限，隐藏缺陷责任保留。",
+                "conditions": [
+                  "适用于H01工业控制终端采购合同",
+                  "保留隐藏缺陷责任"
+                ],
+                "exceptions": [],
+                "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                "relation": "conditional",
+                "matching_points": [
+                  "我方均为乙方启衡设备有限公司，承担供货方责任。",
+                  "均约定到货十个工作日内初验、安装调试后连续运行测试及书面终验记录，但未明确终验期限、逾期处理和整改后复验期限。",
+                  "验收风险定义、示例标准及风险方案版本一致。"
+                ],
+                "differences": [
+                  "历史处置仅适用于H01采购合同，当前为F01补充采购合同，需核对项目范围及沿用条件。",
+                  "历史条款规定整改仍不合格可退货，当前条款规定两次整改不合格可退货。",
+                  "当前明确付款不视为放弃缺陷请求；历史要求保留隐藏缺陷责任，当前是否完整保留该责任仍需核对。"
+                ],
+                "reason": "验收风险实质及我方角色相近，可参考明确终验、逾期处理和复验期限的修改思路；受原合同范围及隐藏缺陷责任条件限制，不能直接沿用。",
+                "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-ACCEPT#38fe297833c88938a4f6871c",
+                "source_label": "查看历史合同处理意见"
+              }
+            ],
+            "schema_version": 2
+          },
+          "EX-TERMINATE": {
+            "items": [
+              {
+                "case_id": "case_a9377fbd81206d701b12407349a1c3b3",
+                "version": 1,
+                "workspace_id": "38fe297833c88938a4f6871c",
+                "report_id": "56fb16dbb28a37ba5b2c6a58",
+                "risk_id": "EX-TERMINATE",
+                "decision": "补充材料",
+                "note": "先核验不可取消采购和专用投入凭证，扣除可转售价值及减损金额后讨论结算。",
+                "conditions": [
+                  "适用于H01工业控制终端采购合同",
+                  "先核验不可取消采购和专用投入凭证",
+                  "扣除可转售价值及减损金额后再讨论结算"
+                ],
+                "exceptions": [],
+                "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                "relation": "conditional",
+                "matching_points": [
+                  "我方均为乙方启衡设备有限公司供货方。",
+                  "均涉及解除后的已完成合格部分结算，风险定义及标准一致。",
+                  "均约定重大违约十个工作日补救及影响持续三十日且合同目的无法实现时解除。"
+                ],
+                "differences": [
+                  "历史处置仅适用于H01合同，当前为F01补充采购合同。",
+                  "当前不可取消采购、专用投入凭证及可转售价值、减损金额未知。",
+                  "历史条款要求书面催告、解除受影响部分，并将立即解除限定于严重侵权或泄密无法补救；当前相应限定未载明。",
+                  "历史明确货物及资料交接，当前所给条款未明确；当前结算仍未明确合理已发生成本。"
+                ],
+                "reason": "解除结算的核验思路有参考价值，但须核对项目范围及投入、减损证据；历史仅要求补充材料后讨论结算，不能视为已认可结算或批准解除条款。",
+                "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-TERMINATE#38fe297833c88938a4f6871c",
+                "source_label": "查看历史合同处理意见"
+              },
+              {
+                "case_id": "case_cecc0428312852a88f831d486516d099",
+                "version": 1,
+                "workspace_id": "38fe297833c88938a4f6871c",
+                "report_id": "56fb16dbb28a37ba5b2c6a58",
+                "risk_id": "EX-ACCEPT",
+                "decision": "要求修改",
+                "note": "增加明确的终验期限、逾期处理及整改后复验期限，隐藏缺陷责任保留。",
+                "conditions": [
+                  "适用于H01工业控制终端采购合同",
+                  "保留隐藏缺陷责任"
+                ],
+                "exceptions": [],
+                "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+                "relation": "conditional",
+                "matching_points": [
+                  "我方均为乙方启衡设备有限公司供货方。",
+                  "当前解除结算以已完成且合格的部分为依据，验收期限与复验安排对该范围的确认有间接参考价值。"
+                ],
+                "differences": [
+                  "历史针对验收期限、逾期处理及整改后复验，当前针对解除与结算，风险定义及标准不同。",
+                  "历史修改要求限于H01合同，并保留隐藏缺陷责任；当前为F01合同，所给条款未提供相关验收安排。"
+                ],
+                "reason": "仅可作为核对合格成果认定条件的关联参考，须核对当前验收条款；历史要求修改不证明修改完成，也不能直接作为解除结算处置。",
+                "source_url": "/agent?artifact=56fb16dbb28a37ba5b2c6a58&risk=EX-ACCEPT#38fe297833c88938a4f6871c",
+                "source_label": "查看历史合同处理意见"
+              }
+            ],
+            "schema_version": 2
+          }
+        },
+        "report_id": "4e1445b5b77e8175a87a1c33"
+      }
+    }
+  ]
+}

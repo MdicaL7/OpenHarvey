@@ -1,0 +1,624 @@
+{
+  "title": "同一来源再次进入真实L3模型调用后仍受人工保护",
+  "evidence": [
+    {
+      "source_file": "closeout-01/protection-replay/same-source-proof.json",
+      "source_sha256": "a816d73e835a5119cb68314884703cf2b11b5d6ecf24912bdcaea1ec762b7441",
+      "json_pointer": "",
+      "value": {
+        "status": "pass",
+        "source_file": "/Users/dicam/.local/share/openharvey/contract-v2-experiment/20261013/closeout-01/protection-replay/steps/PROTECT-REPLAY-01.json",
+        "source_sha256": "626d7a28aa1a106b7aa14b8b3fa68d4754d7c163642f833abed8563287826394",
+        "actual_l3_runs": [
+          {
+            "id": "603189e1ddc56af031866163ce1cbecbd57513513fa11840ff3656bfa2d36c45",
+            "data": {
+              "model": "gpt-6.1-sol",
+              "prompt_version": "contract-v2",
+              "input": {
+                "preferences": [
+                  {
+                    "id": "pref_af3a9475b2c9ec25d446f716fa9388fb",
+                    "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+                    "content": "以后所有合同报告先给结论，再分点说明。",
+                    "kind": "long_term_preference",
+                    "subtype": "delivery_preference",
+                    "topic": "合同报告结构",
+                    "conditions": [],
+                    "exceptions": [],
+                    "source_ids": [
+                      "msg_9101a24538cce88ec2732e66aba39bcd"
+                    ],
+                    "evidence_quote": "以后所有合同报告先给结论，再分点说明。",
+                    "schema_version": 2
+                  },
+                  {
+                    "id": "pref_34cfd7058912c5d767dca7cfe8d54759",
+                    "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+                    "content": "今后称呼用户为“大哥”。",
+                    "kind": "long_term_preference",
+                    "subtype": "communication_preference",
+                    "topic": "用户称呼",
+                    "conditions": [],
+                    "exceptions": [],
+                    "source_ids": [
+                      "msg_9101a24538cce88ec2732e66aba39bcd"
+                    ],
+                    "evidence_quote": "今后请称呼我为大哥。",
+                    "schema_version": 2
+                  },
+                  {
+                    "id": "pref_8c4fd58f54098c1b75087d354a2a3e3c",
+                    "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+                    "content": "以后称呼用户为“老师”，替代以前的称呼约定。",
+                    "kind": "long_term_preference",
+                    "subtype": "communication_preference",
+                    "topic": "用户称呼",
+                    "conditions": [],
+                    "exceptions": [],
+                    "source_ids": [
+                      "msg_d94e62a24b185c07f581419ca6e58b28"
+                    ],
+                    "evidence_quote": "以后称呼我为老师，替代以前的称呼约定。",
+                    "schema_version": 2
+                  },
+                  {
+                    "id": "pref_cb3eb3c6a991ebc30df2339bec0b36ab",
+                    "session": "ses_ecbfbf4d7ffeEwn2PNyZWOu27J",
+                    "content": "今后所有合同审查交付均应保留文档ID和原文段落定位。",
+                    "kind": "long_term_preference",
+                    "subtype": "delivery_preference",
+                    "topic": "合同审查交付的证据定位要求",
+                    "conditions": [],
+                    "exceptions": [],
+                    "source_ids": [
+                      "msg_610530fe2048485ca9b8e523edd7e0a2"
+                    ],
+                    "evidence_quote": "今后所有合同审查交付都应保留文档ID和原文段落定位。这是新增的长期证据要求，现有已经确认的正文仍按当前版本适用。",
+                    "schema_version": 2
+                  }
+                ],
+                "confirmed_experiences": []
+              },
+              "output": {
+                "entries": [
+                  {
+                    "kind": "preference",
+                    "subtype": "delivery_preference",
+                    "title": "合同报告先结论后说明",
+                    "content": "所有合同报告先给结论，再分点说明。",
+                    "topic": "合同报告结构",
+                    "conditions": [],
+                    "exceptions": [],
+                    "source_ids": [
+                      "pref_af3a9475b2c9ec25d446f716fa9388fb"
+                    ]
+                  },
+                  {
+                    "kind": "preference",
+                    "subtype": "communication_preference",
+                    "title": "称呼“大哥”（与“老师”称呼约定冲突）",
+                    "content": "称呼用户为“大哥”。",
+                    "topic": "用户称呼",
+                    "conditions": [],
+                    "exceptions": [],
+                    "source_ids": [
+                      "pref_34cfd7058912c5d767dca7cfe8d54759"
+                    ]
+                  },
+                  {
+                    "kind": "preference",
+                    "subtype": "communication_preference",
+                    "title": "改称“老师”（与“大哥”称呼约定冲突）",
+                    "content": "称呼用户为“老师”，替代以前的称呼约定。",
+                    "topic": "用户称呼",
+                    "conditions": [],
+                    "exceptions": [],
+                    "source_ids": [
+                      "pref_8c4fd58f54098c1b75087d354a2a3e3c"
+                    ]
+                  },
+                  {
+                    "kind": "preference",
+                    "subtype": "delivery_preference",
+                    "title": "合同审查交付保留证据定位",
+                    "content": "所有合同审查交付均应保留文档ID和原文段落定位。",
+                    "topic": "合同审查交付的证据定位要求",
+                    "conditions": [],
+                    "exceptions": [
+                      "现有已经确认的正文仍按当前版本适用。"
+                    ],
+                    "source_ids": [
+                      "pref_cb3eb3c6a991ebc30df2339bec0b36ab"
+                    ]
+                  }
+                ]
+              },
+              "provider": "codex_subscription",
+              "requested_model": "gpt-6.1-sol",
+              "actual_model": null,
+              "model_verified": false,
+              "cli_version": "codex-cli 0.162.0-alpha.17.2",
+              "prompt_sha256": "62696172e4a48fe5386a930c445ac7f6fd942eafdf85dd199ac5c42cdc7d65d5",
+              "input_sha256": "f997777cf8cda10efe2031ba7cf182a8c36d01f2ff425c480af40d25734b3395",
+              "usage": {
+                "input_tokens": "[redacted]",
+                "cached_input_tokens": "[redacted]",
+                "cache_write_input_tokens": "[redacted]",
+                "output_tokens": "[redacted]",
+                "reasoning_output_tokens": "[redacted]"
+              },
+              "elapsed_seconds": 29.965,
+              "stage": "l3",
+              "role": "memory_extraction",
+              "request_id": "e376ad20c9ad37762cbcfa7524ddd10e92ff42d4c8e651759f4694e46bf1884c",
+              "finish_reason": "stop"
+            }
+          }
+        ],
+        "original_ignored": {
+          "id": "aaa1d117-e3f5-4b69-81b0-30a6627d0a9d",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "task": "task-4cuyvvlcni",
+          "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+          "status": "pending",
+          "data": {
+            "kind": "preference",
+            "title": "以老师替代原称呼",
+            "content": "称呼用户为“老师”，替代以前的称呼约定。",
+            "topic": "称呼语气",
+            "conditions": [
+              "与原称呼“大哥”的约定冲突，替代建议需用户确认，不自动覆盖原约定。"
+            ],
+            "exceptions": [],
+            "source_ids": [
+              "pref_8c4fd58f54098c1b75087d354a2a3e3c"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": [
+              {
+                "existing_id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+                "existing_version": 1,
+                "relation": "contradicts"
+              }
+            ]
+          },
+          "fingerprint": "447b4c3234da3e0f916e8457a50ab83e41a497d963c0a025af2deb71a27dbc0b",
+          "target_id": null,
+          "created": "2026-10-13T06:44:20.705Z"
+        },
+        "deleted_entry": {
+          "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "deleted",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“老师”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_34cfd7058912c5d767dca7cfe8d54759"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "version": 3,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.236Z",
+          "updated": "2026-10-13T06:47:22.531Z"
+        },
+        "protected_current_entry": {
+          "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+          "instance": "default",
+          "team": "team-4cuxwpznza",
+          "agent": "agt-4cuxt1gkhh",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后分点",
+            "content": "合同报告先给结论，再列原文证据与建议。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_af3a9475b2c9ec25d446f716fa9388fb"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          },
+          "version": 2,
+          "protected": 1,
+          "created": "2026-10-13T06:42:16.007Z",
+          "updated": "2026-10-13T06:44:27.561Z"
+        },
+        "candidates_after_reprocessing": [
+          {
+            "id": "8750d390-d830-4a35-b04d-d35926f0f893",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+            "status": "confirmed",
+            "data": {
+              "kind": "preference",
+              "title": "合同报告先结论后分点",
+              "content": "所有合同报告先给结论，再分点说明。",
+              "topic": "报告风格",
+              "conditions": [],
+              "exceptions": [],
+              "source_ids": [
+                "pref_af3a9475b2c9ec25d446f716fa9388fb"
+              ],
+              "schema_version": 2,
+              "subtype": "delivery_preference",
+              "conflicts": []
+            },
+            "fingerprint": "64ba32628badf9c8fddb9923c05f6357955bfc588aec9dbda73b893b67354664",
+            "target_id": null,
+            "created": "2026-10-13T06:42:10.307Z"
+          },
+          {
+            "id": "dbe97799-d584-4a51-9781-fc64cfaaf56f",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+            "status": "confirmed",
+            "data": {
+              "kind": "preference",
+              "title": "称呼用户为大哥",
+              "content": "称呼用户为“大哥”。",
+              "topic": "称呼语气",
+              "conditions": [],
+              "exceptions": [],
+              "source_ids": [
+                "pref_34cfd7058912c5d767dca7cfe8d54759"
+              ],
+              "schema_version": 2,
+              "subtype": "communication_preference",
+              "conflicts": []
+            },
+            "fingerprint": "ee16a07bff5613fd3425085a1fceb2a9e59edcf3b845f06265eb9d69a505d3fc",
+            "target_id": null,
+            "created": "2026-10-13T06:42:10.307Z"
+          },
+          {
+            "id": "aaa1d117-e3f5-4b69-81b0-30a6627d0a9d",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+            "status": "ignored",
+            "data": {
+              "kind": "preference",
+              "title": "以老师替代原称呼",
+              "content": "称呼用户为“老师”，替代以前的称呼约定。",
+              "topic": "称呼语气",
+              "conditions": [
+                "与原称呼“大哥”的约定冲突，替代建议需用户确认，不自动覆盖原约定。"
+              ],
+              "exceptions": [],
+              "source_ids": [
+                "pref_8c4fd58f54098c1b75087d354a2a3e3c"
+              ],
+              "schema_version": 2,
+              "subtype": "communication_preference",
+              "conflicts": [
+                {
+                  "existing_id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+                  "existing_version": 1,
+                  "relation": "contradicts"
+                }
+              ]
+            },
+            "fingerprint": "447b4c3234da3e0f916e8457a50ab83e41a497d963c0a025af2deb71a27dbc0b",
+            "target_id": null,
+            "created": "2026-10-13T06:44:20.705Z"
+          },
+          {
+            "id": "78cd0bae-6812-4922-895e-d73e5c063935",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecbfbf4d7ffeEwn2PNyZWOu27J",
+            "status": "pending",
+            "data": {
+              "kind": "preference",
+              "title": "合同审查交付保留证据定位",
+              "content": "所有合同审查交付均应保留文档ID和原文段落定位。",
+              "topic": "验收",
+              "conditions": [],
+              "exceptions": [
+                "现有已经确认的正文仍按当前版本适用。"
+              ],
+              "source_ids": [
+                "pref_cb3eb3c6a991ebc30df2339bec0b36ab"
+              ],
+              "schema_version": 2,
+              "subtype": "delivery_preference",
+              "conflicts": []
+            },
+            "fingerprint": "5b8e5017a1e4eccbf2a5c0d146f4165670350ab4c71b3054bb99037fd8e209d9",
+            "target_id": null,
+            "created": "2026-10-13T07:05:18.168Z"
+          }
+        ],
+        "tombstones": [
+          {
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "fingerprint": "447b4c3234da3e0f916e8457a50ab83e41a497d963c0a025af2deb71a27dbc0b",
+            "created": "2026-10-13T06:44:27.252Z"
+          },
+          {
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "fingerprint": "ee16a07bff5613fd3425085a1fceb2a9e59edcf3b845f06265eb9d69a505d3fc",
+            "created": "2026-10-13T06:47:22.531Z"
+          }
+        ],
+        "jobs": [
+          {
+            "id": "2e71782c-a617-4efb-9171-1e2ccead8530",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+            "status": "completed",
+            "attempts": 1,
+            "error": null,
+            "model": "gpt-6.1-sol",
+            "prompt_version": "contract-v2",
+            "created": "2026-10-13T06:41:33.238Z"
+          },
+          {
+            "id": "1985b584-1232-45bd-a29f-136b19c0664a",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+            "status": "completed",
+            "attempts": 1,
+            "error": null,
+            "model": "gpt-6.1-sol",
+            "prompt_version": "contract-v2",
+            "created": "2026-10-13T06:42:31.758Z"
+          },
+          {
+            "id": "c5b1fc3e-a35c-44c8-a6c2-66bb9690c203",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecbfe9f4dffef7TMXNjCvIEWKj",
+            "status": "completed",
+            "attempts": 1,
+            "error": null,
+            "model": "gpt-6.1-sol",
+            "prompt_version": "contract-v2",
+            "created": "2026-10-13T06:44:51.553Z"
+          },
+          {
+            "id": "abd3c617-c47b-4c49-9ca0-b6cc76cb6fc3",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecbfe9f4dffef7TMXNjCvIEWKj",
+            "status": "completed",
+            "attempts": 1,
+            "error": null,
+            "model": "gpt-6.1-sol",
+            "prompt_version": "contract-v2",
+            "created": "2026-10-13T06:45:28.592Z"
+          },
+          {
+            "id": "fbf79e42-4eef-4e75-b300-81dd814b9336",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecbfe9f4dffef7TMXNjCvIEWKj",
+            "status": "completed",
+            "attempts": 1,
+            "error": null,
+            "model": "gpt-6.1-sol",
+            "prompt_version": "contract-v2",
+            "created": "2026-10-13T06:46:04.271Z"
+          },
+          {
+            "id": "b74ddb76-3107-40d4-af33-35ca86329963",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecbfe9f4dffef7TMXNjCvIEWKj",
+            "status": "completed",
+            "attempts": 1,
+            "error": null,
+            "model": "gpt-6.1-sol",
+            "prompt_version": "contract-v2",
+            "created": "2026-10-13T06:46:32.676Z"
+          },
+          {
+            "id": "11ca2c4c-84db-43cc-8115-7c5c70ee198e",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecbfbf4d7ffeEwn2PNyZWOu27J",
+            "status": "completed",
+            "attempts": 1,
+            "error": null,
+            "model": "gpt-6.1-sol",
+            "prompt_version": "contract-v2",
+            "created": "2026-10-13T06:48:10.657Z"
+          },
+          {
+            "id": "c744e617-9eeb-4ef9-aa1b-cea7093bc8ec",
+            "instance": "default",
+            "team": "team-4cuxwpznza",
+            "agent": "agt-4cuxt1gkhh",
+            "user": "usr-xmmveljrfz",
+            "task": "task-4cuyvvlcni",
+            "session": "ses_ecbfbf4d7ffeEwn2PNyZWOu27J",
+            "status": "completed",
+            "attempts": 2,
+            "error": null,
+            "model": "gpt-6.1-sol",
+            "prompt_version": "contract-v2",
+            "created": "2026-10-13T07:03:56.253Z"
+          }
+        ],
+        "revisions": [
+          {
+            "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+            "version": 1,
+            "data": {
+              "kind": "preference",
+              "title": "合同报告先结论后分点",
+              "content": "所有合同报告先给结论，再分点说明。",
+              "topic": "报告风格",
+              "conditions": [],
+              "exceptions": [],
+              "source_ids": [
+                "pref_af3a9475b2c9ec25d446f716fa9388fb"
+              ],
+              "schema_version": 2,
+              "subtype": "delivery_preference",
+              "conflicts": []
+            },
+            "status": "active",
+            "actor": "usr-xmmveljrfz",
+            "created": "2026-10-13T06:42:16.007Z"
+          },
+          {
+            "id": "cc60d32c-0172-4c79-b9c5-ae022d36353e",
+            "version": 2,
+            "data": {
+              "kind": "preference",
+              "title": "合同报告先结论后分点",
+              "content": "合同报告先给结论，再列原文证据与建议。",
+              "topic": "报告风格",
+              "conditions": [],
+              "exceptions": [],
+              "source_ids": [
+                "pref_af3a9475b2c9ec25d446f716fa9388fb"
+              ],
+              "schema_version": 2,
+              "subtype": "delivery_preference",
+              "conflicts": []
+            },
+            "status": "active",
+            "actor": "usr-xmmveljrfz",
+            "created": "2026-10-13T06:44:27.561Z"
+          },
+          {
+            "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+            "version": 1,
+            "data": {
+              "kind": "preference",
+              "title": "称呼用户为大哥",
+              "content": "称呼用户为“大哥”。",
+              "topic": "称呼语气",
+              "conditions": [],
+              "exceptions": [],
+              "source_ids": [
+                "pref_34cfd7058912c5d767dca7cfe8d54759"
+              ],
+              "schema_version": 2,
+              "subtype": "communication_preference",
+              "conflicts": []
+            },
+            "status": "active",
+            "actor": "usr-xmmveljrfz",
+            "created": "2026-10-13T06:42:16.236Z"
+          },
+          {
+            "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+            "version": 2,
+            "data": {
+              "kind": "preference",
+              "title": "称呼用户为大哥",
+              "content": "称呼用户为“老师”。",
+              "topic": "称呼语气",
+              "conditions": [],
+              "exceptions": [],
+              "source_ids": [
+                "pref_34cfd7058912c5d767dca7cfe8d54759"
+              ],
+              "schema_version": 2,
+              "subtype": "communication_preference",
+              "conflicts": []
+            },
+            "status": "active",
+            "actor": "usr-xmmveljrfz",
+            "created": "2026-10-13T06:44:27.381Z"
+          },
+          {
+            "id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+            "version": 3,
+            "data": {
+              "kind": "preference",
+              "title": "称呼用户为大哥",
+              "content": "称呼用户为“老师”。",
+              "topic": "称呼语气",
+              "conditions": [],
+              "exceptions": [],
+              "source_ids": [
+                "pref_34cfd7058912c5d767dca7cfe8d54759"
+              ],
+              "schema_version": 2,
+              "subtype": "communication_preference",
+              "conflicts": []
+            },
+            "status": "deleted",
+            "actor": "usr-xmmveljrfz",
+            "created": "2026-10-13T06:47:22.531Z"
+          }
+        ],
+        "checks": {
+          "same_original_sources_present_in_real_L3_input": true,
+          "ignored_deleted_fingerprints_absent_from_pending": true,
+          "deleted_entry_absent_from_formal_list": true,
+          "protected_version_and_body_unchanged": true
+        }
+      }
+    }
+  ]
+}

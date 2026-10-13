@@ -1,0 +1,189 @@
+{
+  "status": "real_experiments_executed_with_review_items",
+  "prompt_version": "contract-v2",
+  "live_deployed": true,
+  "real_extraction_and_judge_executed": true,
+  "pack_sha": "3f301503aaef1e654a948e02973df6699f38c0ddf4230787d399d492e22d4d68",
+  "supplemental_plan_sha": "9a7cebf3e50b370398d47c5858a60d0c777583463dfed6330b455b7ea05b0fde",
+  "services": {
+    "workbench": {
+      "port": 8081,
+      "http_status": 200
+    },
+    "outsider": {
+      "port": 8082,
+      "http_status": 200
+    },
+    "core": {
+      "port": 8430,
+      "http_status": 200
+    },
+    "proxy": {
+      "port": 8106,
+      "http_status": 200
+    },
+    "extraction_adapter": {
+      "port": 8766,
+      "http_status": 200
+    },
+    "business_bridge": {
+      "port": 8767,
+      "http_status": 200
+    }
+  },
+  "checks": {
+    "core": {
+      "completed": 27,
+      "total": 27,
+      "blocked": null
+    },
+    "multirisk": {
+      "completed": 16,
+      "total": 16,
+      "blocked": null
+    },
+    "preferences": {
+      "completed": 14,
+      "total": 14,
+      "blocked": null
+    },
+    "l2_use": {
+      "completed": 4,
+      "total": 4,
+      "blocked": null
+    },
+    "revision": {
+      "completed": 3,
+      "total": 3,
+      "blocked": null
+    },
+    "ordinary_provider": {
+      "completed": 2,
+      "total": 2,
+      "blocked": null
+    },
+    "access": {
+      "status": "pass",
+      "checks": 15
+    },
+    "identity_extra": {
+      "status": "pass",
+      "checks": 3
+    },
+    "legacy_write_boundary": {
+      "status": "pass",
+      "checks": 5
+    },
+    "source_state": {
+      "status": "pass",
+      "checks": 6
+    },
+    "fault_recovery": {
+      "status": "pass",
+      "checks": 6
+    },
+    "restart": {
+      "status": "pass"
+    },
+    "l2_native_read": "pass",
+    "preference_source_vs_formal": {
+      "completed": 1,
+      "passed": true
+    },
+    "legacy_separation": {
+      "old_entries_retained": 9,
+      "teams_checked": 16,
+      "passed": true
+    },
+    "team_admin_private_contract": {
+      "passed": true,
+      "checks": 3
+    },
+    "separated_readonly_browser_smoke": {
+      "pass": true,
+      "personal_and_published_team_visible": true,
+      "no_model_or_memory_write_experiment_repeated": true
+    }
+  },
+  "original_judge": {
+    "pass": 6,
+    "fail": 1,
+    "needs_review": 2
+  },
+  "judge_same_configured_model": true,
+  "requested_model": "gpt-6.1-sol",
+  "resolved_model_independently_verified": false,
+  "private_evidence_root": "/Users/dicam/.local/share/openharvey/contract-v2-experiment/20261013",
+  "backup": "/Users/dicam/.local/share/openharvey/contract-v2-experiment/20261013/backup-before-v2",
+  "regression": {
+    "python_precedents": 10,
+    "python_runtime_relocation": 1,
+    "frontend": 158,
+    "core_total": 29,
+    "python_full": 362
+  },
+  "limits": [
+    "Original judge results retained; preference criterion and citation failures require explicit review.",
+    "Real auxiliary title requests observed; native compaction was not naturally triggered.",
+    "Revision tested as a versioned attachment, not replacement of the immutable primary document.",
+    "Cross-organization boundary uses the separate 8082 application instance.",
+    "Rollback backup exists; destructive rollback drill was not run."
+  ],
+  "pending_review": [
+    "Original judge preference assessment uses reply text rather than only persisted memory; focused live tests passed.",
+    "Original judge boundary assessment requests broader Agent variation than the one-Agent-per-team product configuration.",
+    "Original judge protection citations failed exact matching; deterministic and live operator evidence passed."
+  ],
+  "branch_separation": {
+    "common_base": "bc49476",
+    "ui_branch": "codex/ui-style-consistency",
+    "ui_head": "cb1dbdf45b18fb1e6b43a53985e69b80088fe075",
+    "ui_worktree": "/Users/dicam/.codex/worktrees/ui-style-consistency/OpenHarvey",
+    "memory_branch": "codex/contract-memory",
+    "memory_worktree": "/Users/dicam/CodeDir/OpenHarvey",
+    "ui_not_merged": true,
+    "online_code_directory": "/Users/dicam/CodeDir/OpenHarvey",
+    "branch_switch_performed_while_apps_stopped": true,
+    "backup": "/Users/dicam/.local/share/openharvey/branch-separation-backups/20261013-125618",
+    "ui_paths": [
+      "static/account-ui.css",
+      "static/admin-ui.js",
+      "static/agent-ui.css",
+      "static/agent-ui.js",
+      "static/app.css",
+      "static/connectors-ui.css",
+      "static/experience.css",
+      "static/experience.html",
+      "static/experience.js",
+      "static/index.html",
+      "static/labs.css",
+      "static/materials-ui.js",
+      "static/materials.css",
+      "static/risk-settings-ui.js",
+      "static/settings-ui.css",
+      "static/settings-ui.js",
+      "static/spaces.css",
+      "static/workbench.css",
+      "static/workspace-controls.css",
+      "tests/frontend.test.mjs",
+      "static/confirm-dialog.js"
+    ],
+    "memory_tracked_paths": [
+      "contract_web/runtime_manager.py",
+      "scripts/run_tencentdb_local.py",
+      "docs/designs/contract-memory-v2.md"
+    ],
+    "shared_file_review": "Memory behavior retained in common baseline; only UI delta transferred. No shared uncommitted memory hunks were found.",
+    "ui_regression": {
+      "frontend": 163,
+      "python_related": 74
+    },
+    "memory_separated_regression": {
+      "frontend": 158,
+      "runtime_relocation": 1,
+      "precedents": 10
+    },
+    "real_experiments_repeated": false
+  },
+  "final_component_commit": "c9b0720992f04a41fca868e85cf8b1e2bc2371c4"
+}

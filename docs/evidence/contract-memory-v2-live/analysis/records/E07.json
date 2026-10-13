@@ -1,0 +1,278 @@
+{
+  "title": "撤回案例及依赖经验退出有效召回",
+  "evidence": [
+    {
+      "source_file": "core-03-audit/steps/V2-S019.json",
+      "source_sha256": "57f0a4d322962dcddef6d9cd4898d626706958660ddf05f63b5808e72b42f98a",
+      "json_pointer": "/result/feedback",
+      "value": {
+        "risk_id": "EX-PAY",
+        "decision": "待处理",
+        "note": "撤回之前的接受意见，等待重新核对。",
+        "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+        "created": 1791860650.7595022,
+        "revision": 2,
+        "history": [
+          {
+            "risk_id": "EX-PAY",
+            "decision": "接受风险",
+            "note": "现稿付款期限仍以原文为准。若本项目拟将尾款账期调整为60天，我方作为供货方可接受的条件是20%预付款，仅限本项目；这是附条件处理意见，未核验实际修订、批准或执行。",
+            "source_hash": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+            "created": 1791859916.477708,
+            "revision": 1
+          }
+        ],
+        "memory_sync": {
+          "event_id": "feedback_b72566f6034b1aec09c405ad6bed7beca0e7517d7e1da8437dba49c3736e34dc",
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S019.json",
+      "source_sha256": "57f0a4d322962dcddef6d9cd4898d626706958660ddf05f63b5808e72b42f98a",
+      "json_pointer": "/result/after/core/review_cases",
+      "value": [
+        {
+          "id": "case_f5d248be00e165f72a226245b13796d3",
+          "instance": "default",
+          "team": "team-310f20ga3a",
+          "agent": "agt-310ff7dz9i",
+          "user": "usr-xmmveljrfz",
+          "task": "task-310gx8yl7z",
+          "session": "ses_eccd81f64ffeB6KMi8q6NYQ2Zy",
+          "workspace": "f6b9fbd4c2f55e19284aca12",
+          "status": "withdrawn",
+          "version": 2,
+          "data": {
+            "actor_user_id": "usr-xmmveljrfz",
+            "clause_text": "合同生效且收到合格发票后十个工作日内甲方支付20%，即45,200元；全部设备终验合格且收到对应发票后十五个工作日内支付70%，即158,200元；质保期届满且无未解决质量缺陷后十五个工作日内支付10%，即22,600元。甲方对有合理依据的争议金额可暂缓支付，无争议部分按期支付。款项仅付至乙方核验后的对公账户。\n未出具书面终验合格记录不视为验收，甲方试运行或未及时反馈不构成默示验收。",
+            "contract_filename": "H01_工业控制终端采购合同.docx",
+            "contract_title": "H01_工业控制终端采购合同.docx",
+            "created": "2026-10-13T03:04:10.759502+00:00",
+            "decision": "待处理",
+            "document_refs": [
+              {
+                "document_id": "5c7affb14f8c",
+                "paragraph_id": "B12",
+                "quote": "合同生效且收到合格发票后十个工作日内甲方支付20%，即45,200元；全部设备终验合格且收到对应发票后十五个工作日内支付70%，即158,200元；质保期届满且无未解决质量缺陷后十五个工作日内支付10%，即22,600元。甲方对有合理依据的争议金额可暂缓支付，无争议部分按期支付。款项仅付至乙方核验后的对公账户。",
+                "version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e"
+              },
+              {
+                "document_id": "5c7affb14f8c",
+                "paragraph_id": "B10",
+                "quote": "未出具书面终验合格记录不视为验收，甲方试运行或未及时反馈不构成默示验收。",
+                "version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e"
+              }
+            ],
+            "document_version": "f8a1d5e01f4601d3d28bd6d665aa3b63ed1106a3c7b99fd21745c5786e31f45e",
+            "event_id": "feedback_b72566f6034b1aec09c405ad6bed7beca0e7517d7e1da8437dba49c3736e34dc",
+            "note": "撤回之前的接受意见，等待重新核对。",
+            "our_role": "乙方启衡设备有限公司（供货方）",
+            "perspective": "乙方启衡设备有限公司（供货方）",
+            "report_id": "72524037a2c0c50478a3bde3",
+            "revision": 2,
+            "risk_definition": {
+              "baseline": "示例标准：预付款为合同价的20%，里程碑款50%，验收款30%，付款期限为收到合规发票后30日。",
+              "category": "付款",
+              "definition": "检查付款触发条件是否客观明确，是否附带无法控制的第三方回款条件，尾款比例和期限是否可接受。以上比例为虚构示例，不代表任何公司的真实制度。",
+              "id": "EX-PAY",
+              "name": "付款安排"
+            },
+            "risk_definition_hash": "68bcc97082f5bc6207f06e77d428f588fa7714440e70436b5a071238ba84a57c",
+            "risk_id": "EX-PAY",
+            "risk_name": "付款安排",
+            "risk_scheme_version": 1,
+            "session_id": "ses_eccd81f64ffeB6KMi8q6NYQ2Zy",
+            "task_id": "task-310gx8yl7z",
+            "team_id": "1cdff9e00d494dd50062f6cc",
+            "topic": "付款",
+            "verdict": "命中",
+            "workspace_id": "f6b9fbd4c2f55e19284aca12",
+            "schema_version": 2,
+            "kind": "risk_disposition",
+            "content": "撤回之前的接受意见，等待重新核对。",
+            "conditions": [],
+            "exceptions": [],
+            "execution_status": "not_verified",
+            "approval_status": "not_verified"
+          },
+          "created": "2026-10-13T03:04:10.759502+00:00"
+        },
+        {
+          "id": "case_4c33f29d48a12591d5b30f7c1e12a6ee",
+          "instance": "default",
+          "team": "team-310f20ga3a",
+          "agent": "agt-310ff7dz9i",
+          "user": "usr-xmmveljrfz",
+          "task": "task-319g3mwxug",
+          "session": "ses_eccd32b37ffeF6i2Odt3rhV8eN",
+          "workspace": "a35725b079db1df978f00d94",
+          "status": "active",
+          "version": 1,
+          "data": {
+            "actor_user_id": "usr-xmmveljrfz",
+            "clause_text": "合同生效、取得合格发票后十个工作日内支付20%，即67,800元；终验合格且收到对应发票后十五个工作日内支付70%，即237,300元；质保届满且无未解决缺陷后十五个工作日内支付10%，即33,900元。仅支付至乙方核验的对公账户，争议部分单独处理。",
+            "contract_filename": "F01_工业控制终端补充采购合同.docx",
+            "contract_title": "F01_工业控制终端补充采购合同.docx",
+            "created": "2026-10-13T02:58:40.919876+00:00",
+            "decision": "要求修改",
+            "document_refs": [
+              {
+                "document_id": "744c33d4dc82",
+                "paragraph_id": "B12",
+                "quote": "合同生效、取得合格发票后十个工作日内支付20%，即67,800元；终验合格且收到对应发票后十五个工作日内支付70%，即237,300元；质保届满且无未解决缺陷后十五个工作日内支付10%，即33,900元。仅支付至乙方核验的对公账户，争议部分单独处理。",
+                "version": "26ad884e817448020e49b48ce5e2b56c6cd7dd6c2e9c2df9191ef517cca5925b"
+              }
+            ],
+            "document_version": "26ad884e817448020e49b48ce5e2b56c6cd7dd6c2e9c2df9191ef517cca5925b",
+            "event_id": "feedback_f34166f3f563947bcae2d9a47ce9d627ccff7cb9048362c44858920bb0511a6a",
+            "note": "若本项目拟延长为60天账期，我方作为供货方要求增加银行保函保障后再评估；本项目采用保函，不照搬其他项目的20%预付款方案。现稿期限和实际修订状态仍须核验。",
+            "our_role": "乙方启衡设备有限公司（供货方）",
+            "perspective": "乙方启衡设备有限公司（供货方）",
+            "report_id": "72f26de34420b3650fb19746",
+            "revision": 1,
+            "risk_definition": {
+              "baseline": "示例标准：预付款为合同价的20%，里程碑款50%，验收款30%，付款期限为收到合规发票后30日。",
+              "category": "付款",
+              "definition": "检查付款触发条件是否客观明确，是否附带无法控制的第三方回款条件，尾款比例和期限是否可接受。以上比例为虚构示例，不代表任何公司的真实制度。",
+              "id": "EX-PAY",
+              "name": "付款安排"
+            },
+            "risk_definition_hash": "68bcc97082f5bc6207f06e77d428f588fa7714440e70436b5a071238ba84a57c",
+            "risk_id": "EX-PAY",
+            "risk_name": "付款安排",
+            "risk_scheme_version": 1,
+            "session_id": "ses_eccd32b37ffeF6i2Odt3rhV8eN",
+            "task_id": "task-319g3mwxug",
+            "team_id": "1cdff9e00d494dd50062f6cc",
+            "topic": "付款",
+            "verdict": "命中",
+            "workspace_id": "a35725b079db1df978f00d94",
+            "schema_version": 2,
+            "kind": "risk_disposition",
+            "content": "仅限F01_工业控制终端补充采购项目，若拟延长为60天账期，我方乙方启衡设备有限公司作为供货方要求增加银行保函保障后再评估；本项目采用保函保障方案，不照搬其他项目的20%预付款方案，现稿付款期限须核验。",
+            "conditions": [
+              "仅限F01_工业控制终端补充采购项目",
+              "本项目拟延长为60天账期",
+              "增加银行保函保障后再评估"
+            ],
+            "exceptions": [
+              "不照搬其他项目的20%预付款方案",
+              "现稿付款期限须核验，不能将拟议60天账期视为现行期限"
+            ],
+            "execution_status": "not_verified",
+            "approval_status": "not_verified"
+          },
+          "created": "2026-10-13T02:58:40.919876+00:00"
+        }
+      ]
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S020.json",
+      "source_sha256": "485736d4bae3d6b4c4ff200f44677a4826f7019de2539ba35d3575a9ac50838d",
+      "json_pointer": "/result",
+      "value": {
+        "items": [],
+        "schema_version": 2
+      }
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S021.json",
+      "source_sha256": "645d3411540c3be7da8a5760847351bc52d68ac3aa740606ef671d6d839da20a",
+      "json_pointer": "/result/personal/items",
+      "value": [
+        {
+          "id": "d4553a57-006c-43f5-8808-6f70c8e4abbe",
+          "instance": "default",
+          "team": "team-310f20ga3a",
+          "agent": "agt-310ff7dz9i",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "称呼用户为大哥",
+            "content": "称呼用户为“大哥”。",
+            "topic": "称呼语气",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_486c96c75120865ec71c17283bad0ca9"
+            ],
+            "schema_version": 2,
+            "subtype": "communication_preference",
+            "conflicts": []
+          },
+          "version": 1,
+          "protected": 1,
+          "created": "2026-10-13T03:00:23.134Z",
+          "updated": "2026-10-13T03:00:23.134Z"
+        },
+        {
+          "id": "d491b34a-6c7d-4eea-a4c0-45b758fdaa24",
+          "instance": "default",
+          "team": "team-310f20ga3a",
+          "agent": "agt-310ff7dz9i",
+          "user": "usr-xmmveljrfz",
+          "scope": "personal",
+          "status": "active",
+          "data": {
+            "kind": "preference",
+            "title": "合同报告先结论后说明",
+            "content": "所有合同报告先给结论，再分点说明。",
+            "topic": "报告风格",
+            "conditions": [],
+            "exceptions": [],
+            "source_ids": [
+              "pref_10b49992a248b4321f0a31e5b070efc8"
+            ],
+            "schema_version": 2,
+            "subtype": "delivery_preference",
+            "conflicts": []
+          },
+          "version": 1,
+          "protected": 1,
+          "created": "2026-10-13T03:00:22.786Z",
+          "updated": "2026-10-13T03:00:22.786Z"
+        }
+      ]
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S021.json",
+      "source_sha256": "645d3411540c3be7da8a5760847351bc52d68ac3aa740606ef671d6d839da20a",
+      "json_pointer": "/result/candidates/needs_review",
+      "value": [
+        {
+          "id": "97ac27e3-d8c1-40c2-b511-315c8d3794e5",
+          "data": {
+            "kind": "experience",
+            "title": "拟延长至60天账期时按项目保障条件分支评估",
+            "content": "我方启衡设备有限公司作为供货方，遇拟延长至60天的账期，应结合具体项目保障条件处理：H01仅对拟调整的尾款账期提出以合同价20%预付款为条件的可接受意见；F01要求增加银行保函后再评估，不照搬预付款方案。两案仅支持结合项目保障条件评估的方法，不能据此统一接受60天账期。",
+            "topic": "付款",
+            "conditions": [
+              "我方为乙方启衡设备有限公司（供货方）",
+              "H01工业控制终端采购项目：拟将尾款账期调整为60天，可接受意见以合同价20%预付款为条件，仅限该项目",
+              "F01工业控制终端补充采购项目：拟延长为60天账期，要求增加银行保函保障后再评估，仅限该项目"
+            ],
+            "exceptions": [
+              "H01现稿付款期限仍以合同原文为准",
+              "F01现稿付款期限须核验，拟议60天账期不能视为现行期限",
+              "F01不照搬H01的20%预付款方案，增加保函不等于已接受延长账期",
+              "项目保障方案不能自动推广至其他合同；当前合同原文和现行权威制度优先"
+            ],
+            "source_ids": [
+              "case_f5d248be00e165f72a226245b13796d3@1",
+              "case_4c33f29d48a12591d5b30f7c1e12a6ee@1"
+            ],
+            "schema_version": 2,
+            "subtype": "disposition_method",
+            "conflicts": []
+          },
+          "reason": "来源版本已变化，请重新核对"
+        }
+      ]
+    }
+  ]
+}

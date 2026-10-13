@@ -1,0 +1,97 @@
+{
+  "title": "两条长期偏好单独存储；临时要求未生成为长期候选",
+  "evidence": [
+    {
+      "source_file": "core-03-audit/steps/V2-S013.json",
+      "source_sha256": "45e0987b74207bc785e965d84979b7d520f93a5c8decdd3a53e95aac8ddc7eda",
+      "json_pointer": "/result/mutation",
+      "value": {
+        "id": "d491b34a-6c7d-4eea-a4c0-45b758fdaa24",
+        "instance": "default",
+        "team": "team-310f20ga3a",
+        "agent": "agt-310ff7dz9i",
+        "user": "usr-xmmveljrfz",
+        "scope": "personal",
+        "status": "active",
+        "data": {
+          "kind": "preference",
+          "title": "合同报告先结论后说明",
+          "content": "所有合同报告先给结论，再分点说明。",
+          "topic": "报告风格",
+          "conditions": [],
+          "exceptions": [],
+          "source_ids": [
+            "pref_10b49992a248b4321f0a31e5b070efc8"
+          ],
+          "schema_version": 2,
+          "subtype": "delivery_preference",
+          "conflicts": []
+        },
+        "version": 1,
+        "protected": 1,
+        "created": "2026-10-13T03:00:22.786Z",
+        "updated": "2026-10-13T03:00:22.786Z"
+      }
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S014.json",
+      "source_sha256": "bac3966c7b0ab01f8e19c49810ad717aebaeda8ca488d88943ed2e0ec05faee7",
+      "json_pointer": "/result/mutation",
+      "value": {
+        "id": "d4553a57-006c-43f5-8808-6f70c8e4abbe",
+        "instance": "default",
+        "team": "team-310f20ga3a",
+        "agent": "agt-310ff7dz9i",
+        "user": "usr-xmmveljrfz",
+        "scope": "personal",
+        "status": "active",
+        "data": {
+          "kind": "preference",
+          "title": "称呼用户为大哥",
+          "content": "称呼用户为“大哥”。",
+          "topic": "称呼语气",
+          "conditions": [],
+          "exceptions": [],
+          "source_ids": [
+            "pref_486c96c75120865ec71c17283bad0ca9"
+          ],
+          "schema_version": 2,
+          "subtype": "communication_preference",
+          "conflicts": []
+        },
+        "version": 1,
+        "protected": 1,
+        "created": "2026-10-13T03:00:23.134Z",
+        "updated": "2026-10-13T03:00:23.134Z"
+      }
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S017.json",
+      "source_sha256": "390a05c5a41f882fc34ecca652e9cdebda872368c5c4fa4d15a9ecd71fa64e2f",
+      "json_pointer": "/step",
+      "value": {
+        "step_id": "V2-S017",
+        "actor": "owner",
+        "team": "v2-main",
+        "case_ids": [
+          "V2-TEMPORARY"
+        ],
+        "action": "message",
+        "workspace": "F01",
+        "text": "这次回复只写三句话，这次叫我同事即可。"
+      }
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S017.json",
+      "source_sha256": "390a05c5a41f882fc34ecca652e9cdebda872368c5c4fa4d15a9ecd71fa64e2f",
+      "json_pointer": "/result/after/candidates/items",
+      "value": []
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S017.json",
+      "source_sha256": "390a05c5a41f882fc34ecca652e9cdebda872368c5c4fa4d15a9ecd71fa64e2f",
+      "json_pointer": "/result/native/messages/8/parts/1/text",
+      "value": "同事，按乙方立场，先核实草案是否已签署、是否已交货及有无书面延期，因为约定的2026年9月15日交期已过，但不能仅凭草案认定违约。【D744c33d4dc82:B8】【D744c33d4dc82:B30】\n其次，补充终验和复验期限，明确无争议款按期支付，避免70%验收款和10%质保尾款迟迟无法回收。【D744c33d4dc82:B10-B12】\n最后，核实软件授权、售后响应能力及赔偿上限的例外范围，其他项目关于60天账期的附条件历史意见不能直接用于本合同。【D744c33d4dc82:B10】【D744c33d4dc82:B16-B18】"
+    }
+  ]
+}

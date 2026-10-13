@@ -1,0 +1,53 @@
+{
+  "title": "冲突被发现后由用户忽略，未自动替换",
+  "evidence": [
+    {
+      "source_file": "closeout-01/protection-01/steps/PROTECT-07.json",
+      "source_sha256": "edadf354d912e182ecb0c593b19f331d664f78c319635967b19c28b2ee4c5c4a",
+      "json_pointer": "/result/conflict",
+      "value": {
+        "id": "aaa1d117-e3f5-4b69-81b0-30a6627d0a9d",
+        "instance": "default",
+        "team": "team-4cuxwpznza",
+        "agent": "agt-4cuxt1gkhh",
+        "user": "usr-xmmveljrfz",
+        "task": "task-4cuyvvlcni",
+        "session": "ses_ecc019d66ffe9zgNq60wRTeNLJ",
+        "status": "pending",
+        "data": {
+          "kind": "preference",
+          "title": "以老师替代原称呼",
+          "content": "称呼用户为“老师”，替代以前的称呼约定。",
+          "topic": "称呼语气",
+          "conditions": [
+            "与原称呼“大哥”的约定冲突，替代建议需用户确认，不自动覆盖原约定。"
+          ],
+          "exceptions": [],
+          "source_ids": [
+            "pref_8c4fd58f54098c1b75087d354a2a3e3c"
+          ],
+          "schema_version": 2,
+          "subtype": "communication_preference",
+          "conflicts": [
+            {
+              "existing_id": "5e9dcf1f-9717-4a59-81be-e0040fd102aa",
+              "existing_version": 1,
+              "relation": "contradicts"
+            }
+          ]
+        },
+        "fingerprint": "447b4c3234da3e0f916e8457a50ab83e41a497d963c0a025af2deb71a27dbc0b",
+        "target_id": null,
+        "created": "2026-10-13T06:44:20.705Z"
+      }
+    },
+    {
+      "source_file": "closeout-01/protection-01/steps/PROTECT-07.json",
+      "source_sha256": "edadf354d912e182ecb0c593b19f331d664f78c319635967b19c28b2ee4c5c4a",
+      "json_pointer": "/result/ignored",
+      "value": {
+        "ignored": true
+      }
+    }
+  ]
+}

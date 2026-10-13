@@ -1,0 +1,23 @@
+{
+  "isolated_ports_closed": {
+    "18081": true,
+    "18082": true,
+    "18090": true,
+    "18091": true,
+    "18092": true,
+    "18430": true,
+    "18106": true
+  },
+  "online_health": {
+    "8081": 200,
+    "8082": 200,
+    "8430": 200,
+    "8106": 200,
+    "8766": 200,
+    "8767": 200
+  },
+  "compression_testing": "deferred_by_user",
+  "evidence_retained": "/Users/dicam/.local/share/openharvey/contract-v2-experiment/20261013/closeout-01",
+  "no_new_model_calls_for_analysis": true,
+  "verified_at_utc": "2026-10-13T07:44:17.974253+00:00"
+}

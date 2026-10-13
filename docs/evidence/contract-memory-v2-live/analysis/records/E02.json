@@ -1,0 +1,17 @@
+{
+  "title": "单案例时没有L2候选或正式经验",
+  "evidence": [
+    {
+      "source_file": "core-03-audit/steps/V2-S006.json",
+      "source_sha256": "10bfaf071db17ca9a7f53557db87e003b2fced9979a7577312893da96e1b8f6d",
+      "json_pointer": "/result/candidates/items",
+      "value": []
+    },
+    {
+      "source_file": "core-03-audit/steps/V2-S006.json",
+      "source_sha256": "10bfaf071db17ca9a7f53557db87e003b2fced9979a7577312893da96e1b8f6d",
+      "json_pointer": "/result/personal/items",
+      "value": []
+    }
+  ]
+}
