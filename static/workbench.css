@@ -57,9 +57,10 @@
   header nav { margin-left: auto; min-width: 0; display: flex; align-items: center; gap: 4px;
     overflow-x: auto; scrollbar-width: none; }
   header nav::-webkit-scrollbar { display: none; }
-  header nav a { padding: 5px 7px; border-radius: 5px; font-size: 10.5px;
+  header > a:not(.shell-toggle), header nav a { padding: 5px 7px; border-radius: 5px; font-size: 10.5px;
     color: var(--ink-2); text-decoration: none; white-space: nowrap; }
-  header nav a:hover { color: var(--accent); background: var(--accent-soft); }
+  header > a:not(.shell-toggle):hover, header nav a:hover { color: var(--accent); background: var(--accent-soft); }
+  header > a:not(.shell-toggle):focus-visible, header nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   header select { height: 28px; max-width: 180px; color: var(--ink-2); background: var(--surface);
     border: 1px solid var(--line-strong); border-radius: 6px; font: 10.5px var(--sans); }
   .header-actions { flex: none; display: flex; align-items: center; gap: 5px;
@@ -67,9 +68,11 @@
   .shell-toggle { position: relative; display: inline-flex; align-items: center; justify-content: center;
     min-height: 28px; color: var(--ink-2); background: var(--surface);
     border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px;
-    font: 600 10px var(--sans); cursor: pointer; }
-  .shell-toggle:hover { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
+    font: 600 10px var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; }
+  .shell-toggle:hover:not(:disabled) { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
     background: var(--accent-soft); }
+  .shell-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .shell-toggle:disabled { opacity: .5; cursor: not-allowed; }
   .shell-toggle.icon-toggle { width: 30px; padding: 0; }
   .shell-toggle.icon-toggle svg { width: 16px; height: 16px; fill: none; stroke: currentColor;
     stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -1224,7 +1227,7 @@
   .decision-status[data-disposition="接受风险"] { border-left: 2px solid var(--warn); }
   .decision-editor { margin-top: 10px; padding: 12px; background: var(--paper); border: 1px solid var(--line-strong); border-radius: 6px; }
   .decision-editor label { display: grid; gap: 4px; margin-bottom: 9px; font-size: 11px; color: var(--ink-2); }
-  .decision-editor input, .decision-editor select, .decision-editor textarea { box-sizing: border-box; width: 100%; min-width: 0; border: 1px solid var(--line-strong); border-radius: 4px; padding: 7px; color: var(--ink); background: var(--card, #fff); font: inherit; font-size: 12px; }
+  .decision-editor input, .decision-editor select, .decision-editor textarea { box-sizing: border-box; width: 100%; min-width: 0; border: 1px solid var(--line-strong); border-radius: 4px; padding: 7px; color: var(--ink); background: var(--surface); font: inherit; font-size: 12px; }
   .decision-editor textarea { resize: vertical; }
   .decision-editor button:disabled { opacity: .5; cursor: wait; }
   .quality-feedback, .quality-editor .fb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; font-size: 12px; color: var(--ink-3); }
@@ -1238,7 +1241,7 @@
   .execution-record { margin-top: 8px; color: var(--ink-3); font-size: 11px; }
   .execution-record > summary { cursor: pointer; padding: 5px 2px; }
   .execution-record[open] > summary { margin-bottom: 6px; }
-  #attachmentEvidence { width: min(720px, 92vw); max-height: 85vh; padding: 20px;
+  #attachmentEvidence { --dialog-max-w: 720px; width: min(var(--dialog-max-w, 720px), 92vw); max-height: 85vh; padding: 20px;
     color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 12px; }
   #attachmentEvidence::backdrop { background: #17203355; }
   #attachmentEvidence pre { white-space: pre-wrap; overflow-wrap: anywhere; font: 14px/1.8 var(--sans); }
@@ -1253,7 +1256,7 @@
   .queue-position { color: var(--ink-3); font-family: var(--mono); }
   .queue-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 8em; overflow: auto; }
   #pendingQueue button, .draft-notice button { border: 1px solid var(--line-strong); background: var(--surface); color: var(--agent); border-radius: 6px; padding: 5px 8px; cursor: pointer; font: inherit; white-space: nowrap; }
-  #pendingQueue button:hover, .draft-notice button:hover { background: var(--bg); }
+  #pendingQueue button:hover, .draft-notice button:hover { background: var(--surface-subtle); }
   .draft-notice select { min-width: 0; max-width: 100%; font: inherit; color: var(--ink-2); }
   .draft-notice { margin-bottom: 8px; color: var(--ink-2); flex-wrap: wrap; }
   #processWaitHint { color: var(--ink-3); font: 11px/1.6 var(--sans); }
@@ -1320,3 +1323,7 @@
   #artTabs button { display: inline-flex; align-items: center; gap: 5px; flex: none; max-width: 240px; min-height: 34px; padding: 5px 8px; }
   #artTabs .file-icon { width: 20px; height: 22px; background: transparent; }
   #artTabs .file-icon .ui-icon { width: 20px; height: 20px; }
+
+/* Solid actions keep readable text independently of link/accent colors. */
+:root{--primary-bg:#264d79;--primary-ink:#fff;--primary-hover:#1b3c63;--primary-disabled-bg:#dce3ed;--primary-disabled-ink:#526176}
+@media(prefers-color-scheme:dark){:root{--primary-bg:#315f99;--primary-ink:#fff;--primary-hover:#3b6aa6;--primary-disabled-bg:#263750;--primary-disabled-ink:#aebbd0}}

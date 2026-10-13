@@ -624,3 +624,96 @@ test('native session title updates the current conversation',()=>{
  applyEvent(state,{type:'session.updated',properties:{info:{title:'付款条款分析'}}});
  assert.equal(state.title,'付款条款分析');
 });
+
+test('workbench header nav link, retry controls, resume button and materials dialog reuse unified styles',()=>{
+ const indexHtml=readFileSync(new URL('../static/index.html',import.meta.url),'utf8');
+ assert.match(indexHtml,/<a href="\/experience" id="experienceLink" class="shell-toggle">经验与偏好<\/a>/);
+ assert.match(indexHtml,/id="riskSchemeRetry" class="shell-toggle"/);
+ assert.match(indexHtml,/id="modelRetry" class="shell-toggle"/);
+ const todos=todosHTML({
+  status:{type:'idle'},
+  todos:[{content:'核对条款',status:'in_progress'}],
+  messages:[{info:{id:'m1',role:'assistant'},parts:[{type:'tool',tool:'todowrite',state:{status:'completed'}}]}]
+ },true);
+ assert.match(todos,/class="oh-button oh-button-sm" data-resume-todos/);
+ const materialsJs=readFileSync(new URL('../static/materials-ui.js',import.meta.url),'utf8');
+ assert.match(materialsJs,/materials-dialog dialog-xl/);
+ assert.match(materialsJs,/class="shell-toggle pane-close" data-close/);
+ assert.match(materialsJs,/class="oh-button oh-button-sm" data-add/);
+ assert.match(materialsJs,/class="oh-button oh-button-sm" data-retry=/);
+});
+
+test('dialog size variants and stylesheets avoid undefined --bg/--text/--muted variables',()=>{
+ const controlsCss=readFileSync(new URL('../static/workspace-controls.css',import.meta.url),'utf8');
+ assert.match(controlsCss,/dialog\.dialog-xl,dialog\.materials-dialog\{--dialog-max-w:850px/);
+ assert.match(controlsCss,/background:var\(--surface-subtle,#f8faf7\);color:var\(--ink,#213d31\)/);
+ for(const file of ['workbench.css','workspace-controls.css','materials.css','agent-ui.css','app.css','settings-ui.css','labs.css','connectors-ui.css','experience.css','spaces.css']){
+  const css=readFileSync(new URL('../static/'+file,import.meta.url),'utf8');
+  assert.doesNotMatch(css,/var\(--(?:bg|text|muted|card|panel)\b/,`${file} should not use undefined theme variables`);
+ }
+});
+
+test('mobile header targets toggleSource/toggleArtifact and spaces team picker matches sort control',()=>{
+ const accountCss=readFileSync(new URL('../static/account-ui.css',import.meta.url),'utf8');
+ assert.doesNotMatch(accountCss,/toggleContext/);
+ assert.match(accountCss,/body:has\(#appShell\)>header #toggleSource/);
+ assert.match(accountCss,/body:has\(#appShell\)>header #toggleArtifact/);
+ assert.match(accountCss,/body:has\(#appShell\)>header #experienceLink/);
+ const spacesCss=readFileSync(new URL('../static/spaces.css',import.meta.url),'utf8');
+ assert.match(spacesCss,/\.sort,#teamControl\{height:36px/);
+ assert.doesNotMatch(spacesCss,/\.topbar nav>a:not\(\[aria-current=page\]\)/);
+});
+
+test('experience page uses theme variables, active nav state, semantic status banners, and native dialogs',()=>{
+ const expHtml=readFileSync(new URL('../static/experience.html',import.meta.url),'utf8');
+ assert.doesNotMatch(expHtml,/workbench\.css/);
+ assert.match(expHtml,/<a href="\/experience" aria-current="page">经验与偏好<\/a>/);
+ assert.match(expHtml,/<dialog id="confirmDialog" class="dialog-sm">/);
+ assert.match(expHtml,/<dialog id="teamDialog" class="dialog-sm">/);
+ const expCss=readFileSync(new URL('../static/experience.css',import.meta.url),'utf8');
+ assert.match(expCss,/@media\(prefers-color-scheme:dark\)/);
+ assert.match(expCss,/header nav a\[aria-current=page\]/);
+ assert.match(expCss,/#status\[data-kind=loading\]/);
+ assert.match(expCss,/#status\[data-kind=success\]::before/);
+ assert.match(expCss,/#status\[data-kind=warn\]::before/);
+ assert.match(expCss,/#status\[data-kind=error\]::before/);
+ const expJs=readFileSync(new URL('../static/experience.js',import.meta.url),'utf8');
+ assert.match(expJs,/import \{setLoadingStatus\} from '\.\/loading-ui\.js'/);
+ assert.doesNotMatch(expJs,/\b(?:confirm|prompt)\(/);
+});
+
+test('confirmDialog supports cancel and confirm while restoring focus to trigger',async()=>{
+ const {confirmDialog}=await import('../static/confirm-dialog.js');
+ const prevDoc=globalThis.document;
+ let focused=null,dialogNode=null;
+ const makeBtn=()=>({textContent:'',classList:{toggle(){}},focus(){focused=this;}});
+ const titleNode={textContent:''},messageNode={textContent:'',hidden:false},cancelBtn=makeBtn(),okBtn=makeBtn();
+ const trigger={isConnected:true,disabled:false,focus(){focused=this;}};
+ globalThis.document={
+  activeElement:trigger,
+  getElementById:id=>id==='ohConfirmDialog'?dialogNode:null,
+  createElement:()=>({
+   id:'',className:'',innerHTML:'',isConnected:true,returnValue:'cancel',onclose:null,
+   querySelector:sel=>({'[data-confirm-title]':titleNode,'[data-confirm-message]':messageNode,'[data-confirm-cancel]':cancelBtn,'[data-confirm-ok]':okBtn}[sel]),
+   showModal(){this.open=true;},
+   close(val='cancel'){this.open=false;this.returnValue=val;this.onclose?.();}
+  }),
+  body:{append(el){dialogNode=el;}}
+ };
+ try{
+  const p1=confirmDialog({title:'删除方案？',message:'不可恢复',confirmText:'删除',trigger});
+  assert.equal(dialogNode.open,true);
+  assert.equal(focused,cancelBtn);
+  dialogNode.close('cancel');
+  assert.equal(await p1,false);
+  assert.equal(focused,trigger);
+
+  const p2=confirmDialog({title:'删除方案？',message:'不可恢复',confirmText:'删除',trigger});
+  assert.equal(dialogNode.open,true);
+  dialogNode.close('confirm');
+  assert.equal(await p2,true);
+  assert.equal(focused,trigger);
+ }finally{
+  globalThis.document=prevDoc;
+ }
+});

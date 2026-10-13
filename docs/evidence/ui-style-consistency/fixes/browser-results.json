@@ -1,0 +1,663 @@
+[
+  {
+    "case": "confirmation",
+    "tab": "skills",
+    "action": "back",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "skills",
+    "action": "close",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "skills",
+    "action": "expired",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "skills",
+    "action": "cancel",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "skills",
+    "action": "confirm",
+    "deletes": 1
+  },
+  {
+    "case": "confirmation",
+    "tab": "risks",
+    "action": "back",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "risks",
+    "action": "close",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "risks",
+    "action": "expired",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "risks",
+    "action": "cancel",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "risks",
+    "action": "confirm",
+    "deletes": 1
+  },
+  {
+    "case": "confirmation",
+    "tab": "providers",
+    "action": "back",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "providers",
+    "action": "close",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "providers",
+    "action": "expired",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "providers",
+    "action": "cancel",
+    "deletes": 0
+  },
+  {
+    "case": "confirmation",
+    "tab": "providers",
+    "action": "confirm",
+    "deletes": 1
+  },
+  {
+    "case": "experience-status",
+    "condition": "failed-job",
+    "kind": "warn"
+  },
+  {
+    "case": "experience-status",
+    "condition": "read-error",
+    "kind": "error"
+  },
+  {
+    "case": "experience-status",
+    "condition": "clean",
+    "kind": "success"
+  },
+  {
+    "case": "visual",
+    "color": "light",
+    "width": 1440,
+    "palette": [
+      {
+        "selector": "#add",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "#add",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "#add",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(37, 75, 118)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 8.948755920061096
+      },
+      {
+        "selector": "#add",
+        "state": "disabled",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(27, 60, 99)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 11.211263332587352
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "disabled",
+        "color": "rgb(82, 97, 118)",
+        "background": "rgb(220, 227, 237)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 4.880614017413428
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(27, 60, 99)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 11.211263332587352
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "disabled",
+        "color": "rgb(82, 97, 118)",
+        "background": "rgb(220, 227, 237)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 4.880614017413428
+      }
+    ],
+    "layout": {
+      "width": 850,
+      "overflow": false,
+      "controls": [
+        {
+          "width": 530,
+          "height": 34,
+          "y": 488.875,
+          "right": 850
+        },
+        {
+          "width": 90,
+          "height": 34,
+          "y": 488.875,
+          "right": 948
+        },
+        {
+          "width": 90,
+          "height": 34,
+          "y": 488.875,
+          "right": 1046
+        }
+      ]
+    }
+  },
+  {
+    "case": "visual",
+    "color": "light",
+    "width": 390,
+    "palette": [
+      {
+        "selector": "#add",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "#add",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "#add",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(37, 75, 119)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 8.930562439416306
+      },
+      {
+        "selector": "#add",
+        "state": "disabled",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(27, 60, 99)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 11.211263332587352
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "disabled",
+        "color": "rgb(82, 97, 118)",
+        "background": "rgb(220, 227, 237)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 4.880614017413428
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(27, 60, 99)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 11.211263332587352
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(38, 77, 121)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 8.67747112643343
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "disabled",
+        "color": "rgb(82, 97, 118)",
+        "background": "rgb(220, 227, 237)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 4.880614017413428
+      }
+    ],
+    "layout": {
+      "width": 352,
+      "overflow": false,
+      "controls": [
+        {
+          "width": 302,
+          "height": 34,
+          "y": 469.5,
+          "right": 346
+        },
+        {
+          "width": 90,
+          "height": 34,
+          "y": 511.5,
+          "right": 134
+        },
+        {
+          "width": 90,
+          "height": 34,
+          "y": 511.5,
+          "right": 232
+        }
+      ]
+    }
+  },
+  {
+    "case": "visual",
+    "color": "dark",
+    "width": 1440,
+    "palette": [
+      {
+        "selector": "#add",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "#add",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "#add",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(50, 96, 154)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 6.411451887298655
+      },
+      {
+        "selector": "#add",
+        "state": "disabled",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(59, 106, 166)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 5.528920562797903
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "disabled",
+        "color": "rgb(174, 187, 208)",
+        "background": "rgb(38, 55, 80)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.200786590399129
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(59, 106, 166)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 5.528920562797903
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "disabled",
+        "color": "rgb(174, 187, 208)",
+        "background": "rgb(38, 55, 80)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.200786590399129
+      }
+    ],
+    "layout": {
+      "width": 850,
+      "overflow": false,
+      "controls": [
+        {
+          "width": 530,
+          "height": 34,
+          "y": 488.875,
+          "right": 850
+        },
+        {
+          "width": 90,
+          "height": 34,
+          "y": 488.875,
+          "right": 948
+        },
+        {
+          "width": 90,
+          "height": 34,
+          "y": 488.875,
+          "right": 1046
+        }
+      ]
+    }
+  },
+  {
+    "case": "visual",
+    "color": "dark",
+    "width": 390,
+    "palette": [
+      {
+        "selector": "#add",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "#add",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "#add",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(50, 96, 154)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 6.411451887298655
+      },
+      {
+        "selector": "#add",
+        "state": "disabled",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(59, 106, 166)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 5.528920562797903
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": "[data-new-skill]",
+        "state": "disabled",
+        "color": "rgb(174, 187, 208)",
+        "background": "rgb(38, 55, 80)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.200786590399129
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "normal",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "hover",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(59, 106, 166)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 5.528920562797903
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "focus",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(49, 95, 153)",
+        "opacity": "1",
+        "outline": "solid",
+        "contrast": 6.506667309392617
+      },
+      {
+        "selector": ".feishu-card button",
+        "state": "disabled",
+        "color": "rgb(174, 187, 208)",
+        "background": "rgb(38, 55, 80)",
+        "opacity": "1",
+        "outline": "none",
+        "contrast": 6.200786590399129
+      }
+    ],
+    "layout": {
+      "width": 352,
+      "overflow": false,
+      "controls": [
+        {
+          "width": 302,
+          "height": 34,
+          "y": 469.5,
+          "right": 346
+        },
+        {
+          "width": 90,
+          "height": 34,
+          "y": 511.5,
+          "right": 134
+        },
+        {
+          "width": 90,
+          "height": 34,
+          "y": 511.5,
+          "right": 232
+        }
+      ]
+    }
+  }
+]

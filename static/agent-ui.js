@@ -58,7 +58,7 @@ export function todosHTML(state,expanded){
     const label={completed:tr('已完成'),in_progress:tr('进行中'),pending:tr('待处理'),cancelled:tr('已取消'),interrupted:tr('已中断'),waiting:state.questions?.length?tr('等待你的答复'):tr('等待你的许可')}[status]||tr('待处理');
     const badge=status==='completed'?`<span class="bui-badge">${icon('check')}</span>`:ring(status==='in_progress',i+1);
     return `<li data-status="${esc(status)}">${badge}<span class="task-copy">${esc(t.content)}</span><span class="task-status ${esc(status)}">${label}</span></li>`;
-  }).join('')}</ol></details>${resume?ui`<div class="tasks-recovery"><span>本轮已停止，清单仍有未完成项。</span><button type="button" data-resume-todos>继续未完成任务</button></div>`:''}</div>`;
+  }).join('')}</ol></details>${resume?ui`<div class="tasks-recovery"><span>本轮已停止，清单仍有未完成项。</span><button type="button" class="oh-button oh-button-sm" data-resume-todos>继续未完成任务</button></div>`:''}</div>`;
 }
 function latestTodoMessage(state){return (state.messages||[]).findLast(m=>m.parts?.some(p=>p.type==='tool'&&p.tool==='todowrite'&&p.state?.status==='completed'));}
 export function todoSignature(state){

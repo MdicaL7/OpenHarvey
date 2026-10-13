@@ -21,9 +21,9 @@ export function sourceReferencesHTML(text,documents){
 }
 
 export function setupMaterials({context,notice,refresh,openSource,onBusy}){
-  const dialog=document.createElement('dialog');dialog.className='materials-dialog';dialog.setAttribute('aria-labelledby','materialsTitle');
-  dialog.innerHTML=`<header><div><h2 id="materialsTitle">${tr('合同资料')}</h2><p>${tr('本合同空间内所有对话可用；助手按问题查找相关资料。')}</p></div><button type="button" data-close aria-label="${tr('关闭')}">×</button></header>
-    <div class="materials-toolbar"><input type="search" data-search placeholder="${tr('搜索文件名')}" aria-label="${tr('搜索文件名')}"><select data-type aria-label="${tr('文件格式')}"><option value="">${tr('全部格式')}</option>${['docx','pdf','md','txt'].map(s=>`<option value=".${s}">${s.toUpperCase()}</option>`).join('')}</select><select data-scope aria-label="${tr('资料范围')}"><option value="active">${tr('当前资料')}</option><option value="removed">${tr('已移除')}</option></select><button type="button" data-add>${tr('添加资料')}</button></div>
+  const dialog=document.createElement('dialog');dialog.className='materials-dialog dialog-xl';dialog.setAttribute('aria-labelledby','materialsTitle');
+  dialog.innerHTML=`<header><div><h2 id="materialsTitle">${tr('合同资料')}</h2><p>${tr('本合同空间内所有对话可用；助手按问题查找相关资料。')}</p></div><button type="button" class="shell-toggle pane-close" data-close aria-label="${tr('关闭')}">×</button></header>
+    <div class="materials-toolbar"><input type="search" data-search placeholder="${tr('搜索文件名')}" aria-label="${tr('搜索文件名')}"><select data-type aria-label="${tr('文件格式')}"><option value="">${tr('全部格式')}</option>${['docx','pdf','md','txt'].map(s=>`<option value=".${s}">${s.toUpperCase()}</option>`).join('')}</select><select data-scope aria-label="${tr('资料范围')}"><option value="active">${tr('当前资料')}</option><option value="removed">${tr('已移除')}</option></select><button type="button" class="oh-button oh-button-sm" data-add>${tr('添加资料')}</button></div>
     <input type="file" data-files accept=".docx,.pdf,.md,.txt" multiple hidden>
     <div class="materials-drop" data-drop>${tr('可拖入多份文件，支持 Word、文字版 PDF、Markdown 和 TXT。')}</div>
     <p class="materials-status" data-status role="status"></p><div data-jobs aria-live="polite"></div><div class="materials-table" data-table></div>`;
@@ -40,10 +40,10 @@ export function setupMaterials({context,notice,refresh,openSource,onBusy}){
     if(errorMessage)$('[data-status]').textContent=errorMessage;
     else if(lastRemoved){
       $('[data-status]').textContent=tr('已移出资料区，历史引用保留。')+' ';
-      const undo=document.createElement('button');undo.textContent=tr('撤销');undo.disabled=!writable();undo.onclick=()=>void change(lastRemoved,'restore');$('[data-status]').append(undo);
+      const undo=document.createElement('button');undo.type='button';undo.textContent=tr('撤销');undo.disabled=!writable();undo.onclick=()=>void change(lastRemoved,'restore');$('[data-status]').append(undo);
     }else if(context().busy)$('[data-status]').textContent=tr('空间内任务结束后可修改资料。');
     $('[data-table]').innerHTML=visible.length?`<table><thead><tr><th>${tr('名称')}</th><th>${tr('格式')}</th><th>${tr('操作')}</th></tr></thead><tbody>${visible.map(d=>`<tr><td><button type="button" data-open="${esc(d.id)}">${esc(d.filename)}</button><small>${tr(d.primary?'主合同':d.removed_at?'已移除':'可用')}</small></td><td>${esc(d.suffix.slice(1).toUpperCase())}</td><td>${!d.primary?`<button type="button" data-action="${d.removed_at?'restore':'remove'}" data-id="${esc(d.id)}" ${writable()?'':'disabled'}>${tr(d.removed_at?'恢复':'移除')}</button>`:''}</td></tr>`).join('')}</tbody></table>`:`<p class="materials-empty">${tr(removed?'没有已移除资料':'没有匹配的资料')}</p>`;
-    $('[data-jobs]').innerHTML=(jobs.get(wid)||[]).map((job,index)=>`<div class="material-upload"><span>${esc(job.name)}</span><span>${esc(tr(job.status))}${job.error?`：${esc(job.error)}`:''}</span>${job.status==='失败'?`<button type="button" data-retry="${index}" ${writable()?'':'disabled'}>${tr('重试')}</button>`:''}</div>`).join('');
+    $('[data-jobs]').innerHTML=(jobs.get(wid)||[]).map((job,index)=>`<div class="material-upload"><span>${esc(job.name)}</span><span>${esc(tr(job.status))}${job.error?`：${esc(job.error)}`:''}</span>${job.status==='失败'?`<button type="button" class="oh-button oh-button-sm" data-retry="${index}" ${writable()?'':'disabled'}>${tr('重试')}</button>`:''}</div>`).join('');
     if(loading&&!rows.length)$('[data-table]').innerHTML=loadingHTML(tr('正在读取资料…'));
   }
   async function reload(){

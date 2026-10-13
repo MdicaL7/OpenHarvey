@@ -1,0 +1,274 @@
+{
+  "common_base": "bc49476",
+  "ui_code_commit": "03f34d4",
+  "ui_files": [
+    {
+      "path": "static/account-ui.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -31 +31 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width",
+        "@@ -34 +34 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width",
+        "@@ -36,3 +36,3 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width",
+        "@@ -40 +40,4 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width",
+        "@@ -52 +55 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width",
+        "@@ -56 +59 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width",
+        "@@ -57,0 +61 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width",
+        "@@ -59 +63,2 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width",
+        "@@ -61,3 +66,7 @@ dialog.workspace-tour{position:fixed;inset:0;width:100vw;height:100dvh;max-width"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "6229e5fef89af7fb96562d1c89eed343a4af8db35e09ca72a4b649fc6a0fbd0d",
+      "committed_sha256": "6229e5fef89af7fb96562d1c89eed343a4af8db35e09ca72a4b649fc6a0fbd0d"
+    },
+    {
+      "path": "static/admin-ui.js",
+      "owner": "ui",
+      "hunks": [
+        "@@ -6,0 +7 @@ import {addDiscoveredModel,waitForOperation} from './provider-utils.js';",
+        "@@ -167 +168,3 @@ export async function renderAdmin(host,{mode,identity,notice,dirty,leave}){",
+        "@@ -169 +172 @@ export async function renderAdmin(host,{mode,identity,notice,dirty,leave}){"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "ef69c0cc07cf93b81e754cc0e9e38e09234ec4303302ea799da2e3dd80ea86d3",
+      "committed_sha256": "ef69c0cc07cf93b81e754cc0e9e38e09234ec4303302ea799da2e3dd80ea86d3"
+    },
+    {
+      "path": "static/agent-ui.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -37 +37 @@ button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visi",
+        "@@ -39 +39 @@ button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visi",
+        "@@ -42 +42 @@ button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visi",
+        "@@ -45 +45 @@ button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visi",
+        "@@ -47 +47 @@ button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visi"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "63a4cc3def36b6cc9773a26708fa6a28ea42c59019378fb4db3e5f03677781d2",
+      "committed_sha256": "63a4cc3def36b6cc9773a26708fa6a28ea42c59019378fb4db3e5f03677781d2"
+    },
+    {
+      "path": "static/agent-ui.js",
+      "owner": "ui",
+      "hunks": [
+        "@@ -61 +61 @@ export function todosHTML(state,expanded){"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "781eeaa129c06c7bab56ad5f113a3b7c9322b9ba5520c803812782527c2dcd6b",
+      "committed_sha256": "781eeaa129c06c7bab56ad5f113a3b7c9322b9ba5520c803812782527c2dcd6b"
+    },
+    {
+      "path": "static/app.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -52 +52 @@ body.reading-wide #appShell{grid-template-columns:minmax(0,1fr)!important}body.r",
+        "@@ -84 +84 @@ body.reading-wide #appShell{grid-template-columns:minmax(0,1fr)!important}body.r",
+        "@@ -86 +86 @@ body.reading-wide #appShell{grid-template-columns:minmax(0,1fr)!important}body.r",
+        "@@ -89 +89 @@ body.reading-wide #appShell{grid-template-columns:minmax(0,1fr)!important}body.r",
+        "@@ -222 +222 @@ body.reading-wide #appShell{grid-template-columns:minmax(0,1fr)!important}body.r"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "9fa2029bb890d611add1537796398f5029eaf45782fb07279405c544746f93ea",
+      "committed_sha256": "9fa2029bb890d611add1537796398f5029eaf45782fb07279405c544746f93ea"
+    },
+    {
+      "path": "static/connectors-ui.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -1,4 +1,4 @@",
+        "@@ -6 +6 @@"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "f634c791878540111b925b250322ee194e3c6e42321aaf105b34a62175e9404b",
+      "committed_sha256": "f634c791878540111b925b250322ee194e3c6e42321aaf105b34a62175e9404b"
+    },
+    {
+      "path": "static/experience.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -1 +1,64 @@"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "f0f8890c3a897878f04466fb2ada9be95ddbcce49149c3ad6bc678f7631d33ff",
+      "committed_sha256": "f0f8890c3a897878f04466fb2ada9be95ddbcce49149c3ad6bc678f7631d33ff"
+    },
+    {
+      "path": "static/experience.html",
+      "owner": "ui",
+      "hunks": [
+        "@@ -1,4 +1,4 @@",
+        "@@ -6 +6 @@",
+        "@@ -8,2 +8,4 @@"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "16c8192f71dab6847b26c04ae81fd181a84a5a6fcd338268fe57a7eab201b534",
+      "committed_sha256": "16c8192f71dab6847b26c04ae81fd181a84a5a6fcd338268fe57a7eab201b534"
+    },
+    {
+      "path": "static/experience.js",
+      "owner": "ui",
+      "hunks": [
+        "@@ -1,0 +2 @@ import {api} from './api.js';",
+        "@@ -6,2 +7,3 @@ const lines=a=>Array.isArray(a)&&a.length?a.map(esc).join('；'):'未知，使",
+        "@@ -9,4 +11,8 @@ async function mutate(action,e,extra={}){return api('/api/contract-memory/'+acti",
+        "@@ -14,3 +20,4 @@ $('content').onclick=async event=>{const b=event.target.closest('[data-action]')",
+        "@@ -18,4 +25,7 @@ document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset."
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "f6e706de737473510c8b7700acba7d55f57907a71239b7f8c16e4c26ebe32cf1",
+      "committed_sha256": "f6e706de737473510c8b7700acba7d55f57907a71239b7f8c16e4c26ebe32cf1"
+    },
+    {
+      "path": "static/index.html",
+      "owner": "ui",
+      "hunks": [
+        "@@ -36 +36 @@",
+        "@@ -65 +65 @@",
+        "@@ -67 +67 @@"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "25fbcbf0e6f448cd15c9ce74b6144c27b5a16608229e63995000d534e39fbbd8",
+      "committed_sha256": "25fbcbf0e6f448cd15c9ce74b6144c27b5a16608229e63995000d534e39fbbd8"
+    },
+    {
+      "path": "static/labs.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -2,2 +2,2 @@",
+        "@@ -5 +5 @@",
+        "@@ -7,3 +7,3 @@"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "28c64be04749c0c8407d1065d4863d491cb318d97c5f80b245c8406b5c90f5a1",
+      "committed_sha256": "28c64be04749c0c8407d1065d4863d491cb318d97c5f80b245c8406b5c90f5a1"
+    },
+    {
+      "path": "static/materials-ui.js",
+      "owner": "ui",
+      "hunks": [
+        "@@ -24,3 +24,3 @@ export function setupMaterials({context,notice,refresh,openSource,onBusy}){",
+        "@@ -43 +43 @@ export function setupMaterials({context,notice,refresh,openSource,onBusy}){",
+        "@@ -46 +46 @@ export function setupMaterials({context,notice,refresh,openSource,onBusy}){"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "f4c533cd369c14dcd2d1a302b315a1aa61f5e06b5be65e2addeac83f5a0dd830",
+      "committed_sha256": "f4c533cd369c14dcd2d1a302b315a1aa61f5e06b5be65e2addeac83f5a0dd830"
+    },
+    {
+      "path": "static/materials.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -1,3 +1,3 @@"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "6e6d2f3e61382ec15345f72680e64c7f6cec0f8ad2e2d8a611bd3a96ab924ee4",
+      "committed_sha256": "6e6d2f3e61382ec15345f72680e64c7f6cec0f8ad2e2d8a611bd3a96ab924ee4"
+    },
+    {
+      "path": "static/risk-settings-ui.js",
+      "owner": "ui",
+      "hunks": [
+        "@@ -4,0 +5 @@ import {esc} from './markdown.js';",
+        "@@ -123 +124,2 @@ export async function renderRiskSettings(host,{identity,notice,dirty,leave}){"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "886c3e6ce7290c18a914caafc20d44e4ef3012d5034055f0af2f0bb0c5ff06ae",
+      "committed_sha256": "886c3e6ce7290c18a914caafc20d44e4ef3012d5034055f0af2f0bb0c5ff06ae"
+    },
+    {
+      "path": "static/settings-ui.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -1 +1 @@",
+        "@@ -3,4 +3,4 @@",
+        "@@ -8,2 +8,2 @@ body:has(#settingsView:not([hidden])) #notice{position:fixed;bottom:18px;left:50",
+        "@@ -13,19 +13,19 @@ body:has(#settingsView:not([hidden])) #notice{position:fixed;bottom:18px;left:50",
+        "@@ -34 +34 @@ body:has(#settingsView:not([hidden])) #notice{position:fixed;bottom:18px;left:50",
+        "@@ -52,4 +52,4 @@ body:has(#settingsView:not([hidden])) #notice{position:fixed;bottom:18px;left:50",
+        "@@ -60 +60 @@ body:has(#settingsView:not([hidden])) #notice{position:fixed;bottom:18px;left:50",
+        "@@ -62,4 +62,4 @@ body:has(#settingsView:not([hidden])) #notice{position:fixed;bottom:18px;left:50",
+        "@@ -67,2 +67,2 @@ body:has(#settingsView:not([hidden])) #notice{position:fixed;bottom:18px;left:50",
+        "@@ -70 +70 @@ body:has(#settingsView:not([hidden])) #notice{position:fixed;bottom:18px;left:50",
+        "@@ -78 +78 @@ body:has(#settingsView:not([hidden]))>header{z-index:120}body:has(#settingsView:",
+        "@@ -80 +80 @@ body:has(#settingsView:not([hidden]))>header{z-index:120}body:has(#settingsView:"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "1f825e9a6e7ac8bcf3a9df45594d7b1f15050d49b03c2da0eafd2ed34170506b",
+      "committed_sha256": "1f825e9a6e7ac8bcf3a9df45594d7b1f15050d49b03c2da0eafd2ed34170506b"
+    },
+    {
+      "path": "static/settings-ui.js",
+      "owner": "ui",
+      "hunks": [
+        "@@ -9,0 +10 @@ import {settingsPaths,settingsTab,savedWorkbenchURL} from './settings-routes.js'",
+        "@@ -106 +107 @@ export function setupSettings({notice,onClose,onOpen}){"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "c672261c5f283fa0e7481e24fae4f4a3a07ac6444fcc1b38007db278fad15498",
+      "committed_sha256": "c672261c5f283fa0e7481e24fae4f4a3a07ac6444fcc1b38007db278fad15498"
+    },
+    {
+      "path": "static/spaces.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -8 +8 @@ main{width:min(1240px,calc(100% - 48px));margin:0 auto;padding:52px 0 34px;anima",
+        "@@ -16 +16 @@ dialog{width:min(420px,calc(100% - 32px));padding:0;border:1px solid var(--line)"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "4e1ecac6aba66ab4c896878dde9ec92d0e5390cb8511e57409754504397bb4db",
+      "committed_sha256": "4e1ecac6aba66ab4c896878dde9ec92d0e5390cb8511e57409754504397bb4db"
+    },
+    {
+      "path": "static/workbench.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -60 +60 @@",
+        "@@ -62 +62,2 @@",
+        "@@ -70,2 +71,2 @@",
+        "@@ -72,0 +74,2 @@",
+        "@@ -1227 +1230 @@",
+        "@@ -1241 +1244 @@",
+        "@@ -1256 +1259 @@"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "afa0426630dd657bd2e8f9ff009a6454ee8d4f3548fb9d556949c3d53a9a003b",
+      "committed_sha256": "afa0426630dd657bd2e8f9ff009a6454ee8d4f3548fb9d556949c3d53a9a003b"
+    },
+    {
+      "path": "static/workspace-controls.css",
+      "owner": "ui",
+      "hunks": [
+        "@@ -2 +2 @@",
+        "@@ -3,0 +4,4 @@ dialog:not(.workspace-tour)::backdrop{background:#102b3059;backdrop-filter:blur(",
+        "@@ -6,2 +10,3 @@ dialog:not(.workspace-tour) :is(h2,h3){margin:0 0 10px;font-size:19px;line-heigh",
+        "@@ -9,2 +14,3 @@ dialog:not(.workspace-tour) input{box-sizing:border-box;width:100%;height:44px;b",
+        "@@ -12,4 +18,6 @@ dialog:not(.workspace-tour) input{box-sizing:border-box;width:100%;height:44px;b",
+        "@@ -17 +25 @@ dialog:not(.workspace-tour) input{box-sizing:border-box;width:100%;height:44px;b",
+        "@@ -21 +29 @@ body>header #username{max-width:230px}body>header #username:has(.account-identit",
+        "@@ -23 +31 @@ body>header #username{max-width:230px}body>header #username:has(.account-identit"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "60f5b830376cfa7fce38103376203d443411ac880e9d789737a9adb9f059a5fe",
+      "committed_sha256": "60f5b830376cfa7fce38103376203d443411ac880e9d789737a9adb9f059a5fe"
+    },
+    {
+      "path": "tests/frontend.test.mjs",
+      "owner": "ui",
+      "hunks": [
+        "@@ -626,0 +627,94 @@ test('native session title updates the current conversation',()=>{"
+      ],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "c403c5a0982e081a68e658e3a0b3f35212cea94797698460c17bfb8304f6567f",
+      "committed_sha256": "4b19b080c3f52b22e78b3b496b6d4c0817201e6d9720404cb85fc18f4edbb3ca"
+    },
+    {
+      "path": "static/confirm-dialog.js",
+      "owner": "ui",
+      "hunks": [],
+      "basis": "Antigravity report plus reviewed diff",
+      "backup_sha256": "8ea0fbf2cd0597767e742e5ed8316c72c03d86d71f2b98997a189166884d0098",
+      "committed_sha256": "8ea0fbf2cd0597767e742e5ed8316c72c03d86d71f2b98997a189166884d0098"
+    }
+  ],
+  "memory_behaviors_in_shared_files_preserved": true,
+  "memory_task_changes_not_included": true
+}

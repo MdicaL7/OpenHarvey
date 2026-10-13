@@ -1,0 +1,125 @@
+✖ confirm preserves failed-job warning and recovery, including the request version (2.903416ms)
+✖ successful mutation cannot conceal a subsequent list failure (0.761875ms)
+✖ retry retains another failed job and its recovery action (0.461209ms)
+✖ retry surfaces refresh failure instead of acknowledging completed refresh (0.406583ms)
+✔ clean refresh displays the successful operation acknowledgement (0.416375ms)
+✔ a superseded refresh cannot overwrite the current warning with old success (0.347833ms)
+✖ view cancellation settles false and removes the body-level modal (0.693584ms)
+✖ confirmation from an invalidated view cannot authorize the continuation (0.373625ms)
+✖ replacing a pending dialog cancels its promise without settling the replacement (2001.635125ms)
+✖ already invalid view never opens a destructive confirmation (2000.999667ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 2
+ℹ fail 6
+ℹ cancelled 2
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4091.179959
+
+✖ failing tests:
+
+test at ../../../../private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:22:1
+✖ confirm preserves failed-job warning and recovery, including the request version (2.903416ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'success' !== 'warn'
+
+      at TestContext.<anonymous> (file:///private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:23:44)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'success',
+    expected: 'warn',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:26:1
+✖ successful mutation cannot conceal a subsequent list failure (0.761875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'success' !== 'error'
+
+      at TestContext.<anonymous> (file:///private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:27:88)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'success',
+    expected: 'error',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:29:1
+✖ retry retains another failed job and its recovery action (0.461209ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'success' !== 'warn'
+
+      at TestContext.<anonymous> (file:///private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:30:114)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'success',
+    expected: 'warn',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:32:1
+✖ retry surfaces refresh failure instead of acknowledging completed refresh (0.406583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'success' !== 'error'
+
+      at TestContext.<anonymous> (file:///private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:33:158)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'success',
+    expected: 'error',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:50:1
+✖ view cancellation settles false and removes the body-level modal (0.693584ms)
+  TypeError: context.cancelConfirmDialog is not a function
+      at Object.cancel (file:///private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:48:97)
+      at TestContext.<anonymous> (file:///private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:51:44)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7)
+
+test at ../../../../private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:53:1
+✖ confirmation from an invalidated view cannot authorize the continuation (0.373625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:54:137)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:56:1
+✖ replacing a pending dialog cancels its promise without settling the replacement (2001.635125ms)
+  'test timed out after 2000ms'
+
+test at ../../../../private/tmp/openharvey-ui-fix.1d9V33/original/tests/ui-regressions.test.mjs:59:1
+✖ already invalid view never opens a destructive confirmation (2000.999667ms)
+  'test timed out after 2000ms'
