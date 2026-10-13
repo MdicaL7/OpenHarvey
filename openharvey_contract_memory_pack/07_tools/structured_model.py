@@ -7,10 +7,11 @@ from pathlib import Path
 class ModelError(RuntimeError):pass
 def obj(properties):return {'type':'object','properties':properties,'required':list(properties),'additionalProperties':False}
 STR={'type':'string'};STRS={'type':'array','items':STR};NULLSTR={'type':['string','null']}
-CONTENT=obj({'kind':{'type':'string','enum':['experience','preference']},'title':STR,'content':STR,'topic':STR,'conditions':STRS,'exceptions':STRS,'source_ids':STRS})
-RECORD=obj({'content':STR,'kind':{'type':'string','enum':['contract_fact','human_opinion','decision','agent_suggestion','execution_result','preference','open_issue']},'topic':STR,'perspective':NULLSTR,'conditions':STRS,'exceptions':STRS,'business_state':{'type':'string','enum':['proposed','confirmed']},'validity':{'type':'string','enum':['active','withdrawn','superseded']},'source_ids':STRS,'document_refs':{'type':'array','items':obj({'document_id':STR,'version':STR,'paragraph_id':STR,'source_id':STR})},'supersedes_ids':STRS})
+CONTENT=obj({'kind':{'type':'string','enum':['experience','preference']},'subtype':{'type':'string','enum':['disposition_method','review_principle','delivery_preference','communication_preference']},'title':STR,'content':STR,'topic':STR,'conditions':STRS,'exceptions':STRS,'source_ids':STRS})
+RECORD=obj({'content':STR,'kind':{'type':'string','enum':['risk_disposition','long_term_preference','reuse_instruction']},'subtype':{'type':'string','enum':['','review_principle','delivery_preference','communication_preference']},'topic':STR,'conditions':STRS,'exceptions':STRS,'source_ids':STRS,'evidence_quote':STR})
+MATCH=obj({'case_id':STR,'version':{'type':'integer'},'relation':{'type':'string','enum':['applicable','conditional','incompatible','insufficient']},'matching_points':STRS,'differences':STRS,'reason':STR})
 VERDICT=obj({'case_id':STR,'verdict':{'type':'string','enum':['pass','fail','needs_review']},'reason':STR,'evidence':{'type':'array','items':obj({'source_id':STR,'quote':STR})},'critical_failures':STRS})
-SCHEMAS={'l1':obj({'records':{'type':'array','items':RECORD}}),'l2':obj({'entries':{'type':'array','items':CONTENT}}),'l3':obj({'entries':{'type':'array','items':CONTENT}}),'conflict':obj({'relation':{'type':'string','enum':['duplicate','supplements','contradicts','supersedes','unrelated']},'reason':STR}),'judge':obj({'results':{'type':'array','items':VERDICT}})}
+SCHEMAS={'case_relevance':obj({'matches':{'type':'array','items':MATCH}}),'l1':obj({'records':{'type':'array','items':RECORD}}),'l2':obj({'entries':{'type':'array','items':CONTENT}}),'l3':obj({'entries':{'type':'array','items':CONTENT}}),'conflict':obj({'relation':{'type':'string','enum':['duplicate','supplements','contradicts','supersedes','unrelated']},'reason':STR}),'judge':obj({'results':{'type':'array','items':VERDICT}})}
 def validate(value,schema,path='$'):
     kinds=schema.get('type',[]);kinds=[kinds] if isinstance(kinds,str) else kinds
     types={'object':isinstance(value,dict),'array':isinstance(value,list),'string':isinstance(value,str),'null':value is None,'boolean':isinstance(value,bool),'integer':isinstance(value,int) and not isinstance(value,bool),'number':isinstance(value,(int,float)) and not isinstance(value,bool)}
@@ -25,8 +26,8 @@ def validate(value,schema,path='$'):
     if isinstance(value,list):
         for i,v in enumerate(value):validate(v,schema.get('items',{}),path+f'[{i}]')
 def codex_command(binary,model,work,schema,output):
-    cmd=[binary,'exec','--ignore-user-config','--ignore-rules','--ephemeral','--skip-git-repo-check','--cd',str(work),'--sandbox','read-only','--model',model,'--json','--color','never','--output-schema',str(schema),'-o',str(output),'-c','model_provider="openai"','-c','forced_login_method="chatgpt"','-c','web_search="disabled"','-c','project_doc_max_bytes=0','-c','features.skip_host_skill_discovery=true']
-    for feature in ['shell_tool','unified_exec','apps','browser_use','browser_use_external','in_app_browser','computer_use','multi_agent','memories','skill_search','view_image','image_generation','workspace_dependencies','code_mode_host','goals','sleep_tool','remote_plugin','recommended_plugins']:
+    cmd=[binary,'exec','--ignore-user-config','--ignore-rules','--ephemeral','--skip-git-repo-check','--cd',str(work),'--sandbox','read-only','--model',model,'--json','--color','never','--output-schema',str(schema),'-o',str(output),'-c','model_provider="openai"','-c','forced_login_method="chatgpt"','-c','web_search="disabled"','-c','project_doc_max_bytes=0','-c','features.skip_host_skill_discovery=true','-c','suppress_unstable_features_warning=true']
+    for feature in ['shell_tool','unified_exec','apps','browser_use','browser_use_external','in_app_browser','computer_use','multi_agent','memories','skill_search','view_image','image_generation','workspace_dependencies','code_mode_host','goals','sleep_tool','remote_plugin','recommended_plugins','code_mode','code_mode_only','plugins']:
         cmd+=['--disable',feature]
     return cmd+['-']
 def complete(config,request,*,execute=False,run=subprocess.run,urlopen=urllib.request.urlopen):
@@ -52,16 +53,18 @@ def complete(config,request,*,execute=False,run=subprocess.run,urlopen=urllib.re
                 r=run(codex_command(binary,model,work,schemafile,output),input=prompt,text=True,capture_output=True,env=env,timeout=cfg.get('timeout_seconds',180))
             except subprocess.TimeoutExpired:raise ModelError('Codex structured call timed out') from None
             if r.returncode:raise ModelError('Codex call failed; check authentication, available model and quota')
-            events=[]
+            events=[];finished=False
             for line in r.stdout.splitlines():
                 try:events.append(json.loads(line))
                 except json.JSONDecodeError:raise ModelError('Invalid Codex event output') from None
             for e in events:
                 item=e.get('item',{});typ=item.get('type','')
+                if typ=='error' and item.get('message')=='Code Mode is unavailable because code-mode host is disabled. Code mode will fail closed; enable `features.code_mode_host` and install `codex-code-mode-host`.':continue
                 if typ and typ not in {'agent_message','reasoning'}:raise ModelError('Structured call attempted a tool or unsupported item')
                 if e.get('type') in {'error','turn.failed'}:raise ModelError('Codex reported an unsuccessful turn')
-                if e.get('type')=='turn.completed':usage=e.get('usage')
+                if e.get('type')=='turn.completed':usage=e.get('usage');finished=True
                 if e.get('model'):actual_model=e['model']
+            if not finished:raise ModelError('Codex did not complete the inference turn')
             if not output.is_file():raise ModelError('Codex did not return the structured result')
             value=json.loads(output.read_text())
     elif provider=='openai_compatible':

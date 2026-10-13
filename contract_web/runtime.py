@@ -86,6 +86,9 @@ class Runtime:
         for path in [shared + "/*"] + [self.source_path(d["id"]).rsplit("/",1)[0]+"/*" for d in documents]:
             rules.append({"permission": "external_directory", "pattern": path, "action": "allow"})
         from .tencentdb_memory import bridge_permissions
+        if tdai and tdai.get('contract'):
+            for quote in ('',"'",'"'):
+                rules.append({'permission':'bash','pattern':f'python3 {quote}{shared}/scripts/recall_precedents.py{quote} *','action':'allow'})
         return rules + bridge_permissions(tdai)
 
     async def skills(self, tid):

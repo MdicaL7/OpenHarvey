@@ -24,11 +24,14 @@ export function riskBoard(data,documents,filter='attention'){
         <div class="risk-meta">${esc(f.category||'')} · ${esc(f.risk_id)}<span class="disposition">${esc(tr(saved.decision))}</span></div>
         <div class="risk-reason markdown">${markdown(f.reason,documents)}</div>
         ${f.suggestion?ui`<div class="risk-suggestion markdown"><b>建议</b>${markdown(f.suggestion,documents)}</div>`:''}
+        <details class="historical-dispositions" open><summary>历史处理参考</summary><div data-precedents="${esc(f.risk_id)}" role="status">正在查询相关历史处置…</div></details>
         <details class="risk-feedback"><summary>${saved.revision?tr('查看 / 修改处理意见'):tr('添加处理意见')}${saved.note?' · '+esc(saved.note.slice(0,35)):''}</summary>
           <form data-risk-feedback="${esc(f.risk_id)}" data-revision="${saved.revision}">
             <label>处理方式<select name="decision" aria-label="${esc(f.risk_name||f.risk_id)}处理方式">${decisions.map(d=>`<option value="${esc(d)}"${saved.decision===d?' selected':''}>${esc(tr(d))}</option>`).join('')}</select></label>
             <label>备注<textarea name="note" maxlength="1000" rows="2" placeholder="处置理由、修正依据或需补充的材料">${esc(saved.note)}</textarea></label>
             <p class="feedback-help">处理意见单独保存，原审查结论会保留。接受风险不代表判断有误。</p>
+            ${data.memory_sync?.[f.risk_id]?.status==='synced'?'<p class="feedback-help">处理案例已记录；经验整理状态请查看“经验与偏好”。</p>':['pending','failed'].includes(data.memory_sync?.[f.risk_id]?.status)?'<p class="feedback-help">反馈已保存，记忆同步待完成。</p>':''}
+            ${data.memory_sync?.[f.risk_id]?.status==='failed'&&data.memory_sync[f.risk_id].event_id?`<button type="button" data-memory-sync-retry="${esc(data.memory_sync[f.risk_id].event_id)}">重试记忆同步</button>`:''}
             <div class="feedback-actions"><button type="submit" class="feedback-save">保存反馈</button></div><p class="feedback-status" role="status"></p>
           </form>
           ${saved.revision?ui`<details class="feedback-history"><summary>反馈记录（${saved.history.length+1}）</summary>${[...saved.history,saved].reverse().map(h=>`<p><b>${esc(tr(h.decision))}</b> · ${new Date(h.created*1000).toLocaleString(getLanguage())}<br>${esc(h.note||tr('无备注'))}</p>`).join('')}</details>`:''}

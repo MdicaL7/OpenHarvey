@@ -1,14 +1,16 @@
 {
   "result": "PASS",
-  "checks": 1350,
+  "checks": 1416,
   "contracts": 11,
   "clauses": 154,
   "source_events": 21,
   "original_queries": 24,
+  "contract_v2_cases": 9,
+  "contract_v2_steps": 27,
   "cases": 58,
   "steps": 156,
   "categories": 12,
-  "pack_sha": "37374496c51bb3099a473c3201903e5ff487921a0f8aed345b57830e29e7116c",
+  "pack_sha": "3f301503aaef1e654a948e02973df6699f38c0ddf4230787d399d492e22d4d68",
   "errors": [],
   "scope": "Offline materials/manifests only. No real model, application upload, extraction, publication or judge run."
 }

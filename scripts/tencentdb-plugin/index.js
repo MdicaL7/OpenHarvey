@@ -2,7 +2,7 @@ import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
 export const endpoints = new Set(['atomic/search','atomic/query','conversation/search','conversation/query','scenario/ls','scenario/read']);
-const identityHeaders=['x-team-id','x-agent-id','x-task-id','x-conversation-id','x-tdai-service-id'];
+const identityHeaders=['x-team-id','x-agent-id','x-task-id','x-conversation-id','x-tdai-service-id','x-openharvey-memory-version','x-openharvey-source-event'];
 const quote=value=>"'"+String(value).replaceAll("'","'\\''")+"'";
 
 // Parse only literal shell words. No pipelines, expansion, redirection or commands.
@@ -64,6 +64,17 @@ export function checkedCurl(command,binding){
     '--data-raw',quote(JSON.stringify(body))].join(' ');
 }
 
+export function checkedPrecedentCommand(command,script){
+  const args=words(command);
+  if(!script||args[0]!=='python3'||args[1]!==script)throw new Error('历史处置只允许固定只读脚本');
+  const fields=new Map();
+  for(let i=2;i<args.length;i+=2){const key=args[i],value=args[i+1];if(!['--risk-id','--artifact-id','--document-id','--blocks'].includes(key)||fields.has(key)||!value)throw new Error('历史处置参数无效');
+    if(key==='--blocks'?!/^B\d+(?:,B\d+)*$/.test(value):!/^[\p{L}\p{N}_.-]{1,180}$/u.test(value))throw new Error('历史处置标识无效');fields.set(key,value);}
+  const hasReport=fields.has('--artifact-id'),hasSource=fields.has('--document-id')&&fields.has('--blocks');
+  if(!fields.has('--risk-id')||(hasReport&&(fields.has('--document-id')||fields.has('--blocks')))||(!hasReport&&!hasSource))throw new Error('请指定当前风险与报告或原文段落');
+  return ['python3',quote(script),...args.slice(2).map((a,i)=>i%2?quote(a):a)].join(' ');
+}
+
 export default async function plugin(_input,options={}){
   async function binding(sessionID){
     if(!options.bindingDirectory||!/^[A-Za-z0-9_-]{1,180}$/.test(sessionID))throw new Error('TencentDB Memory 会话绑定缺失');
@@ -81,9 +92,10 @@ export default async function plugin(_input,options={}){
       if(!value.enabled)throw new Error('本轮 TencentDB Memory 尚未准备就绪');
       for(const key of ['service_id','team_id','agent_id','task_id'])if(!value[key])throw new Error('TencentDB Memory 身份绑定不完整');
       Object.assign(output.headers,{'x-tdai-service-id':value.service_id,'x-team-id':value.team_id,
-        'x-agent-id':value.agent_id,'x-task-id':value.task_id,'x-conversation-id':input.sessionID});
+        'x-agent-id':value.agent_id,'x-task-id':value.task_id,'x-conversation-id':input.sessionID, ...(value.memory_version===2?{'x-openharvey-memory-version':'2',...(value.source_event_id?{'x-openharvey-source-event':value.source_event_id}:{})}:{})});
     },
     'tool.execute.before':async(input,output)=>{
+      if(input.tool==='bash'&&String(output.args.command||'').includes('/scripts/recall_precedents.py')){const value=await binding(input.sessionID);if(!value.enabled||!value.contract)throw new Error('本轮未启用合同处置查询');output.args.command=checkedPrecedentCommand(output.args.command,options.precedentScript);return;}
       if(input.tool!=='bash'||!String(output.args.command||'').includes('/memory-bridge/'))return;
       output.args.command=checkedCurl(output.args.command,await binding(input.sessionID));
     },

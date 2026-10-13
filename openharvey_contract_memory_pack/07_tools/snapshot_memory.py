@@ -21,12 +21,14 @@ for(const table of ['raw','atoms','jobs','candidates','entries','proposals','aud
  const where='instance=? AND team=? AND agent=? AND '+(table==='entries'?"(user=? OR scope='team')":"user=?");
  out[table]=db.prepare('SELECT * FROM '+table+' WHERE '+where).all(c.instance,c.team,c.agent,c.user).map(r=>{if(r.data)r.data=JSON.parse(r.data);return r;});
 }
+const extraTables=new Set(db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(r=>r.name));
+for(const table of ['review_events','review_cases','preference_statements'])out[table]=extraTables.has(table)?db.prepare('SELECT * FROM '+table+' WHERE instance=? AND team=? AND agent=? AND user=?').all(c.instance,c.team,c.agent,c.user).map(r=>({...r,data:JSON.parse(r.data)})):[];
 const ids=out.entries.filter(e=>e.user===c.user).map(e=>e.id);
 out.revisions=ids.flatMap(id=>db.prepare('SELECT * FROM revisions WHERE id=? ORDER BY version').all(id).map(r=>({...r,data:JSON.parse(r.data)})));
 const tables=new Set(db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(r=>r.name));
 out.extraction_runs=tables.has('extraction_runs')?db.prepare('SELECT e.job,e.data FROM extraction_runs e JOIN jobs j ON j.id=e.job WHERE j.instance=? AND j.team=? AND j.agent=? AND j.user=?').all(c.instance,c.team,c.agent,c.user).map(r=>({...r,data:JSON.parse(r.data)})):[];
-const owned=new Set([...out.raw,...out.atoms,...out.entries.filter(e=>e.user===c.user)].map(r=>r.id));
-out.llm_runs=tables.has('llm_runs')?db.prepare('SELECT id,data FROM llm_runs').all().map(r=>({...r,data:JSON.parse(r.data)})).filter(r=>{const input=r.data.input;const refs=Array.isArray(input)?input:input?.messages;if(!Array.isArray(refs)||!refs.length)return false;return refs.every(x=>owned.has(x.id));}):[];
+const owned=new Set([...out.raw,...out.atoms,...out.review_events,...out.preference_statements,...out.review_cases.flatMap(c=>[c,{id:c.id+'@'+c.version}]),...out.entries.filter(e=>e.user===c.user)].map(r=>r.id));
+out.llm_runs=tables.has('llm_runs')?db.prepare('SELECT id,data FROM llm_runs').all().map(r=>({...r,data:JSON.parse(r.data)})).filter(r=>{const input=r.data.input;const refs=Array.isArray(input)?input:['messages','review_events','cases','preferences','confirmed_experiences','reuse_instructions','existing'].flatMap(k=>input?.[k]||[]);if(!Array.isArray(refs)||!refs.length)return false;return refs.every(x=>owned.has(x.id||x.source_id));}):[];
 db.close();console.log(JSON.stringify(out));"""
     if config.get('sqlite_path'):
         # Local fixtures / offline operator copy; parameterized, same scope constraints.
@@ -41,13 +43,18 @@ db.close();console.log(JSON.stringify(out));"""
             out['revisions']=[dict(r) for e in out['entries'] if e['user']==scope['user'] for r in db.execute('SELECT * FROM revisions WHERE id=? ORDER BY version',(e['id'],))]
             for r in out['revisions']:r['data']=json.loads(r['data'])
             tables={r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            for table in ['review_events','review_cases','preference_statements']:
+                values=[dict(r) for r in db.execute('SELECT * FROM '+table+' WHERE instance=? AND team=? AND agent=? AND user=?',tuple(scope[k] for k in ['instance','team','agent','user']))] if table in tables else []
+                for r in values:r['data']=json.loads(r['data'])
+                out[table]=values
             out['extraction_runs']=[{'job':r[0],'data':json.loads(r[1])} for r in db.execute('SELECT e.job,e.data FROM extraction_runs e JOIN jobs j ON j.id=e.job WHERE j.instance=? AND j.team=? AND j.agent=? AND j.user=?',tuple(scope[k] for k in ['instance','team','agent','user']))] if 'extraction_runs' in tables else []
             owned={r['id'] for name in ['raw','atoms','entries'] for r in out[name] if name!='entries' or r['user']==scope['user']}
+            owned.update(r['id'] for name in ['review_events','review_cases','preference_statements'] for r in out[name]);owned.update(r['id']+'@'+str(r['version']) for r in out['review_cases'])
             out['llm_runs']=[]
             if 'llm_runs' in tables:
                 for row in db.execute('SELECT id,data FROM llm_runs'):
-                    data=json.loads(row[1]);value=data.get('input');refs=value if isinstance(value,list) else value.get('messages',[]) if isinstance(value,dict) else []
-                    if refs and all(x.get('id') in owned for x in refs):out['llm_runs'].append({'id':row[0],'data':data})
+                    data=json.loads(row[1]);value=data.get('input');refs=value if isinstance(value,list) else [r for k in ['messages','review_events','cases','preferences','confirmed_experiences','reuse_instructions','existing'] for r in value.get(k,[])] if isinstance(value,dict) else []
+                    if refs and all((x.get('id') or x.get('source_id')) in owned for x in refs):out['llm_runs'].append({'id':row[0],'data':data})
             return out
     container=config.get('container','tdai-contract-core')
     if not re.fullmatch(r'[a-zA-Z0-9_.-]+',container):raise RuntimeError('Invalid diagnostic container')

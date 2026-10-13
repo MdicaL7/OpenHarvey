@@ -14,3 +14,11 @@ description: 对照当前选择的风险点方案逐项审查当前完整合同�
 按 [输出格式](references/result.md) 将 Markdown 报告写 `review.md`，在 `review.json` 用 `content_file: "review.md"` 引用它，并填写 findings。不要将长 Markdown 嵌入 JSON 字符串，以免引号转义错误。每个启用风险点在两者中均出现，报告汇总数量从实际清单统计。可按类别组织工作并使用原生 Todo，任务是否完成以实际结果为准。
 
 执行 `python3 <context.json 的 publish_script> review.json`。脚本只校验结构、风险项覆盖、引用及原文实际读取记录，并保存真实文件。收到 `saved: true` 后说明已保存；否则根据具体错误补齐，不得虚构保存回执。报告中的分析由当前 OpenCode Agent 完成，不调用另一套模型脚本或额外 grader。
+
+## 历史处置参考
+
+若 context.json.historical_dispositions 存在，识别相关风险后，可使用其中 script 只读查询：
+`python3 <script> --risk-id <风险ID> --document-id <当前文档ID> --blocks B12,B13`。
+已保存报告可使用 `--artifact-id <报告ID> --risk-id <风险ID>`。
+仅引用真实返回的案例版本，说明此前处理、适用条件和本次差异；信息不足或不适用时不能照搬。
+历史处置不是当前合同原文证据，不替代风险库；不得自动填写用户处理意见。对话中用户表达接受/修改时，引导到风险卡片保存。

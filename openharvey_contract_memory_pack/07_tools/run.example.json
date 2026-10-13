@@ -2,10 +2,42 @@
   "origin": "http://127.0.0.1:8081",
   "business_model": "tencentdb-memory/deepseek-flash",
   "ordinary_model": "deepseek/deepseek-flash",
-  "accounts": {"owner": {"login_file": "secrets/owner-login.json"}, "member": {"login_file": "secrets/member-login.json"}, "outsider": {"origin": "http://127.0.0.1:8082", "login_file": "secrets/outsider-login.json", "diagnostics": {"app_data": "/Users/dicam/.local/share/openharvey/contract-memory-outsider-lab", "container": "tdai-contract-core"}}},
-  "diagnostics": {"app_data": "/Users/dicam/.local/share/openharvey/contract-memory-lab", "container": "tdai-contract-core"},
+  "accounts": {
+    "owner": {
+      "login_file": "secrets/owner-login.json"
+    },
+    "member": {
+      "login_file": "secrets/member-login.json"
+    },
+    "outsider": {
+      "origin": "http://127.0.0.1:8082",
+      "login_file": "secrets/outsider-login.json",
+      "diagnostics": {
+        "app_data": "/Users/dicam/.local/share/openharvey/contract-memory-outsider-lab",
+        "container": "tdai-contract-core"
+      }
+    }
+  },
+  "diagnostics": {
+    "app_data": "/Users/dicam/.local/share/openharvey/contract-memory-lab",
+    "container": "tdai-contract-core"
+  },
   "step_timeout_seconds": 600,
   "poll_seconds": 2,
   "operator_evidence": {},
-  "models": {"roles": {"memory_extraction": {"provider": "codex_subscription", "model": "gpt-6.1-sol", "timeout_seconds": 180}, "judge": {"provider": "codex_subscription", "model": "gpt-6.1-sol", "timeout_seconds": 180}}}
+  "models": {
+    "roles": {
+      "memory_extraction": {
+        "provider": "codex_subscription",
+        "model": "gpt-6.1-sol",
+        "timeout_seconds": 180
+      },
+      "judge": {
+        "provider": "codex_subscription",
+        "model": "gpt-6.1-sol",
+        "timeout_seconds": 180
+      }
+    }
+  },
+  "suite": "contract-v2"
 }

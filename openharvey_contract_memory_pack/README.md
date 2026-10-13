@@ -57,3 +57,18 @@ python3 07_tools/run_suite.py plan > /tmp/contract-memory-plan.json
 这次只做适配的模拟测试。实际模型可用性、订阅额度、Docker 到本机适配器的连通性及最终提炼效果，在审查通过后检查。未启动适配服务、未重建运行中 Core、未更换现有模型设置。
 
 同模型抽取和 judge 属于同模型评估，独立会话不能消除模型偏差。结构检查、模型评分与人工复核分开报告；缺失或不确定证据不算通过。详细报告及已知边界见 `08_validation/QA_SUMMARY.md`。
+
+## contract-v2 处置语义更新
+
+默认自动路径已切换到 contract-v2，包含9个用例和27步：真实审查报告 → 保存风险反馈 → L1处置案例 → 新合同参考 → 多案例L2 → 长期L3 → 撤回/人工保护。完整手册见 `10_manual/CONTRACT_V2.md`，来源锚点及对话步骤见 `09_scenarios_OPERATOR_ONLY/v2_cases.json`。
+
+```bash
+python3 07_tools/run_suite.py plan
+python3 07_tools/run_suite.py plan --suite legacy
+```
+
+旧58用例保留为历史对照，不在新版真实执行。原来的 L1 条款字段金标继续用于原文/证据准确性审查，不再要求无处置的条款成为长期记忆。
+
+现有材料没有60天付款账期；v2用户保存的是拟调整到60天的附条件意见，必须与现稿、正式批准和实际执行区分。不得为制造风险命中而改报告或金标。缺少真实风险项、候选不唯一时停止并保留证据。
+
+真实运行仍需 --execute 和重新审查通过的当前包哈希。本轮仅模拟和离线验证，未调用模型抽取或 judge。

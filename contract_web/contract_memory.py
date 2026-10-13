@@ -49,7 +49,7 @@ class ContractMemory:
         controller=Path(control_file).read_text().strip() if control_file else self.models.decrypt(binding.get('gateway_secret')) or 'local'
         headers={'Authorization':'Bearer '+controller,'x-tdai-service-id':binding['service_id'],'x-tdai-user-key':key}
         try:
-            async with httpx.AsyncClient(timeout=20,trust_env=False,follow_redirects=False) as client:
+            async with httpx.AsyncClient(timeout=200 if action=="precedents" else 20,trust_env=False,follow_redirects=False) as client:
                 response=await client.post(binding['core_url']+'/v3/contract-memory/'+action,json=payload,headers=headers)
             result=response.json()
             if response.is_error or result.get('code',0):raise HTTPException(response.status_code if response.is_error else 503,result.get('message','记忆服务暂时不可用'))
@@ -154,11 +154,22 @@ class ContractMemory:
             file=self.store.user_root(u['id'])/'sources'/d['id']/'document.json'
             mapped=json.loads(file.read_text()) if file.is_file() else {}
             refs.append({'document_id':d['id'],'version':d['source_hash'],'read_path':rt.source_path(d['id']),'paragraphs':[{'id':seg['id'],'citation':seg['citation'],'hash':hashlib.sha256(seg['text'].strip().encode()).hexdigest()} for seg in mapped.get('segments',[])]})
+        await self.sync_resources(u,team)
         await self.remote(u,team,'context',{'task_id':taskid,'session_id':t['session_id'],'workspace_id':w['id'],'perspective':self.models.settings.preferences(u)['effective']['perspective'],'documents':refs})
         self.member(u,w['team_id'])
-        value={'enabled':True,'contract':True,'service_id':b['service_id'],'team_id':team['tdai_team_id'],'agent_id':team['agent_id'],'task_id':taskid,'bridge_url':b['proxy_url'].split('/opencode/')[0]+'/memory-bridge/v3'}
+        value={'enabled':True,'contract':True,'memory_version':2,'service_id':b['service_id'],'team_id':team['tdai_team_id'],'agent_id':team['agent_id'],'task_id':taskid,'bridge_url':b['proxy_url'].split('/opencode/')[0]+'/memory-bridge/v3'}
         self.tdai.write_binding(u,t,value)
         return value
+    async def sync_resources(self,u,t):
+        self.member(u,t['id'])
+        workspaces=self.store.all('SELECT w.id,d.source_hash AS primary_version FROM workspaces w JOIN documents d ON d.id=w.document_id WHERE w.user_id=? AND w.team_id=? AND w.deleted_at IS NULL AND d.removed_at IS NULL',(u['id'],t['id']))
+        manifest=[]
+        for w in workspaces:
+            documents=self.store.all('SELECT id AS document_id,source_hash AS version FROM documents WHERE workspace_id=? AND user_id=? AND removed_at IS NULL',(w['id'],u['id']))
+            manifest.append({'workspace_id':w['id'],'primary_version':w['primary_version'],'documents':documents})
+        result=await self.remote(u,t,'resources',{'manifest':manifest})
+        if not result.get('saved'):raise HTTPException(503,'记忆组件未确认来源状态，请检查版本')
+
     async def safe_sources(self,u,t,eid):
         result=await self.remote(u,t,'sources',{'id':eid})
         items=[]
@@ -214,6 +225,14 @@ def register_contract_memory(app,user,service,root):
         def route(op):
             async def handler(request:Request):
                 u=user(request);b=await request.json();t=service.member(u,b.get('team_id'),'admin' if op=='review' else None)
+                if op=='review' and b.get('approved') is True:
+                    proposals=await service.remote(u,t,'proposals')
+                    proposal=next((p for p in proposals.get('items',[]) if p['id']==b.get('id')),None)
+                    if not proposal:raise HTTPException(404,'审核申请不存在')
+                    submitter=service.store.one('SELECT u.* FROM users u JOIN memory_identities i ON i.user_id=u.id WHERE i.tdai_user_id=? AND u.org_id=? AND u.active=1',(proposal['user'],u['org_id']))
+                    if not submitter:raise HTTPException(409,'提交账号已失效')
+                    await service.sync_resources(submitter,service.member(submitter,t['id']))
+                    service.member(u,t['id'],'admin')
                 allowed={'id','version','data','operation_id','operation','approved'}
                 if any(k not in allowed|{'team_id'} for k in b):raise HTTPException(422,'请求字段无效')
                 return await service.remote(u,t,op,{k:v for k,v in b.items() if k in allowed})

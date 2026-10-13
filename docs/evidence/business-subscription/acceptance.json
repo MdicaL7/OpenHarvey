@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-12",
+  "branch": "codex/contract-memory",
+  "status": "local_business_subscription_connected",
+  "business_provider": "tencentdb-memory",
+  "requested_model": "gpt-6.1-sol",
+  "resolved_model_id_independently_verified": false,
+  "cli_version": "0.162.0-alpha.17.2",
+  "workbench_url": "http://127.0.0.1:8081/spaces",
+  "memory_core_model_configuration_changed": false,
+  "judge_configuration_changed": false,
+  "review_gated_test_pack_executed": false,
+  "checks": {
+    "codex_chatgpt_login_status": "pass",
+    "subscription_response": {"status": "pass", "answer": "连接成功"},
+    "docker_proxy_to_host_bridge": "pass",
+    "proxy_auxiliary_request": {
+      "status": "pass", "http_status": 200,
+      "answer": "订阅接入检查",
+      "log_classification": "auxiliary (skip session-init/mem/injection/L0/skill)"
+    },
+    "native_opencode_tool_roundtrip": {
+      "status": "pass", "opencode_version": "1.16.2",
+      "tool": "read", "tool_status": "completed",
+      "answer": "contract-business-ok", "memory_used": false,
+      "initial_attempt": "temporary smoke permission denied external directory; adjusted only temporary smoke scope and reran"
+    },
+    "model_menu_api_and_browser": {
+      "status": "pass", "selected": "tencentdb-memory/gpt-6.1-sol",
+      "deepseek_memory_option_retained": true, "deepseek_direct_option_retained": true
+    },
+    "full_python_regression": {"status": "pass", "tests": 348},
+    "final_subscription_unit_tests": {"status": "pass", "tests": 14},
+    "frontend_regression": {"status": "pass", "tests": 155},
+    "diff_check_and_compile": "pass"
+  },
+  "limits": [
+    "SSE is emitted after structured inference completes; not native token streaming",
+    "first version supports text inputs; document tools remain in OpenCode",
+    "full contract and memory workflow not executed pending test-pack review",
+    "bridge and workbench have not been configured for system boot autostart",
+    "existing explicit thread model selections are preserved"
+  ]
+}

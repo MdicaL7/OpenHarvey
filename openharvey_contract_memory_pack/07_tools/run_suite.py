@@ -4,6 +4,10 @@ import argparse,hashlib,http.cookiejar,json,re,time,urllib.request,urllib.error,
 from pathlib import Path
 from suite_common import ROOT,atomic_json,manifest,pack_digest,require_review,input_files,read_json,source_mapping
 from snapshot_memory import snapshot as core_snapshot
+SUITE='legacy'
+base_manifest=manifest
+def manifest(name):
+    return base_manifest(('v2_'+name) if SUITE=='contract-v2' and name in {'steps.json','cases.json'} else name)
 from structured_model import complete,ModelError
 
 class StopRun(RuntimeError):pass
@@ -32,8 +36,8 @@ class Api:
 class Runner:
     def __init__(self,config,out,state=None,api_factory=Api,snapshot_fn=core_snapshot):
         self.config=config;self.out=Path(out);self.out.mkdir(parents=True,exist_ok=True);self.snapshot_fn=snapshot_fn
-        cfgsha=hashlib.sha256(json.dumps({k:config.get(k) for k in ['origin','business_model','ordinary_model','accounts','diagnostics','models']},sort_keys=True).encode()).hexdigest()
-        self.state=state or {'run_id':uuid.uuid4().hex,'pack_sha':pack_digest(),'config_sha':cfgsha,'completed':[],'calls':{},'teams':{},'spaces':{},'threads':{},'documents':{},'entries':{},'proposals':{},'evidence':{},'entry_baselines':{},'candidate_baselines':{}}
+        cfgsha=hashlib.sha256(json.dumps({k:config.get(k) for k in ['origin','business_model','ordinary_model','accounts','diagnostics','models','suite']},sort_keys=True).encode()).hexdigest()
+        self.state=state or {'suite':SUITE,'run_id':uuid.uuid4().hex,'pack_sha':pack_digest(),'config_sha':cfgsha,'completed':[],'calls':{},'teams':{},'spaces':{},'threads':{},'documents':{},'entries':{},'proposals':{},'evidence':{},'entry_baselines':{},'candidate_baselines':{}}
         if self.state.get('config_sha',cfgsha)!=cfgsha:raise StopRun('模型或身份配置已改变，请建立新运行；操作员证据和等待参数可补充')
         self.clients={};self.users={};self.inputs=input_files();self.active_step=None
         for role,account in config['accounts'].items():
@@ -95,6 +99,7 @@ class Runner:
         selector=s['selector'];items=obs['candidates']['items'];items=[e for e in items if e['data']['kind']==selector['kind'] and selector.get('contains','') in json.dumps(e['data'],ensure_ascii=False)]
         if selector.get('source_dialogue'):
             utterance=manifest('dialogues.json')[selector['source_dialogue']];rawids={r['id'] for r in obs['core']['raw'] if r['data'].get('role')=='user' and utterance in r['data'].get('content','')};atomids={a['id'] for a in obs['core']['atoms'] if set(a['data'].get('source_ids',[]))&rawids}
+            atomids.update(a['id'] for a in obs['core'].get('preference_statements',[]) if set(a['data'].get('source_ids',[]))&rawids)
             items=[e for e in items if set(e['data'].get('source_ids',[]))&atomids]
         if len(items)!=1:raise StopRun('候选必须唯一匹配实际输出，当前 '+str(len(items))+' 条；保存快照后人工核对，不预灌金标')
         return items[0]
@@ -121,6 +126,33 @@ class Runner:
             document=client.call('GET','/api/documents/'+docid+'?thread_id='+self.thread(s))
             result={'document':document,'mapping':source_mapping(iid,document,path)}
             atomic_json(self.out/'mappings'/f'{s["step_id"]}.json',result['mapping'])
+        elif action=='risk_feedback':
+            w=client.call('GET','/api/workspaces/'+self.state['spaces'][s['workspace']]['id'])
+            reports=[]
+            for a in w.get('artifacts',[]):
+                if a.get('kind')=='review':reports.append(client.call('GET','/api/artifacts/'+a['id']))
+            if len(reports)!=1:raise StopRun('必须唯一匹配真实审查报告；当前 '+str(len(reports))+' 份')
+            report=reports[0];rid=s['risk_id']
+            if rid not in {f['risk_id'] for f in report.get('findings',[])}:raise StopRun('真实报告没有脚本指定风险，禁止伪造')
+            old=report.get('feedback',{}).get(rid,{})
+            body={'source_hash':report['source_hash'],'revision':old.get('revision',0),'decision':s['decision'],'note':s['note']}
+            saved=self.mutate('feedback','PUT',f'/api/artifacts/{report["id"]}/risks/{rid}/feedback',body=body)
+            deadline=time.monotonic()+self.config.get('step_timeout_seconds',600)
+            while time.monotonic()<deadline:
+                sync=client.call('GET','/api/artifacts/'+report['id']).get('memory_sync',{}).get(rid,{})
+                if sync.get('status')=='synced':
+                    observed=self.observed(s);jobs=observed['core']['jobs']
+                    if any(j['status']=='failed' and j['attempts']>=3 for j in jobs):raise StopRun('反馈已落盘但提炼失败')
+                    if not any(j['status'] in {'pending','running'} or j['status']=='failed' and j['attempts']<3 for j in jobs):break
+                if sync.get('status')=='failed' and sync.get('attempts',0)>=5:raise StopRun('反馈已保存，但记忆同步失败')
+                time.sleep(self.config.get('poll_seconds',2))
+            else:raise StopRun('反馈同步超时')
+            result={'feedback':saved,'after':self.observed(s)}
+        elif action=='precedent_check':
+            w=client.call('GET','/api/workspaces/'+self.state['spaces'][s['workspace']]['id'])
+            reports=[a for a in w.get('artifacts',[]) if a.get('kind')=='review']
+            if len(reports)!=1:raise StopRun('历史参考检查需唯一真实报告')
+            result=client.call('GET',f'/api/artifacts/{reports[0]["id"]}/risks/{s["risk_id"]}/precedents')
         elif action=='new_thread':
             thread=self.mutate('thread','POST','/api/workspaces/'+self.state['spaces'][s['workspace']]['id']+'/threads');self.state['threads'][s['workspace']].append(thread)
         elif action=='message':
@@ -268,6 +300,10 @@ def deterministic_checks(step,result,state):
         add('L1_sources_exist',all(set(a['data'].get('source_ids',[]))<=ids for a in atoms.values()))
         add('L1_no_approved_enum',all(a['data'].get('business_state') in {'proposed','confirmed'} for a in atoms.values()))
         add('candidate_sources_exist',all(set(c['data'].get('source_ids',[]))<=set(atoms)|entryids for c in core['candidates']))
+        v2_sources={r['id'] for k in ['review_events','preference_statements'] for r in core.get(k,[])}|{r['id']+'@'+str(r['version']) for r in core.get('review_cases',[])}
+        if SUITE=='contract-v2':
+            checks=[x for x in checks if x['check'] not in {'candidate_sources_exist'}]
+            add('v2_candidate_sources_exist',all(set(c['data'].get('source_ids',[]))<=v2_sources|entryids for c in core['candidates']))
         formal={e['id'] for e in result['after']['personal']['items']}|{e['id'] for e in result['after']['team']['items']}
         add('draft_ids_not_formal',not formal & {c['id'] for c in core['candidates'] if c['status']=='pending'})
         outsider=state.get('entries',{}).get('outside',{}).get('id')
@@ -277,6 +313,15 @@ def deterministic_checks(step,result,state):
             add('saved_artifact_exists',bool(result.get('workspace_artifacts')))
             add('actual_tool_save_receipt',any(r['data'].get('role')=='tool' and re.search(r'"saved"\s*:\s*true',r['data'].get('content','')) for r in core['raw']))
         if 'RUN-AUX' in step.get('case_ids',[]):checks.append({'check':'auxiliary_request_was_observed','status':'needs_review','detail':'需人工核对实际标题／压缩请求及脱敏路由证据，单凭L0无相关文本不能判通过'})
+    if action=='risk_feedback':
+        add('saved_feedback_has_real_case',any(e['data']['decision']==step['decision'] and e['data']['note']==step['note'] for e in result['after']['core'].get('review_cases',[])))
+    if action=='precedent_check':
+        add('bounded_reference_results',len(result.get('items',[]))<=3)
+        add('history_is_actually_recalled',bool(result.get('items')) if step.get('expect_matches') else not result.get('items'))
+    if action=='snapshot' and SUITE=='contract-v2':
+        core=obs['core']
+        if step.get('expect_no_experience'):add('single_case_not_promoted',not any(c['data']['kind']=='experience' for c in core['candidates']))
+        add('v1_not_formal',all(e['data'].get('schema_version')==2 for e in obs['personal']['items']))
     if action=='candidate_action':
         e=result['mutation']
         if step['operation']=='confirm':add('confirmed_entry_visible',any(x['id']==e['id'] for x in obs['personal']['items']))
@@ -364,13 +409,18 @@ def probe_models(config,out):
         results[role]=complete(config['models'],request,execute=True)['metadata']
         atomic_json(path,results)
 def main():
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['plan','run','resume','judge','report']);p.add_argument('--config',type=Path);p.add_argument('--out',type=Path);p.add_argument('--execute',action='store_true');p.add_argument('--reviewed-pack-sha');a=p.parse_args()
+    global SUITE
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['plan','run','resume','judge','report']);p.add_argument('--suite',choices=['contract-v2','legacy'],default='contract-v2');p.add_argument('--config',type=Path);p.add_argument('--out',type=Path);p.add_argument('--execute',action='store_true');p.add_argument('--reviewed-pack-sha');a=p.parse_args()
+    SUITE=a.suite
+    if SUITE=='legacy' and a.action in {'run','resume','judge'}:raise StopRun('旧版场景仅供离线对照和历史报告，不用于 contract-v2 实验')
     if a.action=='plan':print(json.dumps({'status':'offline_plan','pack_sha':pack_digest(),'cases':len(manifest('cases.json')),'steps':manifest('steps.json')},ensure_ascii=False,indent=2));return
     if not a.out:p.error('--out required')
-    if a.action=='report':print(json.dumps(report(a.out),ensure_ascii=False));return
+    if a.action=='report':
+        SUITE=read_json(a.out/'checkpoint.json').get('suite','legacy')
+        print(json.dumps(report(a.out),ensure_ascii=False));return
     require_review(a.execute,a.reviewed_pack_sha)
     if not a.config:p.error('--config required')
-    config=read_json(a.config)
+    config=read_json(a.config);config['suite']=SUITE
     if a.action=='judge':judge(config,a.out,a.execute,a.reviewed_pack_sha);return
     required={s['actor'] for s in manifest('steps.json')}|{'member'}
     if required-set(config['accounts']):raise StopRun('完整运行缺少账号配置：'+','.join(sorted(required-set(config['accounts']))))

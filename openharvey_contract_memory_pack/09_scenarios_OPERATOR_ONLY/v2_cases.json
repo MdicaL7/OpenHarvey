@@ -1,0 +1,257 @@
+[
+  {
+    "case_id": "V2-BOUNDARY",
+    "layers": [
+      "L0",
+      "L1"
+    ],
+    "point": "新团队空状态及作用范围",
+    "category": "V2-BOUNDARY",
+    "step_ids": [
+      "V2-S001",
+      "V2-S002"
+    ],
+    "expected": "Team+Agent+User 必须隔离；角色权限和历史数据不混入",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [],
+    "source_anchors": [],
+    "require_no_assumption_about_model_verdict": true
+  },
+  {
+    "case_id": "V2-CASE",
+    "layers": [
+      "L0",
+      "L1"
+    ],
+    "point": "风险卡片真实反馈到处置案例",
+    "category": "V2-CASE",
+    "step_ids": [
+      "V2-S003",
+      "V2-S004",
+      "V2-S005"
+    ],
+    "expected": "保留60天、20%和项目限制；保存反馈不等于批准或执行",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [
+      "V2-S004",
+      "V2-S005"
+    ],
+    "source_anchors": [
+      "H01-C01",
+      "H01-C05",
+      "F01-C01",
+      "F01-C05"
+    ],
+    "require_no_assumption_about_model_verdict": true
+  },
+  {
+    "case_id": "V2-LEVELS",
+    "layers": [
+      "L1",
+      "L2"
+    ],
+    "point": "不同合同案例到方法候选",
+    "category": "V2-LEVELS",
+    "step_ids": [
+      "V2-S006",
+      "V2-S010",
+      "V2-S011"
+    ],
+    "expected": "单案例不生成L2；两个不同空间或明确复用依据才可生成；确认前不生效",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [
+      "V2-S010"
+    ],
+    "source_anchors": [
+      "H01-C01",
+      "H01-C05",
+      "F01-C01",
+      "F01-C05"
+    ],
+    "require_no_assumption_about_model_verdict": true
+  },
+  {
+    "case_id": "V2-RECALL",
+    "layers": [
+      "L1",
+      "L2"
+    ],
+    "point": "新合同真实召回历史处置",
+    "category": "V2-RECALL",
+    "step_ids": [
+      "V2-S007",
+      "V2-S008",
+      "V2-S009"
+    ],
+    "expected": "新合同不附历史材料；实际返回案例版本、条件、差异和可访问来源",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [
+      "V2-S008"
+    ],
+    "source_anchors": [
+      "H01-C01",
+      "H01-C05",
+      "F01-C01",
+      "F01-C05"
+    ],
+    "require_no_assumption_about_model_verdict": true
+  },
+  {
+    "case_id": "V2-PREFERENCE",
+    "layers": [
+      "L1",
+      "L3"
+    ],
+    "point": "长期报告格式及称呼分别形成约定",
+    "category": "V2-PREFERENCE",
+    "step_ids": [
+      "V2-S012",
+      "V2-S013",
+      "V2-S014",
+      "V2-S015",
+      "V2-S016"
+    ],
+    "expected": "两条独立个人L3，不进入L2，正文无确认流程说明",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [
+      "V2-S012",
+      "V2-S016"
+    ],
+    "source_anchors": [],
+    "require_no_assumption_about_model_verdict": true
+  },
+  {
+    "case_id": "V2-TEMPORARY",
+    "layers": [
+      "L1",
+      "L2",
+      "L3"
+    ],
+    "point": "临时风格和助手复述排除",
+    "category": "V2-TEMPORARY",
+    "step_ids": [
+      "V2-S017",
+      "V2-S018"
+    ],
+    "expected": "本次三句和临时称呼不进入长期候选；助手自述不是用户来源",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [
+      "V2-S017"
+    ],
+    "source_anchors": [],
+    "require_no_assumption_about_model_verdict": true
+  },
+  {
+    "case_id": "V2-UPDATE",
+    "layers": [
+      "L1",
+      "L2"
+    ],
+    "point": "撤回与来源失效",
+    "category": "V2-UPDATE",
+    "step_ids": [
+      "V2-S019",
+      "V2-S020",
+      "V2-S021"
+    ],
+    "expected": "待处理退出有效案例；依赖旧处置的正式经验退出召回，历史版本保留",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [
+      "V2-S019"
+    ],
+    "source_anchors": [
+      "H01-C01",
+      "H01-C05",
+      "F01-C01",
+      "F01-C05"
+    ],
+    "require_no_assumption_about_model_verdict": true
+  },
+  {
+    "case_id": "V2-PROTECTION",
+    "layers": [
+      "L2",
+      "L3"
+    ],
+    "point": "人工修改删除保护",
+    "category": "V2-PROTECTION",
+    "step_ids": [
+      "V2-S022",
+      "V2-S023",
+      "V2-S024",
+      "V2-S025"
+    ],
+    "expected": "人工修改不被覆盖；版本冲突409；删除后同来源不重生",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [
+      "V2-S025"
+    ],
+    "source_anchors": [],
+    "require_no_assumption_about_model_verdict": true
+  },
+  {
+    "case_id": "V2-RELIABILITY",
+    "layers": [
+      "L0",
+      "L1",
+      "L2",
+      "L3"
+    ],
+    "point": "持久化、可靠性与人工核验",
+    "category": "V2-RELIABILITY",
+    "step_ids": [
+      "V2-S026",
+      "V2-S027"
+    ],
+    "expected": "记录真实服务状态及权限检查；没有操作员证据不能判通过",
+    "forbidden": [
+      "助手宣称保存就算通过",
+      "伪造来源或审批",
+      "直接灌入金标"
+    ],
+    "source_mapping": "已解析原文段落+真实报告风险ID+反馈版本+对话步骤",
+    "source_steps": [],
+    "source_anchors": [],
+    "require_no_assumption_about_model_verdict": true
+  }
+]

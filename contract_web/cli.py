@@ -16,7 +16,7 @@ def runtime_config(shared, binding_dir=None):
     return {"$schema": "https://opencode.ai/config.json", "default_agent": "contract",
             "share": "disabled", "autoupdate": False, "snapshot": False,
             "plugin": [(shared / "plugins/request-params.js").as_uri()] +
-                      ([[str((shared / "plugins/tencentdb-memory.js").as_uri()), {"bindingDirectory": str(binding_dir)}]] if binding_dir else []),
+                      ([[str((shared / "plugins/tencentdb-memory.js").as_uri()), {"bindingDirectory": str(binding_dir), "precedentScript": str(shared/"scripts/recall_precedents.py")}]] if binding_dir else []),
             "compaction": {"auto": True, "prune": False},
             "skills": {"paths": [str(shared / "skills")]},
             "agent": {"contract": {"mode": "primary", "description": "合同工作台助手",

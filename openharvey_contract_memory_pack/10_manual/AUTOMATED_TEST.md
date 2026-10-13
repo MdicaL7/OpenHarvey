@@ -84,3 +84,11 @@ python3 07_tools/snapshot_memory.py --config /path/private/run.json --team-id AC
 文书构建使用 documents 技能指定的 bundled Python：`build_pack_v2.py` 生成 DOCX／TXT 和来源索引，再用 `build_scenarios_v2.py` 生成统一步骤及手册。任何重建后必须重新审查哈希。
 
 `render_pack.py` 使用 bundled `render_docx.py` 与 LibreOffice，参数显式指定 bundled Python、renderer、字体目录和包外 QA 输出目录。中文正文采用 Arial Unicode MS，清理主题字体覆盖；本机 QA 使用现有系统 Unicode 字体及 bundled 字体目录，显式配置 Fontconfig 后逐页检查，不以 DOCX 文字抽取替代视觉检查。
+
+## contract-v2 分层变更
+
+默认 `plan/run/resume/judge` 使用 v2_steps/v2_cases；原156步路径保留为 legacy 离线对照，不能在新版系统真实执行。新版人工步骤见 CONTRACT_V2.md。新版先运行正常审查，再保存 EX-PAY 真实反馈；不能直接调用 Core 捕获或写数据库灌入案例。反馈等待同步与真实队列完成，来源快照包含 review_events/review_cases/preference_statements。
+
+现有条款没有60天账期，操作脚本中的60天是用户拟调整的附条件处理意见，原文和执行状态必须分别判断。不得为了制造风险而把未命中改成命中。模糊报告/候选会暂停。
+
+Core/应用必须同时升级到 contract-v2；此包不是对运行中的旧服务进行无提示升级。真实运行仍需审查后的当前包哈希。声明格式、源码和 Schema 变更都会使旧哈希失效。

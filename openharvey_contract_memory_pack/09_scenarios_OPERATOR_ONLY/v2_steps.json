@@ -1,0 +1,326 @@
+[
+  {
+    "step_id": "V2-S001",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-BOUNDARY"
+    ],
+    "action": "create_team",
+    "name": "合同处置 v2 验收"
+  },
+  {
+    "step_id": "V2-S002",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-BOUNDARY"
+    ],
+    "action": "assert_empty"
+  },
+  {
+    "step_id": "V2-S003",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-CASE"
+    ],
+    "action": "upload_contract",
+    "workspace": "H01",
+    "input_id": "H01"
+  },
+  {
+    "step_id": "V2-S004",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-CASE"
+    ],
+    "action": "message",
+    "workspace": "H01",
+    "text": "我方是供货方。请完整读取并审查这份合同，按当前风险方案逐项检查，保存完整风险审查报告。"
+  },
+  {
+    "step_id": "V2-S005",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-CASE"
+    ],
+    "action": "risk_feedback",
+    "workspace": "H01",
+    "risk_id": "EX-PAY",
+    "decision": "接受风险",
+    "note": "现稿付款期限仍以原文为准。若本项目拟将尾款账期调整为60天，我方作为供货方可接受的条件是20%预付款，仅限本项目；这是附条件处理意见，未核验实际修订、批准或执行。"
+  },
+  {
+    "step_id": "V2-S006",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-LEVELS"
+    ],
+    "action": "snapshot",
+    "workspace": "H01",
+    "expect_no_experience": true
+  },
+  {
+    "step_id": "V2-S007",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-RECALL"
+    ],
+    "action": "upload_contract",
+    "workspace": "F01",
+    "input_id": "F01"
+  },
+  {
+    "step_id": "V2-S008",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-RECALL"
+    ],
+    "action": "message",
+    "workspace": "F01",
+    "text": "我方是供货方。请完整读取并审查当前合同、保存风险报告。对风险项按需查找历史处置，并说明适用条件和本次差异；结论须有当前原文依据。"
+  },
+  {
+    "step_id": "V2-S009",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-RECALL"
+    ],
+    "action": "precedent_check",
+    "workspace": "F01",
+    "risk_id": "EX-PAY",
+    "expect_matches": true
+  },
+  {
+    "step_id": "V2-S010",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-LEVELS"
+    ],
+    "action": "risk_feedback",
+    "workspace": "F01",
+    "risk_id": "EX-PAY",
+    "decision": "要求修改",
+    "note": "若本项目拟延长为60天账期，我方作为供货方要求增加银行保函保障后再评估；本项目采用保函，不照搬其他项目的20%预付款方案。现稿期限和实际修订状态仍须核验。"
+  },
+  {
+    "step_id": "V2-S011",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-LEVELS"
+    ],
+    "action": "candidate_action",
+    "workspace": "F01",
+    "operation": "confirm",
+    "entry_alias": "payment-method",
+    "selector": {
+      "kind": "experience",
+      "contains": "付款"
+    }
+  },
+  {
+    "step_id": "V2-S012",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PREFERENCE"
+    ],
+    "action": "message",
+    "workspace": "F01",
+    "text": "以后所有合同报告先给结论，再分点说明。今后请称呼我为大哥。"
+  },
+  {
+    "step_id": "V2-S013",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PREFERENCE"
+    ],
+    "action": "candidate_action",
+    "workspace": "F01",
+    "operation": "confirm",
+    "entry_alias": "report-style",
+    "selector": {
+      "kind": "preference",
+      "contains": "结论"
+    }
+  },
+  {
+    "step_id": "V2-S014",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PREFERENCE"
+    ],
+    "action": "candidate_action",
+    "workspace": "F01",
+    "operation": "confirm",
+    "entry_alias": "address",
+    "selector": {
+      "kind": "preference",
+      "contains": "大哥"
+    }
+  },
+  {
+    "step_id": "V2-S015",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PREFERENCE"
+    ],
+    "action": "new_thread",
+    "workspace": "F01"
+  },
+  {
+    "step_id": "V2-S016",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PREFERENCE"
+    ],
+    "action": "message",
+    "workspace": "F01",
+    "text": "请简要说明这份合同下一步应关注什么。"
+  },
+  {
+    "step_id": "V2-S017",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-TEMPORARY"
+    ],
+    "action": "message",
+    "workspace": "F01",
+    "text": "这次回复只写三句话，这次叫我同事即可。"
+  },
+  {
+    "step_id": "V2-S018",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-TEMPORARY"
+    ],
+    "action": "snapshot",
+    "workspace": "F01"
+  },
+  {
+    "step_id": "V2-S019",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-UPDATE"
+    ],
+    "action": "risk_feedback",
+    "workspace": "H01",
+    "risk_id": "EX-PAY",
+    "decision": "待处理",
+    "note": "撤回之前的接受意见，等待重新核对。"
+  },
+  {
+    "step_id": "V2-S020",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-UPDATE"
+    ],
+    "action": "precedent_check",
+    "workspace": "F01",
+    "risk_id": "EX-PAY",
+    "expect_matches": false
+  },
+  {
+    "step_id": "V2-S021",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-UPDATE"
+    ],
+    "action": "snapshot",
+    "workspace": "F01"
+  },
+  {
+    "step_id": "V2-S022",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PROTECTION"
+    ],
+    "action": "entry_action",
+    "workspace": "F01",
+    "entry_alias": "report-style",
+    "operation": "update",
+    "title": "报告结构",
+    "content": "合同报告先给结论，再列原文证据与建议。",
+    "conditions": [
+      "长期合同报告"
+    ],
+    "exceptions": [
+      "用户本次明确要求优先"
+    ],
+    "stale_check": true
+  },
+  {
+    "step_id": "V2-S023",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PROTECTION"
+    ],
+    "action": "entry_action",
+    "workspace": "F01",
+    "entry_alias": "address",
+    "operation": "delete"
+  },
+  {
+    "step_id": "V2-S024",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PROTECTION"
+    ],
+    "action": "new_thread",
+    "workspace": "F01"
+  },
+  {
+    "step_id": "V2-S025",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-PROTECTION"
+    ],
+    "action": "message",
+    "workspace": "F01",
+    "text": "请按我的长期工作约定简要总结当前合同，不要重新采用已删除的称呼。"
+  },
+  {
+    "step_id": "V2-S026",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-RELIABILITY"
+    ],
+    "action": "operator_checkpoint",
+    "workspace": "F01",
+    "checkpoint": "v2-restart",
+    "instruction": "在隔离验收环境重启应用与组件后确认案例版本、正式约定和删除标记仍保留；填写 operator_evidence。"
+  },
+  {
+    "step_id": "V2-S027",
+    "actor": "owner",
+    "team": "v2-main",
+    "case_ids": [
+      "V2-RELIABILITY"
+    ],
+    "action": "snapshot",
+    "workspace": "F01"
+  }
+]

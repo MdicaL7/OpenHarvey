@@ -1,3 +1,4 @@
+import {loadPrecedents} from './precedents.js';
 import {setupMemorySuggestions} from './memory-suggestions.js';
 import {configureModelValue,modelOptionsHTML,modelUsable,availableModel} from './model-picker.js';
 import {accountLanguage} from './language-ui.js';
@@ -188,7 +189,7 @@ async function refreshWorkspace(){
   if(view!==epoch)return;
   for(const t of fresh.threads){const old=workspace.threads.find(row=>row.id===t.id);if(old){t.activity=old.activity;t.completion_id=old.completion_id;}}
   workspace=fresh;renderWorkspace();
-  if(!artifactId&&!artifactLoadingId&&workspace.artifacts.length&&document.activeElement!==$('input'))background(openArtifact(workspace.artifacts[0].id,false,false),view);
+  if(!artifactId&&!artifactLoadingId&&workspace.artifacts.length&&document.activeElement!==$('input'))background(openArtifact(workspace.artifacts.find(a=>a.id===new URLSearchParams(location.search).get('artifact'))?.id||workspace.artifacts[0].id,false,false),view);
 }
 
 let activityPolling=false,lastActivityPoll=0,activityWorkspace=null;
@@ -356,7 +357,7 @@ async function selectThread(id){
   background(restore(view,false),view);
   background(loadModels(),view);
   if(!source&&workspace.document_id)background(loadSource(workspace.document_id),view);
-  if(!artifactId&&workspace.artifacts.length)background(openArtifact(workspace.artifacts[0].id,false,false),view);
+  if(!artifactId&&workspace.artifacts.length)background(openArtifact(workspace.artifacts.find(a=>a.id===new URLSearchParams(location.search).get('artifact'))?.id||workspace.artifacts[0].id,false,false),view);
 }
 
 async function restore(view=epoch,refreshWorkspaceData=true){
@@ -601,6 +602,8 @@ async function openArtifact(id,asCompare=false,reveal=true){
   if(asCompare){compareId=id;$('compareColumn').hidden=false;$('compareBody').innerHTML=artifactHTML(data,state.documents,tid,state.materials_enabled);$('compareSelect').title=data.title;}
   else{artifactId=id;$('artBody').innerHTML=artifactHTML(data,state.documents,tid,state.materials_enabled);$('artifactTitle').textContent=data.title;
     $('artifactDownloads').innerHTML=(data.formats||['md','docx']).map(f=>ui`<a href="/api/artifacts/${id}/file?format=${f}">下载 ${f==='docx'?'Word':f.toUpperCase()}</a>`).join('');}
+  void loadPrecedents(host,()=>view===epoch&&load===(asCompare?compareEpoch:artifactEpoch));
+  const sourceParams=new URLSearchParams(location.search);if(sourceParams.get('artifact')===id){const card=host.querySelector(`[data-risk-id="${CSS.escape(sourceParams.get('risk')||'')}"]`);if(card){card.querySelector('.risk-feedback').open=true;card.scrollIntoView({block:'center'});}}
   renderArtifactPicker();$('artifactMore').open=false;
   if(reveal){document.body.classList.add('context-mobile');document.querySelector('main').classList.remove('context-closed');}
 }
@@ -887,7 +890,8 @@ document.addEventListener('click',protect(async e=>{
   if(b.dataset.quoteOpen!==undefined){const q=quotes.get()[Number(b.dataset.quoteOpen)];await navigateCitation(q.document_id,q.block_ids[0],q.source_hash);}
   if(b.dataset.doc)await navigateCitation(b.dataset.doc,b.dataset.block,b.dataset.hash,b.dataset.end||b.dataset.block);
   const board=b.closest('[data-risk-board]'),data=board&&artifactData.get(board.dataset.riskBoard);
-  if(data&&b.dataset.riskFilterChoice){board.outerHTML=riskBoard(data,state.documents,b.dataset.riskFilterChoice);}
+  if(data&&b.dataset.memorySyncRetry){b.disabled=true;try{await api('/api/contract-memory/sync-retry',{method:'POST',body:{event_id:b.dataset.memorySyncRetry}});await openArtifact(data.id);notice('同步已重新排队，原反馈保持已保存。');}finally{b.disabled=false;}}
+  if(data&&b.dataset.riskFilterChoice){board.outerHTML=riskBoard(data,state.documents,b.dataset.riskFilterChoice);void loadPrecedents($('artBody'));}
   if(b.dataset.permission)await submitRequest('permission',b.dataset.permission,{reply:b.dataset.reply},b.closest('.request-card'));
 }));
 document.addEventListener('submit',async e=>{
@@ -896,8 +900,8 @@ document.addEventListener('submit',async e=>{
   const button=form.querySelector('[type="submit"]'),status=form.querySelector('.feedback-status');button.disabled=true;status.textContent=tr('正在保存…');
   try{
     const feedback=await api(`/api/artifacts/${data.id}/risks/${encodeURIComponent(rid)}/feedback`,{method:'PUT',body:{decision:form.elements.decision.value,note:form.elements.note.value,revision:Number(form.dataset.revision),source_hash:data.source_hash}});
-    if(view!==epoch)return;data.feedback={...data.feedback,[rid]:feedback};
-    board.outerHTML=riskBoard(data,state.documents,board.dataset.riskFilter);notice(tr('反馈已保存。'));
+    if(view!==epoch)return;data.feedback={...data.feedback,[rid]:feedback};data.memory_sync={...data.memory_sync,[rid]:feedback.memory_sync};
+    board.outerHTML=riskBoard(data,state.documents,board.dataset.riskFilter);void loadPrecedents($('artBody'),()=>view===epoch);notice(tr('反馈已保存。'));
   }catch(error){status.textContent=error.message;}
   finally{button.disabled=false;}
 });

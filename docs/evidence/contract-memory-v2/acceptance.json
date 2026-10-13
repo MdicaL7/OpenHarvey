@@ -1,0 +1,43 @@
+{
+  "status": "code_and_offline_validation_complete",
+  "prompt_version": "contract-v2",
+  "live_deployed": false,
+  "real_extraction_or_judge_executed": false,
+  "pack_sha": "3f301503aaef1e654a948e02973df6699f38c0ddf4230787d399d492e22d4d68",
+  "checks": {
+    "full_python_regression": {
+      "pass": 359,
+      "note": "full run followed by focused latest-change tests"
+    },
+    "latest_precedent_tests": {
+      "pass": 10
+    },
+    "membership_regression": {
+      "pass": 8
+    },
+    "frontend": {
+      "pass": 158
+    },
+    "core": {
+      "pass": 27
+    },
+    "proxy_cache": {
+      "pass": 2,
+      "note": "actual pipeline resolver, telemetry isolated with noop"
+    },
+    "pack_tools": {
+      "pass": 32
+    },
+    "pack_integrity": {
+      "pass": 1416
+    },
+    "type_check": "pass",
+    "plugin_and_redline_build": "pass",
+    "visual_dark_light": "pass"
+  },
+  "limits": [
+    "Full v2 contract experiment awaits reviewed test package",
+    "Existing services were not restarted or migrated",
+    "Cross-language and full upstream Proxy dependency build not part of focused local checks"
+  ]
+}

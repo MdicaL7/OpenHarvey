@@ -52,6 +52,18 @@ for st in stages:
  for iid in st['allowed_history_input_ids']:
   check(iid in imap and imap[iid]['available_at']<=st['as_of'],'future stage leak '+iid);check((R/imap[iid]['path']).is_file(),'missing input '+iid)
  check('组织L3' not in st['isolation'],'outdated organization-L3 description')
+v2cases=manifest('v2_cases.json');v2steps=manifest('v2_steps.json')
+v2ids={c['case_id'] for c in v2cases};v2sids={t['step_id'] for t in v2steps}
+check(len(v2cases)==9 and len(v2steps)==27,'v2 suite census')
+check(len(v2ids)==len(v2cases) and len(v2sids)==len(v2steps),'v2 IDs unique')
+for c in v2cases:
+ check(set(c['step_ids'])<=v2sids and bool(c['step_ids']),'v2 step mapping '+c['case_id'])
+ check(set(c['source_anchors'])<=anchors,'v2 clause mapping '+c['case_id'])
+ check(set(c['source_steps'])<=v2sids,'v2 dialogue/feedback source '+c['case_id'])
+for t in v2steps:
+ check(set(t['case_ids'])<=v2ids,'v2 case mapping '+t['step_id'])
+ if t.get('input_id'):check(t['input_id'] in imap,'v2 input '+t['step_id'])
+ if t['action']=='risk_feedback':check(t['risk_id']=='EX-PAY' and bool(t['note']),'v2 real feedback operation')
 cases=manifest('cases.json');steps=manifest('steps.json');coverage=manifest('clause_coverage.json');categories=manifest('categories.json');dialogues=manifest('dialogues.json')
 check(len({c['case_id'] for c in cases})==len(cases),'duplicate case IDs');check(len({s['step_id'] for s in steps})==len(steps),'duplicate steps')
 caseids={c['case_id'] for c in cases};stepids={s['step_id'] for s in steps};allanchors=anchors|set(dialogues)
@@ -74,5 +86,5 @@ checksum=R/'SHA256SUMS'
 if checksum.exists():
  for line in checksum.read_text().splitlines():
   digest,name=line.split('  ',1);p=R/name;check(p.exists() and hashlib.sha256(p.read_bytes()).hexdigest()==digest,'checksum mismatch '+name)
-report={'result':'PASS' if not errors else 'FAIL','checks':checks,'contracts':len(contracts),'clauses':154,'source_events':len(events),'original_queries':24,'cases':len(cases),'steps':len(steps),'categories':len(categories),'pack_sha':pack_digest(),'errors':errors,'scope':'Offline materials/manifests only. No real model, application upload, extraction, publication or judge run.'}
+report={'result':'PASS' if not errors else 'FAIL','checks':checks,'contracts':len(contracts),'clauses':154,'source_events':len(events),'original_queries':24,'contract_v2_cases':len(v2cases),'contract_v2_steps':len(v2steps),'cases':len(cases),'steps':len(steps),'categories':len(categories),'pack_sha':pack_digest(),'errors':errors,'scope':'Offline materials/manifests only. No real model, application upload, extraction, publication or judge run.'}
 print(json.dumps(report,ensure_ascii=False,indent=2));sys.exit(bool(errors))
