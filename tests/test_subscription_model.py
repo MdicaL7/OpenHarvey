@@ -4,6 +4,9 @@ from types import SimpleNamespace
 import threading
 import unittest
 import subprocess
+import socket
+import time
+from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import patch
 
 import httpx
@@ -170,6 +173,150 @@ class SubscriptionModelTests(unittest.TestCase):
                 self.assertEqual(len(invocations), 1)
         finally:
             server.shutdown();server.server_close();thread.join()
+
+
+class SubscriptionAdmissionTests(unittest.TestCase):
+    def setUp(self):
+        self.config = {'subscription_models': ['gpt-6.1-sol'], 'bridge_token': 'x'*40,
+                       'concurrency': 2, 'queue_capacity': 2,
+                       'queue_wait_timeout_seconds': 1, 'request_timeout_seconds': 2}
+        self.server = None
+
+    def tearDown(self):
+        if self.server:
+            self.server.shutdown();self.server.server_close();self.thread.join()
+
+    def start(self, infer, **options):
+        self.server = make_server({**self.config, **options}, port=0, infer=infer)
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True);self.thread.start()
+
+    def post(self, name='test', stream=False):
+        with httpx.Client(trust_env=False, timeout=4) as client:
+            return client.post('http://127.0.0.1:'+str(self.server.server_port)+'/v1/chat/completions',
+                headers={'Authorization': 'Bearer '+self.config['bridge_token']},
+                json={'model': 'gpt-6.1-sol', 'messages': [{'role': 'user', 'content': name}], 'stream': stream})
+
+    def wait_state(self, **expected):
+        end = time.monotonic()+2
+        while time.monotonic()<end:
+            state = self.server.admission.snapshot()
+            if all(state[k]==v for k,v in expected.items()):return state
+            time.sleep(.005)
+        self.fail('Admission state did not settle: '+str(self.server.admission.snapshot()))
+
+    @staticmethod
+    def answer():
+        return {'id':'test','created':0,'model':'gpt-6.1-sol','object':'chat.completion',
+                'choices':[{'index':0,'message':{'role':'assistant','content':'OK'},'finish_reason':'stop'}]}
+
+    def test_third_request_queues_with_two_running_and_executes_once(self):
+        release=threading.Event();calls=[]
+        def infer(body,cfg):
+            calls.append(body['messages'][0]['content'])
+            release.wait(2)
+            return self.answer()
+        self.start(infer)
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            first=pool.submit(self.post,'one');second=pool.submit(self.post,'two')
+            self.wait_state(running=2)
+            third=pool.submit(self.post,'three');self.wait_state(queued=1)
+            self.assertEqual(len(calls),2)
+            release.set()
+            self.assertEqual([f.result().status_code for f in [first,second,third]],[200]*3)
+        self.assertCountEqual(calls,['one','two','three'])
+        self.wait_state(running=0,queued=0,inference_started=3)
+
+    def test_queue_full_rejects_without_inference_and_recovers(self):
+        release=threading.Event();calls=[]
+        def infer(body,cfg):
+            calls.append(body['messages'][0]['content']);release.wait(2);return self.answer()
+        self.start(infer,concurrency=1,queue_capacity=1)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            a=pool.submit(self.post,'one');self.wait_state(running=1)
+            b=pool.submit(self.post,'two');self.wait_state(queued=1)
+            rejected=self.post('not-executed')
+            self.assertEqual(rejected.status_code,429)
+            self.assertEqual(rejected.headers['Retry-After'],'2')
+            self.assertFalse(rejected.json()['error']['inference_started'])
+            release.set();self.assertEqual(a.result().status_code,200);self.assertEqual(b.result().status_code,200)
+        self.assertEqual(self.post('after').status_code,200)
+        self.assertNotIn('not-executed',calls)
+        self.wait_state(running=0,queued=0)
+
+    def test_queue_timeout_does_not_run_or_replay(self):
+        release=threading.Event();calls=[]
+        def infer(body,cfg):
+            calls.append(body['messages'][0]['content']);release.wait(2);return self.answer()
+        self.start(infer,concurrency=1,queue_wait_timeout_seconds=.05)
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            first=pool.submit(self.post,'one');self.wait_state(running=1)
+            r=self.post('expired')
+            self.assertEqual(r.status_code,503)
+            self.assertEqual(r.json()['error']['type'],'bridge_queue_timeout')
+            self.assertIn('Retry-After',r.headers)
+            release.set();self.assertEqual(first.result().status_code,200)
+        self.assertEqual(calls,['one']);self.wait_state(running=0,queued=0)
+
+    def test_inference_exception_releases_capacity_without_replay(self):
+        calls=[]
+        def infer(body,cfg):
+            calls.append(body['messages'][0]['content'])
+            if len(calls)==1:raise SubscriptionError('synthetic inference error')
+            return self.answer()
+        self.start(infer,concurrency=1)
+        self.assertEqual(self.post('first').status_code,503)
+        self.assertEqual(self.post('second').status_code,200)
+        self.assertEqual(calls,['first','second']);self.wait_state(running=0)
+
+    def raw_request(self):
+        body=json.dumps({'model':'gpt-6.1-sol','messages':[]}).encode()
+        sock=socket.create_connection(('127.0.0.1',self.server.server_port))
+        sock.sendall(('POST /v1/chat/completions HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer '+self.config['bridge_token']+'\r\nContent-Length: '+str(len(body))+'\r\n\r\n').encode()+body)
+        return sock
+
+    def test_queued_disconnect_removes_waiter_without_running(self):
+        release=threading.Event();calls=[]
+        def infer(body,cfg):
+            calls.append(1);release.wait(2);return self.answer()
+        self.start(infer,concurrency=1)
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            first=pool.submit(self.post);self.wait_state(running=1)
+            sock=self.raw_request();self.wait_state(queued=1);sock.close()
+            self.wait_state(queued=0);release.set();self.assertEqual(first.result().status_code,200)
+        self.assertEqual(len(calls),1);self.wait_state(running=0)
+
+    def test_running_disconnect_holds_slot_until_inference_ends(self):
+        release=threading.Event()
+        def infer(body,cfg):release.wait(2);return self.answer()
+        self.start(infer,concurrency=1)
+        sock=self.raw_request();self.wait_state(running=1,inference_started=1);sock.close()
+        self.assertEqual(self.server.admission.snapshot()['running'],1)
+        release.set();self.wait_state(running=0,queued=0)
+        self.assertEqual(self.post('after').status_code,200)
+
+    def test_queue_time_is_subtracted_from_inference_budget_and_sse_survives(self):
+        release=threading.Event();timeouts=[]
+        def infer(body,cfg):
+            timeouts.append(cfg['timeout_seconds']);release.wait(2);return self.answer()
+        self.start(infer,concurrency=1,request_timeout_seconds=.8)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            a=pool.submit(self.post);self.wait_state(running=1)
+            b=pool.submit(self.post,'queued',True);self.wait_state(queued=1)
+            time.sleep(.06);release.set();a.result();r=b.result()
+        self.assertEqual(r.status_code,200);self.assertIn('data: [DONE]',r.text)
+        self.assertLess(timeouts[1],timeouts[0]-.04)
+        self.assertIn('x-bridge-request-id',r.headers)
+
+    def test_inference_timeout_restores_capacity(self):
+        calls=[]
+        def infer(body,cfg):
+            calls.append(1)
+            if len(calls)==1:raise subprocess.TimeoutExpired('synthetic',cfg['timeout_seconds'])
+            return self.answer()
+        self.start(infer,concurrency=1)
+        self.assertEqual(self.post().status_code,503)
+        self.assertEqual(self.post().status_code,200)
+        self.wait_state(running=0,queued=0)
 
 
 if __name__ == '__main__':

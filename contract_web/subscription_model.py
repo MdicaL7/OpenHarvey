@@ -5,9 +5,13 @@ Each inference has a fresh temporary session, with no repository or plugins.
 """
 import hmac
 import json
+import math
 import os
+from collections import deque
 from pathlib import Path
+import select
 import shutil
+import socket
 import subprocess
 import tempfile
 import threading
@@ -180,11 +184,87 @@ def stream_chunks(response):
         yield {**common, 'choices': [], 'usage': response['usage']}
 
 
+class AdmissionRejected(Exception):
+    def __init__(self, reason, status):
+        self.reason, self.status = reason, status
+
+
+class InferenceAdmission:
+    """Bounded FIFO admission; never releases a running inference on disconnect."""
+    def __init__(self, concurrency, capacity, emit):
+        self.concurrency, self.capacity, self.emit = concurrency, capacity, emit
+        self.condition = threading.Condition()
+        self.waiters = deque()
+        self.active = self.started = self.rejected = self.timed_out = 0
+
+    def snapshot(self):
+        with self.condition:
+            return {'running': self.active, 'queued': len(self.waiters),
+                    'concurrency': self.concurrency, 'queue_capacity': self.capacity,
+                    'inference_started': self.started, 'queue_rejected': self.rejected,
+                    'queue_timed_out': self.timed_out}
+
+    def acquire(self, request_id, deadline, disconnected):
+        with self.condition:
+            if disconnected():
+                raise AdmissionRejected('client_disconnected', 499)
+            if self.active < self.concurrency and not self.waiters:
+                self.active += 1
+                return
+            if len(self.waiters) >= self.capacity:
+                self.rejected += 1
+                raise AdmissionRejected('bridge_queue_full', 429)
+            self.waiters.append(request_id)
+            self.emit('queued', request_id, **self.snapshot())
+            try:
+                while True:
+                    if disconnected():
+                        raise AdmissionRejected('client_disconnected', 499)
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        self.timed_out += 1
+                        raise AdmissionRejected('bridge_queue_timeout', 503)
+                    if self.waiters[0] == request_id and self.active < self.concurrency:
+                        self.waiters.popleft()
+                        self.active += 1
+                        return
+                    self.condition.wait(min(remaining, .1))
+            finally:
+                if request_id in self.waiters:
+                    self.waiters.remove(request_id)
+                self.condition.notify_all()
+
+    def begin_inference(self):
+        with self.condition:
+            self.started += 1
+
+    def release(self):
+        with self.condition:
+            self.active -= 1
+            self.condition.notify_all()
+
+
 def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
     token = config['bridge_token']
     if not isinstance(token, str) or len(token) < 32:
         raise SubscriptionError('订阅桥接需要独立的本机访问凭据')
-    gate = threading.BoundedSemaphore(config.get('concurrency', 2))
+    concurrency, capacity = config.get('concurrency', 2), config.get('queue_capacity', 4)
+    queue_timeout = config.get('queue_wait_timeout_seconds', 20)
+    request_timeout = config.get('request_timeout_seconds', config.get('timeout_seconds', 240))
+    if type(concurrency) is not int or concurrency < 1 or type(capacity) is not int or capacity < 0:
+        raise ValueError('并发数必须为正整数，等待队列容量必须为非负整数')
+    if any(not isinstance(v, (int, float)) or isinstance(v, bool) or not math.isfinite(v) or v <= 0
+           for v in (queue_timeout, request_timeout)):
+        raise ValueError('排队及请求总超时必须为正的有限秒数')
+    log_lock = threading.Lock()
+
+    def emit(event, request_id, **fields):
+        # Only operational metadata; never headers, prompt text or CLI output.
+        with log_lock:
+            print(json.dumps({'event': 'subscription_bridge.' + event,
+                              'request_id': request_id, 'time': time.time(), **fields}), flush=True)
+
+    gate = InferenceAdmission(concurrency, capacity, emit)
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):
@@ -195,7 +275,10 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
             self.send_response(code)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Content-Length', str(len(data)))
+            if getattr(self, 'request_id', None):
+                self.send_header('x-bridge-request-id', self.request_id)
             self.end_headers()
+            self.response_started = True
             self.wfile.write(data)
 
         def authorized(self):
@@ -203,7 +286,8 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
 
         def do_GET(self):
             if self.path == '/health':
-                return self.reply(200, {'healthy': True, 'provider': 'codex-subscription-bridge', 'inference_verified': False})
+                return self.reply(200, {'healthy': True, 'provider': 'codex-subscription-bridge', 'inference_verified': False,
+                                        'admission': gate.snapshot()})
             if not self.authorized():
                 return self.reply(401, {'error': {'message': '桥接认证失败'}})
             if self.path == '/v1/models':
@@ -215,29 +299,65 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
                 return self.reply(401, {'error': {'message': '桥接认证失败'}})
             if self.path != '/v1/chat/completions':
                 return self.reply(404, {'error': {'message': '未知接口'}})
-            if not gate.acquire(blocking=False):
-                return self.reply(429, {'error': {'message': '订阅桥接繁忙，请稍后重试'}})
+            self.request_id = uuid.uuid4().hex
+            self.response_started = False
+            started = time.monotonic()
+            deadline = started + request_timeout
+            acquired = False
+            outcome = 'failed'
+            usage = None
+
+            def disconnected():
+                try:
+                    readable, _, _ = select.select([self.connection], [], [], 0)
+                    return bool(readable) and self.connection.recv(1, socket.MSG_PEEK) == b''
+                except (ConnectionError, OSError):
+                    return True
+
             try:
+                self.connection.settimeout(min(10, request_timeout))
                 n = int(self.headers.get('Content-Length', 0))
                 if not 0 < n <= 8_000_000:
                     return self.reply(413, {'error': {'message': '请求大小无效'}})
                 body = json.loads(self.rfile.read(n))
                 if not isinstance(body, dict):
                     return self.reply(400, {'error': {'message': '请求格式无效'}})
+                if body.get('model') not in [*config['subscription_models'], *config.get('passthrough_models', [])]:
+                    return self.reply(400, {'error': {'message': '模型不在本机桥接配置中'}})
+                gate.acquire(self.request_id, min(deadline, time.monotonic() + queue_timeout), disconnected)
+                acquired = True
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise AdmissionRejected('bridge_queue_timeout', 503)
+                if disconnected():
+                    raise AdmissionRejected('client_disconnected', 499)
+                # Queue time consumes the same deadline as inference. No replay:
+                # once infer starts its slot stays held until it actually ends.
+                request_config = {**config, 'timeout_seconds': min(config.get('timeout_seconds', 240), remaining)}
+                gate.begin_inference()
+                emit('started', self.request_id, model=body.get('model'),
+                     queue_ms=round((time.monotonic() - started) * 1000), **gate.snapshot())
                 if body.get('model') in config['subscription_models']:
-                    response = infer(body, config)
+                    response = infer(body, request_config)
+                    usage = {k: v for k, v in (response.get('usage') or {}).items()
+                             if k in {'prompt_tokens', 'completion_tokens', 'total_tokens'}
+                             and isinstance(v, (int, float))}
                     if not body.get('stream'):
+                        outcome = 'completed'
                         return self.reply(200, response)
                     self.send_response(200)
                     self.send_header('Content-Type', 'text/event-stream')
+                    self.send_header('x-bridge-request-id', self.request_id)
                     self.end_headers()
+                    self.response_started = True
                     for chunk in stream_chunks(response):
                         self.wfile.write(('data: '+json.dumps(chunk, ensure_ascii=False)+'\n\n').encode())
                         self.wfile.flush()
                     self.wfile.write(b'data: [DONE]\n\n')
+                    outcome = 'completed'
                 elif body.get('model') in config.get('passthrough_models', []):
                     # Explicit DeepSeek selection keeps its original HTTP/SSE protocol.
-                    with httpx.Client(timeout=config.get('timeout_seconds', 240), trust_env=False) as client:
+                    with httpx.Client(timeout=request_config['timeout_seconds'], trust_env=False) as client:
                         with client.stream('POST', config['passthrough_url'], json=body,
                                            headers={'Authorization': 'Bearer '+config['passthrough_key']}) as response:
                             if response.is_error:
@@ -245,20 +365,40 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
                             self.send_response(response.status_code)
                             self.send_header('Content-Type', response.headers.get('Content-Type', 'application/json'))
                             self.end_headers()
+                            self.response_started = True
                             for chunk in response.iter_bytes():
                                 self.wfile.write(chunk)
                                 self.wfile.flush()
+                            outcome = 'completed'
                 else:
                     self.reply(400, {'error': {'message': '模型不在本机桥接配置中'}})
+            except AdmissionRejected as e:
+                outcome = e.reason
+                if e.status != 499:
+                    data = json.dumps({'error': {'message': e.reason, 'type': e.reason,
+                                                 'inference_started': False}}).encode()
+                    self.send_response(e.status)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Content-Length', str(len(data)))
+                    self.send_header('Retry-After', '2')
+                    self.send_header('x-bridge-request-id', self.request_id)
+                    self.end_headers()
+                    self.wfile.write(data)
             except SubscriptionError as e:
                 self.reply(503, {'error': {'message': str(e)}})
             except (BrokenPipeError, ConnectionResetError):
-                pass
+                outcome = 'client_disconnected'
             except (ValueError, KeyError, TypeError):
                 self.reply(400, {'error': {'message': '请求或结构化结果格式无效'}})
             except Exception:
-                self.reply(503, {'error': {'message': '订阅桥接调用失败；未切换模型'}})
+                if not self.response_started:
+                    self.reply(503, {'error': {'message': '订阅桥接调用失败；未切换模型'}})
             finally:
-                gate.release()
+                if acquired:
+                    gate.release()
+                emit(outcome, self.request_id, elapsed_ms=round((time.monotonic() - started) * 1000),
+                     **({'usage': usage} if usage else {}), **gate.snapshot())
 
-    return ThreadingHTTPServer((host, port), Handler)
+    server = ThreadingHTTPServer((host, port), Handler)
+    server.admission = gate
+    return server
