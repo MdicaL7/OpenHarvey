@@ -12,7 +12,7 @@ def validate_feedback(body, source_hash):
         raise ValueError("请补充处置理由或需要补充的材料")
     if type(body.get("revision")) is not int or body["revision"] < 0:
         raise ValueError("反馈版本无效，请刷新后重试")
-    return decision, note.strip()
+    return decision, note
 
 
 def feedback_state(store, aid):

@@ -1,24 +1,28 @@
 import {api} from './api.js';
 import {setLoadingStatus} from './loading-ui.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let team,tab='personal',items=[],teamInfo=[],enterprise=false,editing=null,loading=false,loadId=0;
+let team,tab='personal',items=[],teamInfo=[],enterprise=false,editing=null,loading=false,loadId=0,nextOffset=null,total=null;
 const labels={experience:'过往经验',preference:'工作偏好与约定'},states={pending:'待处理',approved:'已发布',rejected:'未通过',active:'已确认'};
 const lines=a=>Array.isArray(a)&&a.length?a.map(esc).join('；'):'未知，使用前请核对';
 function showStatus(text='',kind='info',busy=false){const el=$('status');el.hidden=!text&&!busy;if(!text&&!busy){el.removeAttribute('data-kind');setLoadingStatus(el,'',false);return;}el.dataset.kind=busy?'loading':kind;setLoadingStatus(el,text,busy);}
-function card(e){const d=e.data;return `<article class="card"><span class="badge">${labels[d.kind]} · ${tab==='pending'?'建议记住':tab==='review'?states[e.status]:tab==='legacy'?'旧版历史 · 不参与召回':tab==='team'?'团队已发布':'个人已确认'}</span><h2>${esc(d.title)}</h2><p class="copy">${esc(d.content)}</p><div class="condition">适用条件：${lines(d.conditions)}<br>例外：${lines(d.exceptions)}</div>${e.before?`<details><summary>查看发布前内容</summary><p>${esc(e.before.title)}<br>${esc(e.before.content)}<br>适用条件：${lines(e.before.conditions)}<br>例外：${lines(e.before.exceptions)}</p></details>`:''}${d.conflicts?.length?'<p class="conflict-note">与已有约定可能冲突，请核对后再确认。</p>':''}<small>${esc(e.updated||e.created)}${e.version?' · 版本 '+e.version:''}</small><div class="actions">${tab==='legacy'?'历史版本，退出新版召回；请依据原始用户意见重新整理。':tab==='pending'?`<button class="primary" data-action="confirm" data-id="${e.id}">确认记住</button><button data-action="confirm-edit" data-id="${e.id}">修改后确认</button><button data-action="ignore" data-id="${e.id}">不记录</button>`:tab==='review'?e.status==='pending'&&teamInfo.find(t=>t.id===team)?.role==='admin'?`<button class="primary" data-action="approve" data-id="${e.id}">批准发布</button><button class="danger" data-action="reject" data-id="${e.id}">拒绝</button>`:'':`<button data-action="detail" data-id="${e.id}">来源与版本</button><button data-action="edit" data-id="${e.id}">${tab==='team'?'建议修改':'修改'}</button><button class="danger" data-action="delete" data-id="${e.id}">${tab==='team'?'申请删除':'删除'}</button>${tab==='personal'?`<button data-action="share" data-id="${e.id}">提交团队共享</button>`:''}`}</div></article>`;}
+function card(e){const d=e.data;return `<article class="card"><span class="badge">${esc({atomic:'L1 原子记忆',scenario:'L2 场景（团队共享）',core:'L3 偏好（团队共享）'}[e.level])}</span><h2>${esc(d.title)}</h2><p class="copy">${esc(d.content)}</p><small>${esc(e.updated||'')}${e.version?' · 版本 '+esc(e.version):''}</small><div class="actions">${e.level==='atomic'?'原子记忆已查到；合同来源与适用性须通过历史案例核验。':`<button data-action="detail" data-id="${esc(e.id)}">查看正文</button>`}</div></article>`;}
 // A mutation acknowledgement must never replace refresh errors or failed-job recovery.
-async function load(success=''){
+async function load(success='',append=false){
+ const n=++loadId;
+ const offset=append?nextOffset:0;
+ if(!append){items=[];nextOffset=null;total=null;$('content').replaceChildren();}
+ $('loadMore').hidden=true;
  if(!team){showStatus('');$('content').innerHTML='<div class="empty">尚未连接团队，请联系管理员配置合同记忆。</div>';return;}
- const n=++loadId;loading=true;showStatus('正在读取…','loading',true);
+ loading=true;showStatus('正在读取…','loading',true);
  try{
   const route=tab==='pending'?'candidates':tab==='review'?'proposals':'list';
-  const r=await api(`/api/contract-memory/${route}?team_id=${encodeURIComponent(team)}&scope=${tab}`);
+  const r=await api(`/api/contract-memory/${route}?team_id=${encodeURIComponent(team)}&scope=${tab}&limit=20&offset=${offset}`);
   if(n!==loadId)return;
-  items=r.items||[];$('content').innerHTML=items.length?'<div class="grid">'+items.map(card).join('')+'</div>':'<div class="empty">这里还没有内容。确认后的经验和约定会出现在这里。</div>';
+  items=append?[...items,...(r.items||[])]:r.items||[];nextOffset=r.next_offset??null;total=r.total??null;$('loadMore').hidden=nextOffset===null;$('loadMore').textContent=`继续加载（已显示 ${items.length}${total===null?'':' / '+total} 条）`;$('content').innerHTML=items.length?'<div class="grid">'+items.map(card).join('')+'</div>':'<div class="empty">暂无已查到的记忆；L0 接收不代表 L1 已提炼。</div>';
   for(const entry of r.needs_review||[]){const note=document.createElement('article');note.className='card';const title=document.createElement('strong');title.textContent='待复核 · '+entry.reason;const copy=document.createElement('p');copy.className='copy';copy.textContent=entry.data?.content||'';note.append(title,copy);$('content').append(note);}
   const failed=r.jobs?.filter(j=>j.status==='failed')||[];
   if(failed.length)showStatus('部分内容整理未完成；对话成功不代表经验已保存。','warn');
-  else showStatus(success,success?'success':'info');
+  else showStatus(success||r.notice,success?'success':'info');
   for(const job of failed){
    if(job.attempts<3)continue;
    const retry=document.createElement('button');retry.textContent='重试未完成的整理';
@@ -40,10 +44,12 @@ $('add').onclick=()=>edit(null,'create',$('add'));
 $('content').onclick=async event=>{const b=event.target.closest('[data-action]');if(!b||loading)return;const e=items.find(x=>x.id===b.dataset.id),action=b.dataset.action;if(!e)return;
  if(action==='edit')return edit(e,tab==='team'?'team-update':'update',b);if(action==='share')return edit(e,'share',b);if(action==='confirm-edit')return edit(e,'confirm',b);
  if(action==='delete'&&!await askDeleteConfirm(b))return;
- b.disabled=true;try{if(action==='detail'){detailTrigger=b;const r=await api(`/api/contract-memory/detail/${e.id}?team_id=${team}`);$('detailContent').replaceChildren();const h=document.createElement('h2');h.textContent=e.data.title;$('detailContent').append(h);for(const s of r.sources){const p=document.createElement('p');if(s.restricted)p.textContent=s.label;else{const a=document.createElement('a');a.href=s.url;a.textContent=s.title;p.append(a);p.append(document.createTextNode('\n'+s.documents.map(d=>d.filename+' · 版本 '+d.version.slice(0,12)+(d.paragraphs?.length?' · 段落 '+d.paragraphs.join('、'):'')).join('\n')));}$('detailContent').append(p);}for(const v of r.versions){const p=document.createElement('p');p.textContent=`版本 ${v.version} · ${v.created}\n${v.data.content}`;$('detailContent').append(p);}$('detail').showModal();$('closeDetail').focus();}
+ b.disabled=true;try{if(action==='detail'){detailTrigger=b;const r=await api(`/api/contract-memory/detail/${encodeURIComponent(e.id)}?team_id=${team}`);$('detailContent').replaceChildren();const h=document.createElement('h2');h.textContent=e.data.title;$('detailContent').append(h);const body=document.createElement('p');body.className='copy';body.textContent=r.content??'暂无正文';$('detailContent').append(body);for(const s of r.sources){const p=document.createElement('p');if(s.restricted)p.textContent=s.label;else{const a=document.createElement('a');a.href=s.url;a.textContent=s.title;p.append(a);p.append(document.createTextNode('\n'+s.documents.map(d=>d.filename+' · 版本 '+d.version.slice(0,12)+(d.paragraphs?.length?' · 段落 '+d.paragraphs.join('、'):'')).join('\n')));}$('detailContent').append(p);}for(const v of r.versions){const p=document.createElement('p');p.textContent=`版本 ${v.version} · ${v.created}\n${v.data.content}`;$('detailContent').append(p);}$('detail').showModal();$('closeDetail').focus();}
  else{await mutate(action==='approve'||action==='reject'?'review':action==='delete'&&tab==='team'?'propose':action,e,action==='approve'||action==='reject'?{approved:action==='approve'}:action==='delete'&&tab==='team'?{operation:'delete'}:{});await load(action==='delete'?(tab==='team'?'已提交删除申请，等待团队管理员审核。':'已删除该条内容。'):action==='confirm'?'已确认记住，可以在后续工作中参考。':action==='ignore'?'已忽略该条待确认内容。':action==='approve'?'已批准发布到团队内容。':action==='reject'?'已拒绝该条共享申请。':'操作已完成。');}}catch(error){showStatus(error.message,'error');}finally{b.disabled=false;}};
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-current',x===b?'page':'false'));void load();});
-$('team').onchange=async()=>{team=$('team').value;try{await api('/api/contract-memory/team-selection',{method:'POST',body:{team_id:team}});await load();}catch(e){showStatus(e.message,'error');}};
+let selectionQueue=Promise.resolve();
+$('team').onchange=()=>{team=$('team').value;const selected=team;void load();selectionQueue=selectionQueue.catch(()=>{}).then(()=>api('/api/contract-memory/team-selection',{method:'POST',body:{team_id:selected}})).catch(e=>{if(team===selected)showStatus(e.message,'error');});};
+$('loadMore').onclick=()=>{if(!loading&&nextOffset!==null)void load('',true);};
 $('newTeam').onclick=()=>{teamTrigger=$('newTeam');$('teamForm').reset();$('teamHint').hidden=true;$('teamHint').textContent='';$('saveTeam').disabled=false;$('teamDialog').showModal();$('teamName').focus();};
 $('cancelTeam').onclick=()=>$('teamDialog').close('cancel');
 $('teamDialog').onclose=()=>restoreFocus(teamTrigger);

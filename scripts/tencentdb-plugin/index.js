@@ -92,7 +92,7 @@ export default async function plugin(_input,options={}){
       if(!value.enabled)throw new Error('本轮 TencentDB Memory 尚未准备就绪');
       for(const key of ['service_id','team_id','agent_id','task_id'])if(!value[key])throw new Error('TencentDB Memory 身份绑定不完整');
       Object.assign(output.headers,{'x-tdai-service-id':value.service_id,'x-team-id':value.team_id,
-        'x-agent-id':value.agent_id,'x-task-id':value.task_id,'x-conversation-id':input.sessionID, ...(value.memory_version===2?{'x-openharvey-memory-version':'2',...(value.source_event_id?{'x-openharvey-source-event':value.source_event_id}:{})}:{})});
+        'x-agent-id':value.agent_id,'x-task-id':value.task_id,'x-conversation-id':input.sessionID});
     },
     'tool.execute.before':async(input,output)=>{
       if(input.tool==='bash'&&String(output.args.command||'').includes('/scripts/recall_precedents.py')){const value=await binding(input.sessionID);if(!value.enabled||!value.contract)throw new Error('本轮未启用合同处置查询');output.args.command=checkedPrecedentCommand(output.args.command,options.precedentScript);return;}

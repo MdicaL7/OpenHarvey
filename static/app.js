@@ -890,6 +890,7 @@ document.addEventListener('click',protect(async e=>{
   if(b.dataset.quoteOpen!==undefined){const q=quotes.get()[Number(b.dataset.quoteOpen)];await navigateCitation(q.document_id,q.block_ids[0],q.source_hash);}
   if(b.dataset.doc)await navigateCitation(b.dataset.doc,b.dataset.block,b.dataset.hash,b.dataset.end||b.dataset.block);
   const board=b.closest('[data-risk-board]'),data=board&&artifactData.get(board.dataset.riskBoard);
+  if(data&&b.dataset.memoryRebind){b.disabled=true;try{const event_id=b.dataset.memoryRebind;const preview=await api('/api/contract-memory/target-preview',{method:'POST',body:{event_id}});const result=await api('/api/contract-memory/target-rebind',{method:'POST',body:{event_id,preview_token:preview.preview_token}});await openArtifact(data.id);notice(`当前目标预检通过，实际重新入队 ${result.queued} 项。`);}finally{b.disabled=false;}}
   if(data&&b.dataset.memorySyncRetry){b.disabled=true;try{await api('/api/contract-memory/sync-retry',{method:'POST',body:{event_id:b.dataset.memorySyncRetry}});await openArtifact(data.id);notice('同步已重新排队，原反馈保持已保存。');}finally{b.disabled=false;}}
   if(data&&b.dataset.riskFilterChoice){board.outerHTML=riskBoard(data,state.documents,b.dataset.riskFilterChoice);void loadPrecedents($('artBody'));}
   if(b.dataset.permission)await submitRequest('permission',b.dataset.permission,{reply:b.dataset.reply},b.closest('.request-card'));

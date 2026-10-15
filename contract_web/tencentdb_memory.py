@@ -164,7 +164,8 @@ class TencentDBMemory:
             key = person['default_user_key']
             team = await self.call(binding, '/v3/meta/team/create', {'name': 'OpenHarvey', 'owner_user_id': person['user_id']}, key)
             agent = await self.call(binding, '/v3/meta/agent/create', {'team_id': team['team_id'], 'owner_user_id': person['user_id'],
-                                        'name': '合同助手', 'visibility': 'private', 'description': 'OpenHarvey 单合同 Agent 的独立记忆'}, key)
+                                        'name': '合同助手', 'visibility': 'private', 'description': 'OpenHarvey 单合同 Agent 的独立记忆',
+                                        'metadata_json': encoded({'prompt_mode': 'contract', 'managed_by': 'OpenHarvey'})}, key)
             binding.update(tdai_user_id=person['user_id'], team_id=team['team_id'], agent_id=agent['agent_id'])
             self.store.execute('INSERT INTO tdai_users VALUES(?,?,?,?,?,?,?,?)',
                 (u['id'], service_id, binding['core_url'], binding['proxy_url'], binding['gateway_secret'], person['user_id'], team['team_id'], agent['agent_id']))

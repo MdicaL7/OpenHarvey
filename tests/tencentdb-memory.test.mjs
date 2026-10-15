@@ -53,3 +53,19 @@ test('retired Memory UI is absent and shared material/redline Labs remain',async
  assert.match(source,/data-materials-toggle/);assert.match(source,/redlineLabsHTML/);
  assert.doesNotMatch(source,/\/api\/memories|data-memory-toggle|memory-enabled|memoryReceiptHTML/);
 });
+
+
+test('source and bundled plugins strip retired proprietary headers without emitting them',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'tdai-native-'));
+ try{
+  await writeFile(join(dir,'ses_a.json'),JSON.stringify({...bind('ses_a'),memory_version:2,source_event_id:'event'}));
+  for(const factory of [plugin,bundled.default]){
+   const hooks=await factory({}, {bindingDirectory:dir});
+   const output={headers:{'x-openharvey-memory-version':'2','x-openharvey-source-event':'old'}};
+   await hooks['chat.headers']({sessionID:'ses_a',agent:'contract',model:{providerID:'tencentdb-memory'}},output);
+   assert.equal(output.headers['x-openharvey-memory-version'],undefined);
+   assert.equal(output.headers['x-openharvey-source-event'],undefined);
+   assert.equal(output.headers['x-task-id'],'task-ses_a');
+  }
+ }finally{await rm(dir,{recursive:true,force:true});}
+});

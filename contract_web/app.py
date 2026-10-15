@@ -1186,14 +1186,35 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
     async def memory_migration_enqueue(request:Request):
         return precedents.migrate(user(request),(await request.json()).get('items'))
 
+    @app.post('/api/contract-memory/target-preview')
+    async def memory_target_preview(request:Request):
+        b = await request.json()
+        if set(b) != {'event_id'}: raise HTTPException(422, '只允许指定本地事件')
+        return await precedents.rebind(user(request), b['event_id'])
+
+    @app.post('/api/contract-memory/target-rebind')
+    async def memory_target_rebind(request:Request):
+        b = await request.json()
+        if set(b) != {'event_id', 'preview_token'} or not isinstance(b['preview_token'], str) or not b['preview_token']:
+            raise HTTPException(422, '需要目标预检凭据')
+        return await precedents.rebind(user(request), b['event_id'], b['preview_token'])
+
     @app.post('/api/contract-memory/sync-retry')
     async def memory_sync_retry(request:Request):
         u=user(request);b=await request.json()
         r=store.one('SELECT * FROM contract_memory_outbox WHERE id=? AND user_id=?',(b.get('event_id'),u['id']))
         if not r:raise HTTPException(404,'同步记录不存在')
         contract_memory.member(u,r['team_id'])
-        store.execute("UPDATE contract_memory_outbox SET status='pending',attempts=0,next_attempt=0 WHERE id=?",(r['id'],))
-        return {'queued':True}
+        delivery = store.one("SELECT data FROM contract_memory_deliveries WHERE event_id=? AND backend='native-v3'", (r['id'],))
+        binding, _, uid = contract_memory.binding(u)
+        team = contract_memory.member(u,r['team_id'])
+        if delivery and json.loads(delivery['data']).get('target') != [binding['core_url'], binding['service_id'], team['tdai_team_id'], team['agent_id'], uid]:
+            raise HTTPException(409, '目标已变化，请使用 target-preview 和 target-rebind；普通重试不更换目标')
+        with store.connect() as db:
+            count = db.execute("UPDATE contract_memory_deliveries SET status='pending',error=NULL WHERE event_id=? AND backend='native-v3' AND status='blocked' AND l0_id IS NULL AND data=?", (r['id'], delivery['data'] if delivery else '')).rowcount
+        if not count:
+            raise HTTPException(409, '当前状态不能安全重试；结果不明须先核对远端，旧管道请先迁移预检')
+        return {'queued': count, 'target_backend': 'native-v3'}
 
     @app.post('/internal/contract-memory/precedents')
     async def runtime_precedents(request:Request):

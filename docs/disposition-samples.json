@@ -1,0 +1,98 @@
+[
+  {
+    "name": "valid",
+    "payload": {
+      "schema_version": 1,
+      "workspace_id": "sample-workspace",
+      "report_id": "sample-report",
+      "risk_id": "SAMPLE-PAYMENT",
+      "document_version": "sample-document-v1",
+      "risk_definition_hash": "sample-risk-definition-v1",
+      "document_refs": [],
+      "contract_title": "虚构采购合同",
+      "risk_name": "付款条件",
+      "topic": "付款",
+      "our_role": "采购方",
+      "created_at": "2026-10-14T00:00:00+00:00",
+      "event_id": "sample-event-1",
+      "revision": 1,
+      "decision": "接受风险",
+      "note": "仅限本项目，预付款为20%，须先核验保函。"
+    },
+    "message": "[CONTRACT_RISK_DISPOSITION]\n合同：虚构采购合同\n交易角色：采购方\n风险项：付款条件（SAMPLE-PAYMENT，主题：付款）\n处置决定：接受风险（第 1 版）\n处置说明：仅限本项目，预付款为20%，须先核验保函。\n这是已保存的处置事件。接受风险不代表正式审批；要求修改不代表修改已完成。待处理或撤回不是有效案例。仅当有效处置的 note.trim() 非空时提炼 L1，不增加质量或数量门槛。\nMETADATA_JSON: {\"created_at\":\"2026-10-14T00:00:00+00:00\",\"decision\":\"接受风险\",\"document_refs\":[],\"document_version\":\"sample-document-v1\",\"event_id\":\"sample-event-1\",\"note\":\"仅限本项目，预付款为20%，须先核验保函。\",\"our_role\":\"采购方\",\"report_id\":\"sample-report\",\"revision\":1,\"risk_definition_hash\":\"sample-risk-definition-v1\",\"risk_id\":\"SAMPLE-PAYMENT\",\"risk_name\":\"付款条件\",\"schema_version\":1,\"topic\":\"付款\",\"workspace_id\":\"sample-workspace\"}",
+    "expected_valid_case": true,
+    "illustrative_l0_id": "sample-l0-1"
+  },
+  {
+    "name": "revision",
+    "payload": {
+      "schema_version": 1,
+      "workspace_id": "sample-workspace",
+      "report_id": "sample-report",
+      "risk_id": "SAMPLE-PAYMENT",
+      "document_version": "sample-document-v1",
+      "risk_definition_hash": "sample-risk-definition-v1",
+      "document_refs": [],
+      "contract_title": "虚构采购合同",
+      "risk_name": "付款条件",
+      "topic": "付款",
+      "our_role": "采购方",
+      "created_at": "2026-10-14T00:00:00+00:00",
+      "event_id": "sample-event-2",
+      "revision": 2,
+      "decision": "要求修改",
+      "note": "修订：预付款调整为10%，保函条件保留。"
+    },
+    "message": "[CONTRACT_RISK_DISPOSITION]\n合同：虚构采购合同\n交易角色：采购方\n风险项：付款条件（SAMPLE-PAYMENT，主题：付款）\n处置决定：要求修改（第 2 版）\n处置说明：修订：预付款调整为10%，保函条件保留。\n这是已保存的处置事件。接受风险不代表正式审批；要求修改不代表修改已完成。待处理或撤回不是有效案例。仅当有效处置的 note.trim() 非空时提炼 L1，不增加质量或数量门槛。\nMETADATA_JSON: {\"created_at\":\"2026-10-14T00:00:00+00:00\",\"decision\":\"要求修改\",\"document_refs\":[],\"document_version\":\"sample-document-v1\",\"event_id\":\"sample-event-2\",\"note\":\"修订：预付款调整为10%，保函条件保留。\",\"our_role\":\"采购方\",\"report_id\":\"sample-report\",\"revision\":2,\"risk_definition_hash\":\"sample-risk-definition-v1\",\"risk_id\":\"SAMPLE-PAYMENT\",\"risk_name\":\"付款条件\",\"schema_version\":1,\"topic\":\"付款\",\"workspace_id\":\"sample-workspace\"}",
+    "expected_valid_case": true,
+    "illustrative_l0_id": "sample-l0-2"
+  },
+  {
+    "name": "blank",
+    "payload": {
+      "schema_version": 1,
+      "workspace_id": "sample-workspace",
+      "report_id": "sample-report",
+      "risk_id": "SAMPLE-PAYMENT",
+      "document_version": "sample-document-v1",
+      "risk_definition_hash": "sample-risk-definition-v1",
+      "document_refs": [],
+      "contract_title": "虚构采购合同",
+      "risk_name": "付款条件",
+      "topic": "付款",
+      "our_role": "采购方",
+      "created_at": "2026-10-14T00:00:00+00:00",
+      "event_id": "sample-event-3",
+      "revision": 3,
+      "decision": "要求修改",
+      "note": "  \n  "
+    },
+    "message": "[CONTRACT_RISK_DISPOSITION]\n合同：虚构采购合同\n交易角色：采购方\n风险项：付款条件（SAMPLE-PAYMENT，主题：付款）\n处置决定：要求修改（第 3 版）\n处置说明：  \n  \n这是已保存的处置事件。接受风险不代表正式审批；要求修改不代表修改已完成。待处理或撤回不是有效案例。仅当有效处置的 note.trim() 非空时提炼 L1，不增加质量或数量门槛。\nMETADATA_JSON: {\"created_at\":\"2026-10-14T00:00:00+00:00\",\"decision\":\"要求修改\",\"document_refs\":[],\"document_version\":\"sample-document-v1\",\"event_id\":\"sample-event-3\",\"note\":\"  \\n  \",\"our_role\":\"采购方\",\"report_id\":\"sample-report\",\"revision\":3,\"risk_definition_hash\":\"sample-risk-definition-v1\",\"risk_id\":\"SAMPLE-PAYMENT\",\"risk_name\":\"付款条件\",\"schema_version\":1,\"topic\":\"付款\",\"workspace_id\":\"sample-workspace\"}",
+    "expected_valid_case": false,
+    "illustrative_l0_id": "sample-l0-3"
+  },
+  {
+    "name": "withdraw_to_pending",
+    "payload": {
+      "schema_version": 1,
+      "workspace_id": "sample-workspace",
+      "report_id": "sample-report",
+      "risk_id": "SAMPLE-PAYMENT",
+      "document_version": "sample-document-v1",
+      "risk_definition_hash": "sample-risk-definition-v1",
+      "document_refs": [],
+      "contract_title": "虚构采购合同",
+      "risk_name": "付款条件",
+      "topic": "付款",
+      "our_role": "采购方",
+      "created_at": "2026-10-14T00:00:00+00:00",
+      "event_id": "sample-event-4",
+      "revision": 4,
+      "decision": "待处理",
+      "note": ""
+    },
+    "message": "[CONTRACT_RISK_DISPOSITION]\n合同：虚构采购合同\n交易角色：采购方\n风险项：付款条件（SAMPLE-PAYMENT，主题：付款）\n处置决定：待处理（第 4 版）\n处置说明：未填写处置理由\n这是已保存的处置事件。接受风险不代表正式审批；要求修改不代表修改已完成。待处理或撤回不是有效案例。仅当有效处置的 note.trim() 非空时提炼 L1，不增加质量或数量门槛。\nMETADATA_JSON: {\"created_at\":\"2026-10-14T00:00:00+00:00\",\"decision\":\"待处理\",\"document_refs\":[],\"document_version\":\"sample-document-v1\",\"event_id\":\"sample-event-4\",\"note\":\"\",\"our_role\":\"采购方\",\"report_id\":\"sample-report\",\"revision\":4,\"risk_definition_hash\":\"sample-risk-definition-v1\",\"risk_id\":\"SAMPLE-PAYMENT\",\"risk_name\":\"付款条件\",\"schema_version\":1,\"topic\":\"付款\",\"workspace_id\":\"sample-workspace\"}",
+    "expected_valid_case": false,
+    "illustrative_l0_id": "sample-l0-4"
+  }
+]

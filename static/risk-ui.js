@@ -30,8 +30,10 @@ export function riskBoard(data,documents,filter='attention'){
             <label>处理方式<select name="decision" aria-label="${esc(f.risk_name||f.risk_id)}处理方式">${decisions.map(d=>`<option value="${esc(d)}"${saved.decision===d?' selected':''}>${esc(tr(d))}</option>`).join('')}</select></label>
             <label>备注<textarea name="note" maxlength="1000" rows="2" placeholder="处置理由、修正依据或需补充的材料">${esc(saved.note)}</textarea></label>
             <p class="feedback-help">处理意见单独保存，原审查结论会保留。接受风险不代表判断有误。</p>
-            ${data.memory_sync?.[f.risk_id]?.status==='synced'?'<p class="feedback-help">处理案例已记录；经验整理状态请查看“经验与偏好”。</p>':['pending','failed'].includes(data.memory_sync?.[f.risk_id]?.status)?'<p class="feedback-help">反馈已保存，记忆同步待完成。</p>':''}
-            ${data.memory_sync?.[f.risk_id]?.status==='failed'&&data.memory_sync[f.risk_id].event_id?`<button type="button" data-memory-sync-retry="${esc(data.memory_sync[f.risk_id].event_id)}">重试记忆同步</button>`:''}
+            ${data.memory_sync?.[f.risk_id]?.l1_status==='not_expected'?'<p class="feedback-help">空备注或待处理不提炼 L1，属于正常状态。</p>':data.memory_sync?.[f.risk_id]?.l1_status==='found'?'<p class="feedback-help">L1 已查到，使用前仍需核验当前适用性。</p>':''}
+            ${data.memory_sync?.[f.risk_id]?.status==='l0_received'?'<p class="feedback-help">反馈已保存，L0 已接收；不代表 L1 提炼完成。</p>':['pending','blocked','uncertain','blocked_length','legacy_not_delivered'].includes(data.memory_sync?.[f.risk_id]?.status)?'<p class="feedback-help">反馈已保存，L0 尚未确认接收；投递详情请核查。</p>':''}
+            ${data.memory_sync?.[f.risk_id]?.error?`<p class="feedback-help">${esc(data.memory_sync[f.risk_id].error)}</p>`:''}
+            ${data.memory_sync?.[f.risk_id]?.status==='blocked'&&data.memory_sync[f.risk_id].event_id?`<button type="button" data-memory-sync-retry="${esc(data.memory_sync[f.risk_id].event_id)}">安全重试原目标</button><button type="button" data-memory-rebind="${esc(data.memory_sync[f.risk_id].event_id)}">预检并重新绑定当前目标</button>`:''}
             <div class="feedback-actions"><button type="submit" class="feedback-save">保存反馈</button></div><p class="feedback-status" role="status"></p>
           </form>
           ${saved.revision?ui`<details class="feedback-history"><summary>反馈记录（${saved.history.length+1}）</summary>${[...saved.history,saved].reverse().map(h=>`<p><b>${esc(tr(h.decision))}</b> · ${new Date(h.created*1000).toLocaleString(getLanguage())}<br>${esc(h.note||tr('无备注'))}</p>`).join('')}</details>`:''}

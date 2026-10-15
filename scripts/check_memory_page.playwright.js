@@ -1,0 +1,41 @@
+async (page) => {
+ const requests=[];
+ let release;
+ let delay=false;
+ await page.route('**/api/contract-memory/**',async route=>{
+  const url=new URL(route.request().url());
+  if(url.pathname.endsWith('/teams'))return route.fulfill({json:{items:[{id:'a',name:'团队A'},{id:'b',name:'团队B'}],selected:'a',enterprise_admin:false}});
+  if(url.pathname.endsWith('/team-selection'))return route.fulfill({json:{saved:true}});
+  const team=url.searchParams.get('team_id'),offset=Number(url.searchParams.get('offset')||0);
+  requests.push({team,offset});
+  if(delay&&team==='a'&&offset===20)await new Promise(resolve=>release=resolve);
+  const all=Array.from({length:45},(_,i)=>({id:team+i,level:'atomic',data:{title:team+'-'+i,content:'合成记忆 '+i}}));
+  return route.fulfill({json:{items:all.slice(offset,offset+20),total:45,offset,limit:20,next_offset:offset+20<45?offset+20:null}});
+ });
+ await page.reload();
+ await page.waitForFunction(()=>document.querySelectorAll('#content .card').length===20);
+ await page.getByRole('button',{name:/继续加载/}).click();
+ await page.waitForFunction(()=>document.querySelectorAll('#content .card').length===40);
+ await page.getByRole('button',{name:/继续加载/}).click();
+ await page.waitForFunction(()=>document.querySelectorAll('#content .card').length===45);
+ if(await page.locator('#loadMore').isVisible())throw new Error('unexpected extra page');
+ await page.screenshot({path:'output/playwright/audit-pagination-45.png',fullPage:true});
+ await page.reload();
+ await page.waitForFunction(()=>document.querySelectorAll('#content .card').length===20);
+ delay=true;
+ await page.getByRole('button',{name:/继续加载/}).click();
+ await page.waitForTimeout(100);
+ await page.locator('#team').selectOption('b');
+ await page.waitForFunction(()=>document.querySelector('#content h2')?.textContent==='b-0');
+ release();
+ await page.waitForTimeout(200);
+ if(await page.locator('#content .card').count()!==20)throw new Error('old page appended');
+ if((await page.locator('#content h2').allTextContents()).some(x=>!x.startsWith('b-')))throw new Error('team leak');
+ await page.screenshot({path:'output/playwright/audit-team-isolation.png',fullPage:true});
+ await page.getByRole('button',{name:/继续加载/}).click();
+ await page.waitForFunction(()=>document.querySelectorAll('#content .card').length===40);
+ await page.getByRole('button',{name:'原子记忆',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelectorAll('#content .card').length===20);
+ await page.screenshot({path:'output/playwright/audit-tab-reset.png'});
+ return {passed:['45 records paged','team switch resets offset','late old page ignored','tab resets offset'],requests};
+}
