@@ -1,3 +1,4 @@
+from . import memory_trace
 """Business identities and source authorization; Memory owns all memory content."""
 import asyncio
 import json
@@ -86,7 +87,7 @@ class ContractMemory:
         payload = {**(body or {}), 'team_id': t['tdai_team_id'], 'agent_id': t['agent_id'], 'user_id': uid}
         control_file = os.environ.get('CW_TDAI_CONTROL_KEY_FILE')
         controller = Path(control_file).read_text().strip() if control_file else self.models.decrypt(binding.get('gateway_secret')) or 'local'
-        headers = {'Authorization': 'Bearer ' + controller, 'x-tdai-service-id': binding['service_id'], 'x-tdai-user-key': key}
+        headers = {**memory_trace.headers(), 'Authorization': 'Bearer ' + controller, 'x-tdai-service-id': binding['service_id'], 'x-tdai-user-key': key}
         try:
             async with httpx.AsyncClient(timeout=20, trust_env=False, follow_redirects=False) as client:
                 response = await client.post(binding['core_url'].rstrip('/') + endpoint, json=payload, headers=headers)
@@ -240,6 +241,10 @@ class ContractMemory:
             'agent_id': team['agent_id'], 'task_id': taskid,
             'bridge_url': b['proxy_url'].split('/opencode/')[0] + '/memory-bridge/v3',
         }
+        trace_ctx = memory_trace.context({'instanceId': b['service_id'], 'teamId': team['tdai_team_id'],
+            'userId': uid, 'agentId': team['agent_id'], 'taskId': taskid, 'sessionId': t['session_id'], 'app_user_id': u['id']}, memory_trace._current.get())
+        if trace_ctx:
+            value['trace_context'] = trace_ctx
         self.tdai.write_binding(u, t, value)
         return value
 

@@ -2,7 +2,7 @@ import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
 export const endpoints = new Set(['atomic/search','atomic/query','conversation/search','conversation/query','scenario/ls','scenario/read']);
-const identityHeaders=['x-team-id','x-agent-id','x-task-id','x-conversation-id','x-tdai-service-id','x-openharvey-memory-version','x-openharvey-source-event'];
+const identityHeaders=['x-team-id','x-agent-id','x-task-id','x-conversation-id','x-tdai-service-id','x-openharvey-memory-version','x-openharvey-source-event','x-memory-trace-context'];
 const quote=value=>"'"+String(value).replaceAll("'","'\\''")+"'";
 
 // Parse only literal shell words. No pipelines, expansion, redirection or commands.
@@ -93,6 +93,7 @@ export default async function plugin(_input,options={}){
       for(const key of ['service_id','team_id','agent_id','task_id'])if(!value[key])throw new Error('TencentDB Memory 身份绑定不完整');
       Object.assign(output.headers,{'x-tdai-service-id':value.service_id,'x-team-id':value.team_id,
         'x-agent-id':value.agent_id,'x-task-id':value.task_id,'x-conversation-id':input.sessionID});
+      if(value.trace_context)output.headers['x-memory-trace-context']=JSON.stringify(value.trace_context);
     },
     'tool.execute.before':async(input,output)=>{
       if(input.tool==='bash'&&String(output.args.command||'').includes('/scripts/recall_precedents.py')){const value=await binding(input.sessionID);if(!value.enabled||!value.contract)throw new Error('本轮未启用合同处置查询');output.args.command=checkedPrecedentCommand(output.args.command,options.precedentScript);return;}

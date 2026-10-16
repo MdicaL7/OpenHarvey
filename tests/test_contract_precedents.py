@@ -501,6 +501,38 @@ class PrecedentTests(unittest.TestCase):
                     asyncio.run(p.rebind(u, eid))
                 remote.assert_not_called()
 
+    def test_passive_trace_keeps_l0_body_and_receipt_on_export_failure(self):
+        from contract_web import memory_trace as mt
+        u, _, t, aid = self.prepared()
+        captured=[]
+        def fail(payload):
+            captured.append(payload)
+            raise OSError('synthetic exporter failure')
+        tracer=mt.LocalTrace({'enabled':True,'run_id':'synthetic-run','app_user_ids':[u['id']],
+            'include_content':True,'synthetic_data':True},
+            {'host':'http://127.0.0.1:3000','public_key':'test','secret_key':'test'},send=fail)
+        with patch.object(mt,'client',return_value=tracer):
+            response=self.save_feedback(aid,note='  合成条件，保持原文  ')
+            self.assertEqual(response.status_code,200,response.text)
+            p=self.app.state.precedents
+            row=self.store.one('SELECT data FROM contract_memory_deliveries')
+            payload=json.loads(row['data'])
+            self.assertEqual(payload['trace_context']['run_id'],'synthetic-run')
+            self.assertNotIn('trace_context',payload['metadata'])
+            self.assertNotIn('synthetic-run',p.format_disposition_message(payload))
+            with patch.object(p.memory,'remote',AsyncMock(return_value={'accepted_ids':['msg-trace'],'total_count':1})) as remote:
+                asyncio.run(p.flush());asyncio.run(p.flush())
+            self.assertEqual(remote.await_count,1)
+            body=remote.call_args.args[3]
+            self.assertEqual(body,{'task_id':'task','session_id':t['session_id'],
+                'messages':[{'role':'user','content':p.format_disposition_message(payload)}]})
+            self.assertEqual(p.status(aid,'TEST-1',u['id'])['l0_id'],'msg-trace')
+            self.assertGreater(tracer.flush()['failed'],0)
+            spans=[p['resourceSpans'][0]['scopeSpans'][0]['spans'][0] for p in captured]
+            attrs=[{a['key']:a['value']['stringValue'] for a in s['attributes']} for s in spans]
+            meta=[json.loads(a['langfuse.observation.metadata']) for a in attrs]
+            self.assertTrue(any(m.get('l0_message_ids')==['msg-trace'] for m in meta))
+
 
 if __name__ == '__main__':
     unittest.main()

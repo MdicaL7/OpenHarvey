@@ -1,3 +1,4 @@
+from . import memory_trace
 """Durable per-thread outbox. OpenCode remains the owner of executed messages."""
 import asyncio
 import json
@@ -84,6 +85,7 @@ class MessageQueue:
                 (tid,*ERROR_PAUSES,tid))
             db.execute('INSERT INTO queued_messages(id,thread_id,user_id,request_id,body,message_id,created) VALUES(?,?,?,?,?,?,?)',
                        (qid,tid,u['id'],request_id,encoded(body),mid,time.time()))
+        memory_trace.emit('openharvey.request.saved', memory_trace.context({'app_user_id': u['id']}), data={'request_id': request_id, 'queue_id': qid, 'thread_id': tid})
         return qid
 
     async def withdraw(self,u,tid,qid):
@@ -197,7 +199,13 @@ class MessageQueue:
             try:
                 if cloud:
                     self.manager.e2b.record(t['workspace_id'],'execution.start',{'queue_id':row['id']},tid)
-                await self.dispatch(u,tid,json.loads(row['body']),row['message_id'])
+                ctx = memory_trace.context({'app_user_id': u['id'], 'request_id': row['request_id'], 'sessionId': t['session_id']})
+                trace_token = memory_trace._current.set(ctx)
+                try:
+                    await self.dispatch(u,tid,json.loads(row['body']),row['message_id'])
+                    memory_trace.emit('openharvey.request.submitted', ctx, data={'queue_id': row['id'], 'message_id': row['message_id']})
+                finally:
+                    memory_trace._current.reset(trace_token)
             except Exception as exc:
                 message=redact(str(getattr(exc,'detail',exc)))[:800]
                 stage=self.store.one('SELECT stage FROM queued_messages WHERE id=?',(row['id'],))['stage']

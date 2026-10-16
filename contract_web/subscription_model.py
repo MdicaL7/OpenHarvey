@@ -4,6 +4,7 @@ Codex selects the next reply/tool call; OpenCode alone executes business tools.
 Each inference has a fresh temporary session, with no repository or plugins.
 """
 import hmac
+import hashlib
 import json
 import math
 import os
@@ -20,6 +21,7 @@ import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import httpx
+from . import memory_trace
 
 
 class SubscriptionError(RuntimeError):
@@ -99,6 +101,11 @@ def completion(body, config, *, run=subprocess.run):
                   '遵守 tool_choice；若不需要工具，返回正文及空 tool_calls。'
                   '保持消息来源、合同版本、段落引用和记忆适用条件。\n业务会话 JSON：\n')
         prompt += json.dumps({k: body[k] for k in ('messages', 'tools', 'tool_choice', 'parallel_tool_calls') if k in body}, ensure_ascii=False)
+        memory_trace.emit('subscription_bridge.cli_input', input={'prompt': prompt, 'output_schema': output_schema()},
+            data={'prompt_sha256': hashlib.sha256(prompt.encode()).hexdigest(),
+                  'output_schema_sha256': hashlib.sha256(schema.read_bytes()).hexdigest(),
+                  'prompt_version': 'subscription-bridge-v1@' + os.getenv('OH_RUNTIME_REVISION', 'unknown'),
+                  'input_kind': 'application_submitted_cli_prompt', 'provider_hidden_context': 'unavailable'})
         try:
             result = run(command, input=prompt, text=True, capture_output=True, env=env,
                          timeout=config.get('timeout_seconds', 240))
@@ -132,6 +139,7 @@ def completion(body, config, *, run=subprocess.run):
             raise SubscriptionError('ChatGPT 未返回完整结果')
         try:
             answer = json.loads(output.read_text())
+            memory_trace.emit('subscription_bridge.cli_response', output=answer, data={'output_kind': 'raw_cli_structured_answer'})
         except ValueError:
             raise SubscriptionError('ChatGPT 结果不是有效 JSON') from None
     if not isinstance(answer, dict) or set(answer) != {'content', 'tool_calls'} or not isinstance(answer['tool_calls'], list):
@@ -287,7 +295,7 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
         def do_GET(self):
             if self.path == '/health':
                 return self.reply(200, {'healthy': True, 'provider': 'codex-subscription-bridge', 'inference_verified': False,
-                                        'admission': gate.snapshot()})
+                                        'admission': gate.snapshot(), 'tracing': memory_trace.client().status() if memory_trace.client() else {'enabled': False}})
             if not self.authorized():
                 return self.reply(401, {'error': {'message': '桥接认证失败'}})
             if self.path == '/v1/models':
@@ -306,6 +314,11 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
             acquired = False
             outcome = 'failed'
             usage = None
+            trace_ctx = None
+            trace_started = time.time_ns()
+            inference_started_ns = None
+            trace_output = None
+            body = None
 
             def disconnected():
                 try:
@@ -324,6 +337,10 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
                     return self.reply(400, {'error': {'message': '请求格式无效'}})
                 if body.get('model') not in [*config['subscription_models'], *config.get('passthrough_models', [])]:
                     return self.reply(400, {'error': {'message': '模型不在本机桥接配置中'}})
+                incoming = memory_trace.incoming(self.headers.get('x-memory-trace-context'))
+                trace_ctx = memory_trace.context({k: incoming[k] for k in ('instanceId','teamId','userId','agentId','taskId','sessionId') if k in incoming}, incoming)
+                if trace_ctx:
+                    trace_ctx = {**trace_ctx, 'attempt_id': self.request_id}
                 gate.acquire(self.request_id, min(deadline, time.monotonic() + queue_timeout), disconnected)
                 acquired = True
                 remaining = deadline - time.monotonic()
@@ -334,11 +351,17 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
                 # Queue time consumes the same deadline as inference. No replay:
                 # once infer starts its slot stays held until it actually ends.
                 request_config = {**config, 'timeout_seconds': min(config.get('timeout_seconds', 240), remaining)}
+                inference_started_ns = time.time_ns()
                 gate.begin_inference()
                 emit('started', self.request_id, model=body.get('model'),
                      queue_ms=round((time.monotonic() - started) * 1000), **gate.snapshot())
                 if body.get('model') in config['subscription_models']:
-                    response = infer(body, request_config)
+                    trace_token = memory_trace._current.set(trace_ctx)
+                    try:
+                        response = infer(body, request_config)
+                    finally:
+                        memory_trace._current.reset(trace_token)
+                    trace_output = response.get('choices')
                     usage = {k: v for k, v in (response.get('usage') or {}).items()
                              if k in {'prompt_tokens', 'completion_tokens', 'total_tokens'}
                              and isinstance(v, (int, float))}
@@ -398,6 +421,18 @@ def make_server(config, host='127.0.0.1', port=8767, *, infer=completion):
                     gate.release()
                 emit(outcome, self.request_id, elapsed_ms=round((time.monotonic() - started) * 1000),
                      **({'usage': usage} if usage else {}), **gate.snapshot())
+                trace_record = memory_trace.emit('subscription_bridge.attempt', trace_ctx, start_ns=trace_started,
+                    input=body, output=trace_output, model=body.get('model') if isinstance(body, dict) else None,
+                    usage=({'input': usage['prompt_tokens']} if usage and 'prompt_tokens' in usage else {}) |
+                          ({'output': usage['completion_tokens']} if usage and 'completion_tokens' in usage else {}) if usage is not None else None,
+                    error=outcome != 'completed', data={'bridge_request_id': self.request_id, 'outcome': outcome,
+                    'inference_started': inference_started_ns is not None,
+                    'queue_ms': round((inference_started_ns - trace_started)/1e6) if inference_started_ns else None,
+                    'execution_ms': round((time.time_ns() - inference_started_ns)/1e6) if inference_started_ns else None,
+                    'provider': 'codex-subscription', 'input_kind': 'chat_completions_wire_request', 'request_body_sha256': memory_trace.sha(body)})
+                if trace_record:
+                    emit('trace_link', self.request_id, **trace_record)
+
 
     server = ThreadingHTTPServer((host, port), Handler)
     server.admission = gate

@@ -322,7 +322,7 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
 
     @app.get("/health")
     async def health():
-        return {"healthy": True, "runtime": "opencode", "version": "1.16.2"}
+        return {"healthy": True, "runtime": "opencode", "version": "1.16.2", **({"build_revision": os.environ["OH_RUNTIME_REVISION"]} if os.environ.get("OH_RUNTIME_REVISION") else {})}
 
     @app.post("/api/login")
     async def login(request: Request):
@@ -1171,6 +1171,10 @@ def create_app(data_dir=None, runtime_factory=Runtime, library=None):
             db.execute("INSERT INTO risk_feedback VALUES(?,?,?,?,?,?,?,?)",
                        (aid, rid, u["id"], row["source_hash"], decision, note, created, latest+1))
             memory_sync=precedents.enqueue(db,u,row,report,rid,decision,note,latest+1,created)
+        from . import memory_trace
+        delivery = store.one("SELECT o.id,d.data FROM contract_memory_outbox o JOIN contract_memory_deliveries d ON d.event_id=o.id WHERE o.artifact_id=? AND o.risk_id=? AND o.user_id=? ORDER BY o.created DESC,o.rowid DESC LIMIT 1", (aid,rid,u['id'])) if memory_trace.client() else None
+        if delivery:
+            memory_trace.emit('openharvey.feedback.saved', json.loads(delivery['data']).get('trace_context'), data={'event_id': delivery['id'], 'business_revision': latest+1, 'outbox_status': memory_sync})
         return {**feedback_state(store, aid)[rid],"memory_sync":precedents.status(aid,rid,u["id"])}
 
     @app.get('/api/artifacts/{aid}/risks/{rid}/precedents')

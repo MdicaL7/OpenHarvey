@@ -1,3 +1,4 @@
+from . import memory_trace
 """Saved risk dispositions: durable delivery via standard L0/L1 APIs and local precedent filtering/reranking."""
 import asyncio
 import datetime
@@ -190,6 +191,11 @@ class ContractPrecedents:
             'session_id': thread['session_id'], 'task_id': task['task_id'] if task else None,
             'decision': decision, 'note': note, 'revision': revision, 'created_at': created_iso,
         }
+        trace_ctx = memory_trace.context({'instanceId': binding['service_id'], 'teamId': team['tdai_team_id'],
+            'userId': uid, 'agentId': team['agent_id'], 'taskId': payload['task_id'], 'sessionId': payload['session_id'],
+            'app_user_id': u['id'], 'event_id': event_id, 'request_id': 'feedback-request-' + event_id}, memory_trace._current.get())
+        if trace_ctx:
+            payload['trace_context'] = trace_ctx
         metadata = self.disposition_metadata(payload)
         message = self.format_disposition_message(payload)
         payload['metadata'] = metadata
@@ -219,6 +225,9 @@ class ContractPrecedents:
             rows = self.store.all("SELECT o.*,d.data AS delivery_data,d.status AS delivery_status,d.attempts AS delivery_attempts FROM contract_memory_outbox o JOIN contract_memory_deliveries d ON d.event_id=o.id WHERE d.backend='native-v3' AND d.status='pending' ORDER BY o.created LIMIT 10")
             for r in rows:
                 sent = False
+                trace_ctx = None
+                trace_token = None
+                trace_start = time.time_ns()
                 try:
                     u = self.store.one('SELECT * FROM users WHERE id=? AND active=1', (r['user_id'],))
                     if not u:
@@ -228,6 +237,10 @@ class ContractPrecedents:
                     if not w or w['team_id'] != team['id']:
                         raise HTTPException(403, '原合同已移除')
                     payload = json.loads(r['delivery_data'])
+                    trace_ctx = payload.get('trace_context')
+                    if trace_ctx:
+                        trace_ctx = {**trace_ctx, 'attempt_id': r['id'] + ':' + str(r['delivery_attempts'] + 1), 'retry_count': r['delivery_attempts']}
+                    trace_token = memory_trace._current.set(trace_ctx)
                     binding, _, uid = self.memory.binding(u)
                     if payload.get('target') != [binding['core_url'], binding['service_id'], team['tdai_team_id'], team['agent_id'], uid]:
                         raise HTTPException(409, 'Memory 目标身份已变化，请使用目标重新绑定预检；普通重试不能更换目标')
@@ -244,6 +257,7 @@ class ContractPrecedents:
                     if not claimed:
                         continue
                     sent = True
+                    memory_trace.emit('openharvey.outbox.started', trace_ctx, data={'event_id': r['id']})
                     result = await self.memory.remote(u, team, '/v3/conversation/add', {
                         'task_id': payload['task_id'], 'session_id': payload['session_id'],
                         'messages': [{'role': 'user', 'content': content}],
@@ -252,10 +266,15 @@ class ContractPrecedents:
                     if not isinstance(ids, list) or len(ids) != 1 or not isinstance(ids[0], str) or not ids[0] or type(result.get('total_count')) is not int or result['total_count'] != 1:
                         raise HTTPException(503, 'L0 接收回执无效，投递结果未确认')
                     self.store.execute("UPDATE contract_memory_deliveries SET status='l0_received',l0_id=?,error=NULL WHERE event_id=? AND backend='native-v3' AND status='uncertain' AND attempts=?", (ids[0], r['id'], r['delivery_attempts'] + 1))
+                    memory_trace.emit('openharvey.outbox.l0_received', trace_ctx, start_ns=trace_start, data={'event_id': r['id'], 'l0_message_ids': ids, 'accepted_versions': result.get('accepted_versions'), 'status': 'l0_received'})
                 except Exception as e:
                     safe = not sent or isinstance(e, MemoryTransportError) and e.safe_to_retry
                     self.store.execute("UPDATE contract_memory_deliveries SET status=?,error=? WHERE event_id=? AND backend='native-v3' AND status=? AND attempts=? AND data=?",
                                        ('blocked' if safe else 'uncertain', str(getattr(e, 'detail', '投递结果未确认，须核对远端')), r['id'], 'uncertain' if sent else 'pending', r['delivery_attempts'] + int(sent), r['delivery_data']))
+                    memory_trace.emit('openharvey.outbox.failed', trace_ctx, start_ns=trace_start, error=True, data={'event_id': r['id'], 'status': 'blocked' if safe else 'uncertain', 'request_started': sent, 'error_type': type(e).__name__})
+                finally:
+                    if trace_token is not None:
+                        memory_trace._current.reset(trace_token)
 
     async def rebind(self, u, event_id, enqueue=False):
         row = self.store.one("SELECT d.* FROM contract_memory_deliveries d JOIN contract_memory_outbox o ON o.id=d.event_id WHERE d.event_id=? AND d.backend='native-v3' AND o.user_id=?", (event_id, u['id']))
@@ -572,6 +591,11 @@ class ContractPrecedents:
             seen.add(dedup_key)
             item = self.evaluate_case(current_ctx, c)
             scored.append((self.rank_key(current_ctx, c, item), item))
+        trace_ctx = memory_trace.context({'app_user_id': u['id'], 'teamId': team['tdai_team_id'], 'agentId': team['agent_id']})
+        memory_trace.emit('openharvey.recall.filtered', trace_ctx, data={'candidate_count': len(raw_items),
+            'unavailable_sources': unavailable_sources, 'usable_count': len(scored), 'returned_count': min(3, len(scored)),
+            'l1_record_ids': [r.get('id') for r in raw_items],
+            'source_message_ids': sorted({m for r in raw_items for m in r.get('source_message_ids', [])})})
         if not scored:
             return {'items': [], 'schema_version': 2, 'unavailable_sources': unavailable_sources, 'notice': '本次有界检索未找到可用处置案例；普通对话或来源不能精确关联的记忆不可用作处置案例，不代表全库无有效案例'}
         scored.sort(key=lambda pair: pair[0], reverse=True)
