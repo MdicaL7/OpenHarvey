@@ -6,6 +6,8 @@
 
 [English](README.md) · [官网](https://openharvey.com) · [在线试用](https://openharvey.com/demo) · [部署说明](docs/deployment.md) · [在线说明书](https://openharvey.com/guide#materials) · [合同资料使用手册](docs/materials-labs.zh-CN.md)
 
+[新电脑本地部署手册：OpenHarvey + Agent Memory + Langfuse](docs/local-fresh-deployment.zh-CN.md)（全新初始化，含指定分支、模型配置和 AI 部署交接）。
+
 把主合同、附件、对话、风险判断和产出放到同一个工作空间，支持点击有效引用定位原文、连续段落高亮、原文与报告并排核对。
 
 
