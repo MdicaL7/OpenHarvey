@@ -2,6 +2,8 @@
 
 更新：2026-10-19。交接对象：在另一台电脑上执行部署的 AI。
 
+> **目标环境更新：用户已确认目标电脑只能运行原生 Windows，不能使用 Docker、WSL2 或虚拟机，且所有服务必须同机。因此本篇 Docker/POSIX 配方不适用于该目标电脑，不要执行。** 当前源码尚未完成原生 Windows 适配。请先阅读 [原生 Windows 可行性与适配交接](windows-native-feasibility.zh-CN.md)；该文档说明待开发项和 Langfuse 的版本取舍，并非已验证的安装手册。
+
 目标是**全新初始化**，不迁移任何旧账号、合同、记忆、数据库、密钥或测试身份。部署 OpenHarvey、本地 OpenCode、MemoryCore、MemoryProxy、Memory Hub 和官方 Langfuse。业务和记忆模型使用 OpenAI Chat Completions 兼容 API。无需 Railway、Vercel、E2B、Supabase、ChatGPT 订阅桥接或旧实验的 8766/8767 服务。
 
 本手册基于源码、当前部署配置和官方 Langfuse Compose 核对编写；没有在目标电脑完成空环境验收。执行 AI 必须完成末尾验收，记录实际失败，不能把健康检查或历史实验结果当作部署成功。
